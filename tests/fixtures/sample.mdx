@@ -1,0 +1,21 @@
+---
+title: ChatExample integration
+integration:
+  pypi: langchain-example
+---
+
+import ChatDownloads from '/snippets/oss/downloads.mdx';
+
+<Tip>
+    The default model is `claude-sonnet-4-6`.
+</Tip>
+
+Set <YOUR_API_KEY> in the environment.
+
+```python
+import os
+
+llm = ChatExample(model="claude-3-sonnet-20240229", max_tokens=5000)
+```
+
+Trailing prose.
