@@ -1,0 +1,92 @@
+{
+  "claims": [
+    {
+      "entity": "langchain-example",
+      "attribute": "pypi package",
+      "value": "langchain-example",
+      "raw_value": "langchain-example",
+      "line_start": 4,
+      "line_end": 4,
+      "quote": "  pypi: langchain-example",
+      "context": "prose",
+      "confidence": 0.95
+    },
+    {
+      "entity": "ChatExample",
+      "attribute": "max_tokens",
+      "value": "5000",
+      "raw_value": "5000",
+      "line_start": 18,
+      "line_end": 18,
+      "quote": "llm = ChatExample(model=\"claude-3-sonnet-20240229\", max_tokens=5000)",
+      "context": "code",
+      "confidence": 0.9
+    },
+    {
+      "entity": "ChatExample",
+      "attribute": "default model",
+      "value": "claude-opus-5",
+      "raw_value": "`claude-opus-5`",
+      "line_start": 10,
+      "line_end": 10,
+      "quote": "The default model is `claude-opus-5`.",
+      "context": "prose",
+      "confidence": 0.8
+    },
+    {
+      "entity": "ChatExample",
+      "attribute": "import",
+      "value": "os",
+      "raw_value": "os",
+      "line_start": 10,
+      "line_end": 10,
+      "quote": "import os",
+      "context": "code",
+      "confidence": 0.7
+    },
+    {
+      "entity": "ChatExample",
+      "attribute": "timeout",
+      "value": "9999",
+      "raw_value": "9999",
+      "line_start": 13,
+      "line_end": 13,
+      "quote": "Set <YOUR_API_KEY> in the environment.",
+      "context": "prose",
+      "confidence": 0.6
+    },
+    {
+      "entity": "ChatExample",
+      "attribute": "region",
+      "value": "us-east-1",
+      "raw_value": "us-east-1",
+      "line_start": 900,
+      "line_end": 901,
+      "quote": "region us-east-1",
+      "context": "prose",
+      "confidence": 0.5
+    },
+    {
+      "entity": "ChatExample",
+      "attribute": "class name",
+      "value": "ChatExample",
+      "raw_value": "ChatExample",
+      "line_start": 2,
+      "line_end": 2,
+      "quote": "title: ChatExample integration",
+      "context": "table",
+      "confidence": 0.9
+    },
+    {
+      "entity": "ChatExample",
+      "attribute": "model",
+      "value": "claude-3-sonnet-20240229",
+      "raw_value": "claude-3-sonnet-20240229",
+      "line_start": 18,
+      "line_end": 18,
+      "quote": "llm = ChatExample(model=\"claude-3-sonnet-20240229\", max_tokens=5000)",
+      "context": "code",
+      "confidence": 1.7
+    }
+  ]
+}
