@@ -88,9 +88,14 @@ def _normalize(text: str) -> str:
     return _WHITESPACE.sub(" ", text).strip()
 
 
-def cache_key(document: Document, model: str, prompt_version: str) -> str:
+def cache_key(document: Document, model: str, prompt_version: str, effort: str) -> str:
+    """Everything that changes the claims a document produces.
+
+    Effort is in the key because it changes output quality: without it, an
+    effort sweep would serve the first run's claims and appear to do nothing.
+    """
     digest = hashlib.sha256()
-    for part in (document.text, prompt_version, model):
+    for part in (document.text, prompt_version, model, effort):
         digest.update(part.encode("utf-8"))
         digest.update(b"\x00")
     return digest.hexdigest()
@@ -255,7 +260,7 @@ def extract_document(
     prompt_version: str = PROMPT_VERSION,
 ) -> ExtractResult:
     """Extract claims from one document, serving from the cache when possible."""
-    key = cache_key(document, model, prompt_version)
+    key = cache_key(document, model, prompt_version, effort)
     path = _cache_path(cache_dir, key)
 
     if path.exists():
@@ -297,12 +302,18 @@ def extract_document(
             else:
                 result.claims, result.rejected = validate_claims(raw_claims, document)
 
+    if result.error:
+        # A failure is not an answer. Caching one would make the fix it asks
+        # for ("raise --max-tokens") do nothing on the rerun.
+        return result
+
     cache_dir.mkdir(parents=True, exist_ok=True)
     path.write_text(
         json.dumps(
             {
                 "path": document.path,
                 "model": model,
+                "effort": effort,
                 "prompt_version": prompt_version,
                 "claims": [asdict(c) for c in result.claims],
                 "rejected": result.rejected,

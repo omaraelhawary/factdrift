@@ -150,17 +150,37 @@ def test_a_new_prompt_version_invalidates_the_cache(sample, tmp_path):
     assert client.calls == 2
 
 
-def test_cache_key_covers_content_prompt_and_model(sample):
-    base = cache_key(sample, "m", "v1")
+def test_cache_key_covers_content_prompt_model_and_effort(sample):
+    base = cache_key(sample, "m", "v1", "low")
     changed = Document(
         path=sample.path,
         language=sample.language,
         text=sample.text + "\n",
         spans=sample.spans,
     )
-    assert cache_key(changed, "m", "v1") != base
-    assert cache_key(sample, "m", "v2") != base
-    assert cache_key(sample, "other", "v1") != base
+    assert cache_key(changed, "m", "v1", "low") != base
+    assert cache_key(sample, "m", "v2", "low") != base
+    assert cache_key(sample, "other", "v1", "low") != base
+    assert cache_key(sample, "m", "v1", "high") != base
+
+
+def test_a_new_effort_level_invalidates_the_cache(sample, tmp_path):
+    client = FakeClient()
+    extract_document(sample, client, cache_dir=tmp_path, effort="low")
+    extract_document(sample, client, cache_dir=tmp_path, effort="high")
+    assert client.calls == 2
+
+
+def test_a_failed_extraction_is_not_cached(sample, tmp_path):
+    truncated = FakeClient(text='{"claims": [', stop_reason="max_tokens")
+    assert extract_document(sample, truncated, cache_dir=tmp_path).error
+    assert list(tmp_path.glob("*.json")) == []
+
+    retry = FakeClient()
+    result = extract_document(sample, retry, cache_dir=tmp_path)
+    assert retry.calls == 1
+    assert result.error is None
+    assert len(result.claims) == 2
 
 
 def test_a_truncated_response_is_reported_not_raised(sample, tmp_path):
