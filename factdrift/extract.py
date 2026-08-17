@@ -15,6 +15,8 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Iterable
 
+import anthropic
+
 from factdrift.ingest import Document
 from factdrift.prompts.extraction import (
     CLAIMS_SCHEMA,
@@ -39,6 +41,15 @@ PRICES = {
 
 CONTEXTS = ("prose", "code")
 _WHITESPACE = re.compile(r"\s+")
+
+# Credentials and permissions are wrong for every document, not just this one,
+# so retrying the rest of the corpus wastes time. Everything else that the API
+# can raise is recorded per document and the run continues.
+FATAL_API_ERRORS = (
+    anthropic.AuthenticationError,
+    anthropic.PermissionDeniedError,
+    anthropic.NotFoundError,
+)
 
 
 @dataclass(frozen=True)
@@ -279,9 +290,18 @@ def extract_document(
                 cached=True,
             )
 
-    text, usage, stop_reason = call_model(
-        client, document, model=model, effort=effort, max_tokens=max_tokens
-    )
+    try:
+        text, usage, stop_reason = call_model(
+            client, document, model=model, effort=effort, max_tokens=max_tokens
+        )
+    except FATAL_API_ERRORS:
+        raise
+    except anthropic.APIError as exc:
+        return ExtractResult(
+            path=document.path,
+            error=f"{type(exc).__name__}: {exc}",
+            cached=False,
+        )
 
     result = ExtractResult(
         path=document.path, usage=usage, stop_reason=stop_reason, cached=False

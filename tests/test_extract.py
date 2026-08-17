@@ -2,6 +2,8 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 
+import anthropic
+import httpx
 import pytest
 
 from factdrift import extract as extract_mod
@@ -205,6 +207,39 @@ def test_a_corrupt_cache_entry_is_discarded(sample, tmp_path):
     result = extract_document(sample, client, cache_dir=tmp_path)
     assert client.calls == 2
     assert result.cached is False
+
+
+class RaisingClient:
+    """Stands in for a client whose requests fail."""
+
+    def __init__(self, exc: Exception):
+        self.exc = exc
+        self.calls = 0
+        self.messages = SimpleNamespace(stream=self._stream)
+
+    def _stream(self, **kwargs):
+        self.calls += 1
+        raise self.exc
+
+
+def _api_error(cls: type, status: int) -> Exception:
+    request = httpx.Request("POST", "https://api.anthropic.com/v1/messages")
+    response = httpx.Response(status, request=request, json={"error": {}})
+    return cls("boom", response=response, body=None)
+
+
+def test_a_transient_api_error_is_recorded_not_raised(sample, tmp_path):
+    client = RaisingClient(_api_error(anthropic.RateLimitError, 429))
+    result = extract_document(sample, client, cache_dir=tmp_path)
+    assert result.claims == []
+    assert result.error.startswith("RateLimitError")
+    assert list(tmp_path.glob("*.json")) == []
+
+
+def test_a_bad_key_stops_the_run(sample, tmp_path):
+    client = RaisingClient(_api_error(anthropic.AuthenticationError, 401))
+    with pytest.raises(anthropic.AuthenticationError):
+        extract_document(sample, client, cache_dir=tmp_path)
 
 
 def test_cost_uses_the_price_table():

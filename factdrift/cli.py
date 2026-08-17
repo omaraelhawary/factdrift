@@ -10,6 +10,8 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
 from pathlib import Path
 
+import anthropic
+
 from factdrift import extract as extract_mod
 from factdrift.ingest import Document, load_corpus, load_document, find_sources
 from factdrift.prompts.extraction import PROMPT_VERSION, render_document
@@ -71,8 +73,6 @@ def _fmt_cost(value: float | None) -> str:
 
 
 def cmd_extract(args: argparse.Namespace) -> int:
-    import anthropic
-
     all_documents = load_corpus(args.corpus)
     if not all_documents:
         print(f"no markdown or mdx files under {args.corpus}", file=sys.stderr)
@@ -99,8 +99,21 @@ def cmd_extract(args: argparse.Namespace) -> int:
         )
 
     started = time.monotonic()
-    with ThreadPoolExecutor(max_workers=args.concurrency) as pool:
-        results = list(pool.map(run, documents))
+    try:
+        with ThreadPoolExecutor(max_workers=args.concurrency) as pool:
+            results = list(pool.map(run, documents))
+    except anthropic.AuthenticationError:
+        print(
+            "the API rejected the key: set ANTHROPIC_API_KEY to a valid key",
+            file=sys.stderr,
+        )
+        return 2
+    except anthropic.PermissionDeniedError as exc:
+        print(f"the key lacks access: {exc}", file=sys.stderr)
+        return 2
+    except anthropic.NotFoundError:
+        print(f"unknown model {args.model!r}", file=sys.stderr)
+        return 2
     elapsed = time.monotonic() - started
 
     total = extract_mod.Usage()
