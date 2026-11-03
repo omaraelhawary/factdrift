@@ -307,7 +307,10 @@ def cmd_normalize(args: argparse.Namespace) -> int:
         json.dumps(
             {
                 "model": args.model,
-                "prompt_version": normalize_mod.NORMALIZE_PROMPT_VERSION,
+                "prompt_versions": [
+                    normalize_mod.ALIAS_PROMPT_VERSION,
+                    normalize_mod.CARDINALITY_PROMPT_VERSION,
+                ],
                 "cardinality": result.cardinality,
                 "reasons": result.reasons,
                 "claims": annotated,

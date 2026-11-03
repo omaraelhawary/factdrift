@@ -24,7 +24,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable
 
-NORMALIZE_PROMPT_VERSION = "normalize-v1"
+ALIAS_PROMPT_VERSION = "normalize-v1"  # unchanged since the first run; keeps its cache
+CARDINALITY_PROMPT_VERSION = "cardinality-v2"
 DEFAULT_BATCH_SIZE = 80
 DEFAULT_MAX_TOKENS = 16000
 DEFAULT_CACHE_DIR = Path(".cache/normalize")
@@ -62,7 +63,9 @@ variable name, API base URL, a default value, the minimum supported version.
 free: the value is a choice the user makes, so different values in different \
 examples are expected. Examples: temperature or max_tokens passed in an \
 example, the prompt text, the model picked for an example, a timeout picked \
-for an example.
+for an example. Also free: a property that is a set with many members, such \
+as supported models, supported features, available methods or valid \
+options, because different passages legitimately name different members.
 
 Return one label per attribute id with a one-sentence reason.\
 """
@@ -222,7 +225,7 @@ def build_aliases(
             f"Known ids so far: {json.dumps(known)}\n\n"
             f"Items:\n{json.dumps(items, ensure_ascii=False)}"
         )
-        key = _cache_key(NORMALIZE_PROMPT_VERSION, "alias", model, items, known)
+        key = _cache_key(ALIAS_PROMPT_VERSION, "alias", model, items, known)
         payload = _cached_call(
             backend,
             cache_dir,
@@ -275,7 +278,7 @@ def classify_attributes(
     "free", the label that cannot create a false contradiction."""
     for start in range(0, len(attribute_ids), batch_size):
         batch = attribute_ids[start : start + batch_size]
-        key = _cache_key(NORMALIZE_PROMPT_VERSION, "cardinality", model, batch)
+        key = _cache_key(CARDINALITY_PROMPT_VERSION, "cardinality", model, batch)
         payload = _cached_call(
             backend,
             cache_dir,
