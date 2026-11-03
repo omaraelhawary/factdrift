@@ -307,11 +307,30 @@ class OllamaBackend:
     def complete(
         self, document: Document, *, model: str, effort: str, max_tokens: int
     ) -> tuple[str, Usage, str | None]:
+        return self.complete_json(
+            system=SYSTEM,
+            user=user_message(document),
+            schema=CLAIMS_SCHEMA,
+            model=model,
+            max_tokens=max_tokens,
+        )
+
+    def complete_json(
+        self,
+        *,
+        system: str,
+        user: str,
+        schema: dict[str, Any],
+        model: str,
+        max_tokens: int,
+        schema_name: str = "claims",
+    ) -> tuple[str, Usage, str | None]:
+        """One schema-constrained request. Returns raw text, usage, stop reason."""
         payload = {
             "model": model,
-            "system": SYSTEM,
-            "prompt": user_message(document),
-            "format": CLAIMS_SCHEMA,
+            "system": system,
+            "prompt": user,
+            "format": schema,
             "stream": False,
             "think": False,
             "options": {
@@ -361,15 +380,34 @@ class OpenRouterBackend:
     def complete(
         self, document: Document, *, model: str, effort: str, max_tokens: int
     ) -> tuple[str, Usage, str | None]:
+        return self.complete_json(
+            system=SYSTEM,
+            user=user_message(document),
+            schema=CLAIMS_SCHEMA,
+            model=model,
+            max_tokens=max_tokens,
+        )
+
+    def complete_json(
+        self,
+        *,
+        system: str,
+        user: str,
+        schema: dict[str, Any],
+        model: str,
+        max_tokens: int,
+        schema_name: str = "claims",
+    ) -> tuple[str, Usage, str | None]:
+        """One schema-constrained request. Returns raw text, usage, stop reason."""
         payload = {
             "model": model,
             "messages": [
-                {"role": "system", "content": SYSTEM},
-                {"role": "user", "content": user_message(document)},
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
             ],
             "response_format": {
                 "type": "json_schema",
-                "json_schema": {"name": "claims", "strict": True, "schema": CLAIMS_SCHEMA},
+                "json_schema": {"name": schema_name, "strict": True, "schema": schema},
             },
             "temperature": 0,
             "max_tokens": max_tokens,
