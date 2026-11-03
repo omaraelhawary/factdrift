@@ -33,6 +33,13 @@ def test_single_attribute_disagreement_is_a_contradiction():
     assert [(f.kind, f.severity) for f in findings] == [("contradiction", "medium")]
 
 
+def test_single_attribute_differing_across_languages_is_not_flagged():
+    assert detect([
+        norm("anthropic", "package_name", "langchain-anthropic"),
+        norm("anthropic", "package_name", "@langchain/anthropic", language="javascript"),
+    ]) == []
+
+
 def test_agreeing_values_are_not_flagged():
     assert detect([
         norm("anthropic", "package_name", "langchain-anthropic"),

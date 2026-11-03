@@ -3,11 +3,14 @@
 Two kinds of finding:
 
 - contradiction: a "single" attribute of one entity has more than one value
-  across the corpus. At least one document is wrong.
-- divergence: a "free" attribute of one entity has values in both the Python
-  and JavaScript docs, and the two sets share nothing. Neither is wrong on
-  its own, but the two docs teach different things, which is how stale
-  examples (an old model id in one language) show up.
+  within the docs of one language. At least one document is wrong. Values
+  are compared per language because package names, install commands and
+  feature support legitimately differ between the Python and JavaScript
+  libraries.
+- divergence: a "free" attribute of one entity has values in both the
+  Python and JavaScript docs, and the two sets share nothing. Neither is wrong on its
+  own, but the two docs teach different things, which is how stale examples
+  (an old model id in one language) show up.
 
 Severity follows where the values were written. Prose is what readers trust,
 so a disagreement between two prose statements ranks above one involving
@@ -97,11 +100,14 @@ def detect(claims: list[dict[str, Any]], *, divergence: bool = True) -> list[Fin
     for (entity_id, attribute_id), group in _group(claims).items():
         cardinality = group[0]["cardinality"]
         if cardinality == "single":
-            by_value = _by_value(group)
-            if len(by_value) > 1:
-                findings.append(
-                    Finding("contradiction", _severity(by_value), entity_id, attribute_id, by_value)
-                )
+            for language in sorted({c["language"] for c in group}):
+                by_value = _by_value([c for c in group if c["language"] == language])
+                if len(by_value) > 1:
+                    findings.append(
+                        Finding(
+                            "contradiction", _severity(by_value), entity_id, attribute_id, by_value
+                        )
+                    )
         elif divergence:
             python = {normalize_value(c["value"]) for c in group if c["language"] == "python"}
             javascript = {

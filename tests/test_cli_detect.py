@@ -10,7 +10,7 @@ def test_detect_writes_findings_and_report(tmp_path, capsys):
     claims = tmp_path / "normalized.json"
     claims.write_text(json.dumps({"claims": [
         norm("anthropic", "package_name", "langchain-anthropic"),
-        norm("anthropic", "package_name", "anthropic-langchain", language="javascript"),
+        norm("anthropic", "package_name", "anthropic-langchain"),
     ]}))
     out, report = tmp_path / "findings.json", tmp_path / "report.md"
     rc = cli.main(["detect", "--claims", str(claims), "--out", str(out), "--report", str(report)])
