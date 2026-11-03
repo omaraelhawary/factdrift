@@ -334,3 +334,74 @@ def test_an_ollama_error_payload_is_recorded(sample, tmp_path):
     backend = extract_mod.OllamaBackend(post=post)
     result = extract_document(sample, backend, model="qwen3:8b", cache_dir=tmp_path)
     assert "more system memory" in result.error
+
+
+class FakeOpenRouterPost:
+    """Stands in for the HTTP call to OpenRouter, recording requests."""
+
+    def __init__(self, response=None, exc: Exception | None = None):
+        self.response = response
+        self.exc = exc
+        self.requests = []
+
+    def __call__(self, url, payload, timeout, headers=None):
+        self.requests.append((url, payload, headers))
+        if self.exc is not None:
+            raise self.exc
+        return self.response
+
+
+def _openrouter_response(text: str = RESPONSE, finish_reason: str = "stop") -> dict:
+    return {
+        "choices": [{"message": {"content": text}, "finish_reason": finish_reason}],
+        "usage": {"prompt_tokens": 1100, "completion_tokens": 450},
+    }
+
+
+def test_openrouter_responses_are_validated_like_anthropic_ones(sample, tmp_path):
+    post = FakeOpenRouterPost(_openrouter_response())
+    backend = extract_mod.OpenRouterBackend("test-key", post=post)
+    result = extract_document(sample, backend, model="m", cache_dir=tmp_path)
+    assert result.error is None
+    assert len(result.claims) == 2
+    assert len(result.rejected) == 6
+    assert (result.usage.input_tokens, result.usage.output_tokens) == (1100, 450)
+
+
+def test_openrouter_request_is_schema_constrained_and_authenticated(sample, tmp_path):
+    post = FakeOpenRouterPost(_openrouter_response())
+    backend = extract_mod.OpenRouterBackend("test-key", post=post)
+    extract_document(sample, backend, model="m", max_tokens=777, cache_dir=tmp_path)
+    url, payload, headers = post.requests[0]
+    assert url.endswith("/chat/completions")
+    assert headers == {"Authorization": "Bearer test-key"}
+    assert payload["response_format"]["json_schema"]["schema"] == extract_mod.CLAIMS_SCHEMA
+    assert payload["response_format"]["json_schema"]["strict"] is True
+    assert (payload["temperature"], payload["max_tokens"]) == (0, 777)
+
+
+def test_an_openrouter_length_stop_is_reported_and_not_cached(sample, tmp_path):
+    post = FakeOpenRouterPost(_openrouter_response(finish_reason="length"))
+    backend = extract_mod.OpenRouterBackend("test-key", post=post)
+    result = extract_document(sample, backend, model="m", cache_dir=tmp_path)
+    assert result.error.startswith("max_tokens")
+    assert list(tmp_path.glob("*.json")) == []
+
+
+def test_a_response_without_choices_is_recorded(sample, tmp_path):
+    post = FakeOpenRouterPost({"usage": {}})
+    backend = extract_mod.OpenRouterBackend("test-key", post=post)
+    result = extract_document(sample, backend, model="m", cache_dir=tmp_path)
+    assert "no choices" in result.error
+
+
+def test_running_out_of_openrouter_credit_stops_the_run(sample, tmp_path):
+    post = FakeOpenRouterPost(exc=extract_mod.BackendUnavailable("out of credit"))
+    backend = extract_mod.OpenRouterBackend("test-key", post=post)
+    with pytest.raises(extract_mod.BackendUnavailable):
+        extract_document(sample, backend, model="m", cache_dir=tmp_path)
+
+
+def test_a_missing_openrouter_key_is_rejected_up_front():
+    with pytest.raises(extract_mod.BackendUnavailable):
+        extract_mod.OpenRouterBackend("")

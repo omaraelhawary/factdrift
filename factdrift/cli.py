@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -87,6 +88,17 @@ def cmd_extract(args: argparse.Namespace) -> int:
         client = extract_mod.OllamaBackend(
             args.ollama_url, num_ctx=args.num_ctx, timeout=args.timeout
         )
+    elif args.backend == "openrouter":
+        args.model = args.model or extract_mod.DEFAULT_OPENROUTER_MODEL
+        try:
+            client = extract_mod.OpenRouterBackend(
+                os.environ.get("OPENROUTER_API_KEY", ""),
+                args.openrouter_url,
+                timeout=args.timeout,
+            )
+        except extract_mod.BackendUnavailable as exc:
+            print(f"openrouter: {exc}", file=sys.stderr)
+            return 2
     else:
         args.model = args.model or extract_mod.DEFAULT_MODEL
         client = anthropic.Anthropic()
@@ -200,7 +212,7 @@ def _project(
     Input tokens are counted exactly for every file. Output tokens are scaled
     from the observed output-per-input ratio, so the number is an estimate.
     """
-    method = "estimating tokens" if args.backend == "ollama" else "counting tokens"
+    method = "counting tokens" if args.backend == "anthropic" else "estimating tokens"
     print("\nprojecting full run over "
           f"{len(all_documents)} files ({method}, no charge)")
     with ThreadPoolExecutor(max_workers=args.concurrency) as pool:
@@ -263,19 +275,26 @@ def build_parser() -> argparse.ArgumentParser:
     extract.add_argument("--files", nargs="+", metavar="PATH", help="only these files")
     extract.add_argument(
         "--backend",
-        choices=["anthropic", "ollama"],
+        choices=["anthropic", "ollama", "openrouter"],
         default="anthropic",
         help="where extraction requests go (default: %(default)s)",
     )
     extract.add_argument(
         "--model",
         help=f"model id (default: {extract_mod.DEFAULT_MODEL} for anthropic, "
-        f"{extract_mod.DEFAULT_OLLAMA_MODEL} for ollama)",
+        f"{extract_mod.DEFAULT_OLLAMA_MODEL} for ollama, "
+        f"{extract_mod.DEFAULT_OPENROUTER_MODEL} for openrouter)",
     )
     extract.add_argument(
         "--ollama-url",
         default=extract_mod.DEFAULT_OLLAMA_URL,
         help="Ollama server (default: %(default)s)",
+    )
+    extract.add_argument(
+        "--openrouter-url",
+        default=extract_mod.DEFAULT_OPENROUTER_URL,
+        help="OpenRouter API base; the key comes from OPENROUTER_API_KEY "
+        "(default: %(default)s)",
     )
     extract.add_argument(
         "--num-ctx",
@@ -287,7 +306,8 @@ def build_parser() -> argparse.ArgumentParser:
         "--timeout",
         type=float,
         default=extract_mod.DEFAULT_TIMEOUT,
-        help="seconds to wait for one Ollama response (default: %(default)s)",
+        help="seconds to wait for one Ollama or OpenRouter response "
+        "(default: %(default)s)",
     )
     extract.add_argument(
         "--effort",

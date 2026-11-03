@@ -36,6 +36,8 @@ DEFAULT_CACHE_DIR = Path(".cache/extract")
 DEFAULT_OLLAMA_URL = "http://localhost:11434"
 DEFAULT_OLLAMA_MODEL = "qwen3:8b"
 DEFAULT_NUM_CTX = 32768
+DEFAULT_OPENROUTER_URL = "https://openrouter.ai/api/v1"
+DEFAULT_OPENROUTER_MODEL = "anthropic/claude-haiku-5.5"
 DEFAULT_TIMEOUT = 900.0
 
 # US dollars per million tokens, by model. Override on the command line when a
@@ -247,19 +249,28 @@ def _response_text(message: Any) -> str:
     return ""
 
 
-def _http_post(url: str, payload: dict[str, Any], timeout: float) -> dict[str, Any]:
+# HTTP statuses that will fail the same way for every document.
+_FATAL_STATUSES = {401: "rejected the API key", 402: "out of credit", 403: "forbidden", 404: "model not found"}
+
+
+def _http_post(
+    url: str,
+    payload: dict[str, Any],
+    timeout: float,
+    headers: dict[str, str] | None = None,
+) -> dict[str, Any]:
     request = urllib.request.Request(
         url,
         data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
+        headers={"Content-Type": "application/json", **(headers or {})},
     )
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
             return json.load(response)
     except urllib.error.HTTPError as exc:
         body = exc.read().decode("utf-8", "replace")[:300]
-        if exc.code == 404:
-            raise BackendUnavailable(f"model not found: {body}") from exc
+        if exc.code in _FATAL_STATUSES:
+            raise BackendUnavailable(f"{_FATAL_STATUSES[exc.code]}: {body}") from exc
         raise BackendRequestError(f"HTTP {exc.code}: {body}") from exc
     except urllib.error.URLError as exc:
         if isinstance(exc.reason, TimeoutError):
@@ -325,6 +336,66 @@ class OllamaBackend:
         return str(data.get("response") or ""), usage, stop_reason
 
 
+class OpenRouterBackend:
+    """Sends the extraction request to OpenRouter's OpenAI-compatible API.
+
+    The response is constrained to CLAIMS_SCHEMA through response_format, so
+    validation is identical to the other backends. Effort is not sent.
+    """
+
+    def __init__(
+        self,
+        api_key: str,
+        base_url: str = DEFAULT_OPENROUTER_URL,
+        *,
+        timeout: float = DEFAULT_TIMEOUT,
+        post: Any = _http_post,
+    ) -> None:
+        if not api_key:
+            raise BackendUnavailable("no OpenRouter key: set OPENROUTER_API_KEY")
+        self._headers = {"Authorization": f"Bearer {api_key}"}
+        self.base_url = base_url.rstrip("/")
+        self.timeout = timeout
+        self._post = post
+
+    def complete(
+        self, document: Document, *, model: str, effort: str, max_tokens: int
+    ) -> tuple[str, Usage, str | None]:
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": SYSTEM},
+                {"role": "user", "content": user_message(document)},
+            ],
+            "response_format": {
+                "type": "json_schema",
+                "json_schema": {"name": "claims", "strict": True, "schema": CLAIMS_SCHEMA},
+            },
+            "temperature": 0,
+            "max_tokens": max_tokens,
+        }
+        data = self._post(
+            f"{self.base_url}/chat/completions", payload, self.timeout, self._headers
+        )
+        if not isinstance(data, dict):
+            raise BackendRequestError("server returned a non-object response")
+        if data.get("error"):
+            raise BackendRequestError(str(data["error"]))
+        choices = data.get("choices") or []
+        if not choices:
+            raise BackendRequestError("response has no choices")
+        choice = choices[0]
+        usage_data = data.get("usage") or {}
+        usage = Usage(
+            input_tokens=int(usage_data.get("prompt_tokens") or 0),
+            output_tokens=int(usage_data.get("completion_tokens") or 0),
+        )
+        finish = choice.get("finish_reason")
+        stop_reason = {"length": "max_tokens", "stop": "end_turn"}.get(finish, finish)
+        text = (choice.get("message") or {}).get("content") or ""
+        return str(text), usage, stop_reason
+
+
 def call_model(
     client: Any,
     document: Document,
@@ -334,7 +405,7 @@ def call_model(
     max_tokens: int,
 ) -> tuple[str, Usage, str | None]:
     """Run one extraction request and return the raw response text and usage."""
-    if isinstance(client, OllamaBackend):
+    if isinstance(client, (OllamaBackend, OpenRouterBackend)):
         return client.complete(
             document, model=model, effort=effort, max_tokens=max_tokens
         )
@@ -454,10 +525,10 @@ def extract_document(
 def count_input_tokens(client: Any, document: Document, model: str) -> int:
     """Count the input tokens one extraction request would send. Free to call.
 
-    Ollama has no counting endpoint, so for that backend this is an estimate
-    of four characters per token.
+    Ollama and OpenRouter have no counting endpoint, so for those backends this
+    is an estimate of four characters per token.
     """
-    if isinstance(client, OllamaBackend):
+    if isinstance(client, (OllamaBackend, OpenRouterBackend)):
         return (len(SYSTEM) + len(user_message(document))) // 4
     response = client.messages.count_tokens(
         model=model,
