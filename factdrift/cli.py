@@ -280,44 +280,47 @@ def build_parser() -> argparse.ArgumentParser:
     )
     ingest.set_defaults(func=cmd_ingest)
 
-    extract = sub.add_parser("extract", parents=[common], help="extract claims")
-    extract.add_argument("--files", nargs="+", metavar="PATH", help="only these files")
-    extract.add_argument(
+    backend_opts = argparse.ArgumentParser(add_help=False)
+    backend_opts.add_argument(
         "--backend",
         choices=["anthropic", "ollama", "openrouter"],
         default="anthropic",
-        help="where extraction requests go (default: %(default)s)",
+        help="where model requests go (default: %(default)s)",
     )
-    extract.add_argument(
+    backend_opts.add_argument(
         "--model",
         help=f"model id (default: {extract_mod.DEFAULT_MODEL} for anthropic, "
         f"{extract_mod.DEFAULT_OLLAMA_MODEL} for ollama, "
         f"{extract_mod.DEFAULT_OPENROUTER_MODEL} for openrouter)",
     )
-    extract.add_argument(
+    backend_opts.add_argument(
         "--ollama-url",
         default=extract_mod.DEFAULT_OLLAMA_URL,
         help="Ollama server (default: %(default)s)",
     )
-    extract.add_argument(
+    backend_opts.add_argument(
         "--openrouter-url",
         default=extract_mod.DEFAULT_OPENROUTER_URL,
         help="OpenRouter API base; the key comes from OPENROUTER_API_KEY "
         "(default: %(default)s)",
     )
-    extract.add_argument(
+    backend_opts.add_argument(
         "--num-ctx",
         type=int,
         default=extract_mod.DEFAULT_NUM_CTX,
         help="Ollama context window in tokens (default: %(default)s)",
     )
-    extract.add_argument(
+    backend_opts.add_argument(
         "--timeout",
         type=float,
         default=extract_mod.DEFAULT_TIMEOUT,
         help="seconds to wait for one Ollama or OpenRouter response "
         "(default: %(default)s)",
     )
+    extract = sub.add_parser(
+        "extract", parents=[common, backend_opts], help="extract claims"
+    )
+    extract.add_argument("--files", nargs="+", metavar="PATH", help="only these files")
     extract.add_argument(
         "--effort",
         default=extract_mod.DEFAULT_EFFORT,
