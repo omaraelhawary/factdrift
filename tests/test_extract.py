@@ -246,3 +246,91 @@ def test_cost_uses_the_price_table():
     usage = Usage(input_tokens=1_000_000, output_tokens=1_000_000)
     assert cost(usage, "claude-opus-5", extract_mod.PRICES) == pytest.approx(30.0)
     assert cost(usage, "made-up-model", extract_mod.PRICES) is None
+
+
+class FakeOllamaPost:
+    """Stands in for the HTTP call to an Ollama server, recording payloads."""
+
+    def __init__(self, response=None, exc: Exception | None = None):
+        self.response = response
+        self.exc = exc
+        self.payloads = []
+
+    def __call__(self, url, payload, timeout):
+        self.payloads.append(payload)
+        if self.exc is not None:
+            raise self.exc
+        return self.response
+
+
+def _ollama_response(text: str = RESPONSE, done_reason: str = "stop") -> dict:
+    return {
+        "response": text,
+        "done": True,
+        "done_reason": done_reason,
+        "prompt_eval_count": 900,
+        "eval_count": 400,
+    }
+
+
+def test_ollama_responses_are_validated_like_anthropic_ones(sample, tmp_path):
+    post = FakeOllamaPost(_ollama_response())
+    backend = extract_mod.OllamaBackend(post=post)
+    result = extract_document(sample, backend, model="qwen3:8b", cache_dir=tmp_path)
+    assert result.error is None
+    assert len(result.claims) == 2
+    assert len(result.rejected) == 6
+    assert result.usage.input_tokens == 900
+    assert result.usage.output_tokens == 400
+
+
+def test_ollama_request_is_schema_constrained_and_deterministic(sample, tmp_path):
+    post = FakeOllamaPost(_ollama_response())
+    backend = extract_mod.OllamaBackend(num_ctx=8192, post=post)
+    extract_document(
+        sample, backend, model="qwen3:8b", max_tokens=1234, cache_dir=tmp_path
+    )
+    payload = post.payloads[0]
+    assert payload["format"] == extract_mod.CLAIMS_SCHEMA
+    assert payload["options"] == {"temperature": 0, "num_ctx": 8192, "num_predict": 1234}
+    assert payload["think"] is False
+
+
+def test_an_ollama_rerun_makes_no_requests(sample, tmp_path):
+    post = FakeOllamaPost(_ollama_response())
+    backend = extract_mod.OllamaBackend(post=post)
+    extract_document(sample, backend, model="qwen3:8b", cache_dir=tmp_path)
+    second = extract_document(sample, backend, model="qwen3:8b", cache_dir=tmp_path)
+    assert len(post.payloads) == 1
+    assert second.cached is True
+
+
+def test_an_ollama_length_stop_is_reported_and_not_cached(sample, tmp_path):
+    post = FakeOllamaPost(_ollama_response(done_reason="length"))
+    backend = extract_mod.OllamaBackend(post=post)
+    result = extract_document(sample, backend, model="qwen3:8b", cache_dir=tmp_path)
+    assert result.error.startswith("max_tokens")
+    assert list(tmp_path.glob("*.json")) == []
+
+
+def test_a_failed_ollama_request_is_recorded_not_raised(sample, tmp_path):
+    post = FakeOllamaPost(exc=extract_mod.OllamaRequestError("timed out after 900s"))
+    backend = extract_mod.OllamaBackend(post=post)
+    result = extract_document(sample, backend, model="qwen3:8b", cache_dir=tmp_path)
+    assert result.claims == []
+    assert "timed out" in result.error
+    assert list(tmp_path.glob("*.json")) == []
+
+
+def test_an_unreachable_ollama_server_stops_the_run(sample, tmp_path):
+    post = FakeOllamaPost(exc=extract_mod.OllamaUnavailable("connection refused"))
+    backend = extract_mod.OllamaBackend(post=post)
+    with pytest.raises(extract_mod.OllamaUnavailable):
+        extract_document(sample, backend, model="qwen3:8b", cache_dir=tmp_path)
+
+
+def test_an_ollama_error_payload_is_recorded(sample, tmp_path):
+    post = FakeOllamaPost({"error": "model requires more system memory"})
+    backend = extract_mod.OllamaBackend(post=post)
+    result = extract_document(sample, backend, model="qwen3:8b", cache_dir=tmp_path)
+    assert "more system memory" in result.error

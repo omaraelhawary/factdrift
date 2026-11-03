@@ -1,6 +1,7 @@
 """The claim extraction pass.
 
-One API call per document. Results are cached to disk, keyed by file content,
+One model request per document, sent to the Anthropic API or to a local
+Ollama server. Results are cached to disk, keyed by file content,
 prompt version and model, so a rerun over unchanged files makes no API calls.
 Every claim is checked against the source before it is kept: a claim whose
 quote is not in the lines it cites is dropped and recorded as a rejection.
@@ -11,6 +12,8 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import urllib.error
+import urllib.request
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Iterable
@@ -30,6 +33,11 @@ DEFAULT_EFFORT = "low"
 DEFAULT_MAX_TOKENS = 32000
 DEFAULT_CACHE_DIR = Path(".cache/extract")
 
+DEFAULT_OLLAMA_URL = "http://localhost:11434"
+DEFAULT_OLLAMA_MODEL = "qwen3:8b"
+DEFAULT_NUM_CTX = 32768
+DEFAULT_TIMEOUT = 900.0
+
 # US dollars per million tokens, by model. Override on the command line when a
 # price changes or a model is missing.
 PRICES = {
@@ -42,14 +50,26 @@ PRICES = {
 CONTEXTS = ("prose", "code")
 _WHITESPACE = re.compile(r"\s+")
 
-# Credentials and permissions are wrong for every document, not just this one,
-# so retrying the rest of the corpus wastes time. Everything else that the API
-# can raise is recorded per document and the run continues.
+
+
+class OllamaUnavailable(RuntimeError):
+    """The server cannot be reached or does not have the model."""
+
+
+class OllamaRequestError(RuntimeError):
+    """One Ollama request failed; the next document may still succeed."""
+
+
+# Credentials, permissions, a missing model and an unreachable server are wrong
+# for every document, not just this one, so retrying the rest of the corpus
+# wastes time. Everything else is recorded per document and the run continues.
 FATAL_API_ERRORS = (
     anthropic.AuthenticationError,
     anthropic.PermissionDeniedError,
     anthropic.NotFoundError,
+    OllamaUnavailable,
 )
+TRANSIENT_ERRORS = (anthropic.APIError, OllamaRequestError)
 
 
 @dataclass(frozen=True)
@@ -226,6 +246,84 @@ def _response_text(message: Any) -> str:
     return ""
 
 
+def _http_post(url: str, payload: dict[str, Any], timeout: float) -> dict[str, Any]:
+    request = urllib.request.Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            return json.load(response)
+    except urllib.error.HTTPError as exc:
+        body = exc.read().decode("utf-8", "replace")[:300]
+        if exc.code == 404:
+            raise OllamaUnavailable(f"model not found: {body}") from exc
+        raise OllamaRequestError(f"HTTP {exc.code}: {body}") from exc
+    except urllib.error.URLError as exc:
+        if isinstance(exc.reason, TimeoutError):
+            raise OllamaRequestError(f"timed out after {timeout:.0f}s") from exc
+        raise OllamaUnavailable(f"cannot reach {url}: {exc.reason}") from exc
+    except TimeoutError as exc:
+        raise OllamaRequestError(f"timed out after {timeout:.0f}s") from exc
+    except json.JSONDecodeError as exc:
+        raise OllamaRequestError(f"server returned non-JSON: {exc}") from exc
+
+
+class OllamaBackend:
+    """Sends the extraction request to a local Ollama server.
+
+    The response is constrained to CLAIMS_SCHEMA, the same schema the Anthropic
+    request uses, so validation is identical for both backends. Ollama has no
+    effort setting; effort stays in the cache key regardless, so entries from
+    different settings never mix.
+    """
+
+    def __init__(
+        self,
+        base_url: str = DEFAULT_OLLAMA_URL,
+        *,
+        num_ctx: int = DEFAULT_NUM_CTX,
+        timeout: float = DEFAULT_TIMEOUT,
+        post: Any = _http_post,
+    ) -> None:
+        self.base_url = base_url.rstrip("/")
+        self.num_ctx = num_ctx
+        self.timeout = timeout
+        self._post = post
+
+    def complete(
+        self, document: Document, *, model: str, effort: str, max_tokens: int
+    ) -> tuple[str, Usage, str | None]:
+        payload = {
+            "model": model,
+            "system": SYSTEM,
+            "prompt": user_message(document),
+            "format": CLAIMS_SCHEMA,
+            "stream": False,
+            "think": False,
+            "options": {
+                "temperature": 0,
+                "num_ctx": self.num_ctx,
+                "num_predict": max_tokens,
+            },
+        }
+        data = self._post(f"{self.base_url}/api/generate", payload, self.timeout)
+        if not isinstance(data, dict):
+            raise OllamaRequestError("server returned a non-object response")
+        if data.get("error"):
+            raise OllamaRequestError(str(data["error"]))
+        usage = Usage(
+            input_tokens=int(data.get("prompt_eval_count") or 0),
+            output_tokens=int(data.get("eval_count") or 0),
+        )
+        done_reason = data.get("done_reason")
+        stop_reason = {"length": "max_tokens", "stop": "end_turn"}.get(
+            done_reason, done_reason
+        )
+        return str(data.get("response") or ""), usage, stop_reason
+
+
 def call_model(
     client: Any,
     document: Document,
@@ -235,6 +333,10 @@ def call_model(
     max_tokens: int,
 ) -> tuple[str, Usage, str | None]:
     """Run one extraction request and return the raw response text and usage."""
+    if isinstance(client, OllamaBackend):
+        return client.complete(
+            document, model=model, effort=effort, max_tokens=max_tokens
+        )
     with client.messages.stream(
         model=model,
         max_tokens=max_tokens,
@@ -296,7 +398,7 @@ def extract_document(
         )
     except FATAL_API_ERRORS:
         raise
-    except anthropic.APIError as exc:
+    except TRANSIENT_ERRORS as exc:
         return ExtractResult(
             path=document.path,
             error=f"{type(exc).__name__}: {exc}",
@@ -349,7 +451,13 @@ def extract_document(
 
 
 def count_input_tokens(client: Any, document: Document, model: str) -> int:
-    """Count the input tokens one extraction request would send. Free to call."""
+    """Count the input tokens one extraction request would send. Free to call.
+
+    Ollama has no counting endpoint, so for that backend this is an estimate
+    of four characters per token.
+    """
+    if isinstance(client, OllamaBackend):
+        return (len(SYSTEM) + len(user_message(document))) // 4
     response = client.messages.count_tokens(
         model=model,
         system=SYSTEM,
