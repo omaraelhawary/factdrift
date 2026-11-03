@@ -31,10 +31,41 @@ _QUOTES = "\"'`"
 _SPACE = re.compile(r"\s+")
 
 
+_TRUE = {"true", "yes", "y", "supported", "✅", "✔", "✔️", "✓"}
+_FALSE = {"false", "no", "n", "not supported", "unsupported", "❌", "✗", "✖"}
+# Package-manager prefixes that mean "install these packages". Alternatives
+# (npm, yarn, pnpm; pip, uv) install the same thing and must compare equal.
+_INSTALL = re.compile(
+    r"^(?:[%!]?pip3? install|uv (?:add|pip install)|npm (?:install|i)|yarn add|pnpm (?:add|install)"
+    r"|bun add|poetry add|conda install)\s+(?P<rest>.+)$"
+)
+
+
+def _install_packages(text: str) -> str | None:
+    match = _INSTALL.match(text)
+    if not match:
+        return None
+    packages = sorted(
+        token.strip(_QUOTES)
+        for token in match.group("rest").split()
+        if not token.startswith("-")
+    )
+    return "install " + " ".join(packages) if packages else None
+
+
 def normalize_value(value: str) -> str:
-    """Compare values without case, surrounding quotes, or spacing noise."""
+    """Compare values without case, surrounding quotes, or spacing noise.
+
+    Yes/no spellings (true, supported, a check mark) collapse to true or
+    false, and install commands collapse to the sorted package list.
+    """
     text = _SPACE.sub(" ", value.strip()).rstrip(".,;").strip(_QUOTES).strip()
-    return text.casefold()
+    text = text.casefold()
+    if text in _TRUE:
+        return "true"
+    if text in _FALSE:
+        return "false"
+    return _install_packages(text) or text
 
 
 @dataclass

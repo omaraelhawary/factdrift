@@ -25,6 +25,27 @@ def test_normalize_value_ignores_quotes_case_and_spacing():
     assert normalize_value("`a  b`") == "a b"
 
 
+def test_yes_no_spellings_compare_equal():
+    assert {normalize_value(v) for v in ["true", "Supported", "✅", "yes"]} == {"true"}
+    assert {normalize_value(v) for v in ["false", "❌", "Not supported"]} == {"false"}
+
+
+def test_install_commands_compare_by_package_set():
+    same = [
+        "npm install @langchain/anthropic @langchain/core",
+        "yarn add @langchain/core @langchain/anthropic",
+        "pnpm add @langchain/anthropic @langchain/core",
+    ]
+    assert len({normalize_value(v) for v in same}) == 1
+    assert normalize_value("pip install -U langchain-anthropic") == normalize_value(
+        "uv add langchain-anthropic"
+    )
+    assert normalize_value("!pip install -qU x") == normalize_value("%pip install x")
+    assert normalize_value("pip install langchain-openai") != normalize_value(
+        "pip install langchain-anthropic"
+    )
+
+
 def test_single_attribute_disagreement_is_a_contradiction():
     findings = detect([
         norm("anthropic", "package_name", "langchain-anthropic"),
