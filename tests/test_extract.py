@@ -246,3 +246,162 @@ def test_cost_uses_the_price_table():
     usage = Usage(input_tokens=1_000_000, output_tokens=1_000_000)
     assert cost(usage, "claude-opus-5", extract_mod.PRICES) == pytest.approx(30.0)
     assert cost(usage, "made-up-model", extract_mod.PRICES) is None
+
+
+class FakeOllamaPost:
+    """Stands in for the HTTP call to an Ollama server, recording payloads."""
+
+    def __init__(self, response=None, exc: Exception | None = None):
+        self.response = response
+        self.exc = exc
+        self.payloads = []
+
+    def __call__(self, url, payload, timeout):
+        self.payloads.append(payload)
+        if self.exc is not None:
+            raise self.exc
+        return self.response
+
+
+def _ollama_response(text: str = RESPONSE, done_reason: str = "stop") -> dict:
+    return {
+        "response": text,
+        "done": True,
+        "done_reason": done_reason,
+        "prompt_eval_count": 900,
+        "eval_count": 400,
+    }
+
+
+def test_ollama_responses_are_validated_like_anthropic_ones(sample, tmp_path):
+    post = FakeOllamaPost(_ollama_response())
+    backend = extract_mod.OllamaBackend(post=post)
+    result = extract_document(sample, backend, model="qwen3:8b", cache_dir=tmp_path)
+    assert result.error is None
+    assert len(result.claims) == 2
+    assert len(result.rejected) == 6
+    assert result.usage.input_tokens == 900
+    assert result.usage.output_tokens == 400
+
+
+def test_ollama_request_is_schema_constrained_and_deterministic(sample, tmp_path):
+    post = FakeOllamaPost(_ollama_response())
+    backend = extract_mod.OllamaBackend(num_ctx=8192, post=post)
+    extract_document(
+        sample, backend, model="qwen3:8b", max_tokens=1234, cache_dir=tmp_path
+    )
+    payload = post.payloads[0]
+    assert payload["format"] == extract_mod.CLAIMS_SCHEMA
+    assert payload["options"] == {"temperature": 0, "num_ctx": 8192, "num_predict": 1234}
+    assert payload["think"] is False
+
+
+def test_an_ollama_rerun_makes_no_requests(sample, tmp_path):
+    post = FakeOllamaPost(_ollama_response())
+    backend = extract_mod.OllamaBackend(post=post)
+    extract_document(sample, backend, model="qwen3:8b", cache_dir=tmp_path)
+    second = extract_document(sample, backend, model="qwen3:8b", cache_dir=tmp_path)
+    assert len(post.payloads) == 1
+    assert second.cached is True
+
+
+def test_an_ollama_length_stop_is_reported_and_not_cached(sample, tmp_path):
+    post = FakeOllamaPost(_ollama_response(done_reason="length"))
+    backend = extract_mod.OllamaBackend(post=post)
+    result = extract_document(sample, backend, model="qwen3:8b", cache_dir=tmp_path)
+    assert result.error.startswith("max_tokens")
+    assert list(tmp_path.glob("*.json")) == []
+
+
+def test_a_failed_ollama_request_is_recorded_not_raised(sample, tmp_path):
+    post = FakeOllamaPost(exc=extract_mod.BackendRequestError("timed out after 900s"))
+    backend = extract_mod.OllamaBackend(post=post)
+    result = extract_document(sample, backend, model="qwen3:8b", cache_dir=tmp_path)
+    assert result.claims == []
+    assert "timed out" in result.error
+    assert list(tmp_path.glob("*.json")) == []
+
+
+def test_an_unreachable_ollama_server_stops_the_run(sample, tmp_path):
+    post = FakeOllamaPost(exc=extract_mod.BackendUnavailable("connection refused"))
+    backend = extract_mod.OllamaBackend(post=post)
+    with pytest.raises(extract_mod.BackendUnavailable):
+        extract_document(sample, backend, model="qwen3:8b", cache_dir=tmp_path)
+
+
+def test_an_ollama_error_payload_is_recorded(sample, tmp_path):
+    post = FakeOllamaPost({"error": "model requires more system memory"})
+    backend = extract_mod.OllamaBackend(post=post)
+    result = extract_document(sample, backend, model="qwen3:8b", cache_dir=tmp_path)
+    assert "more system memory" in result.error
+
+
+class FakeOpenRouterPost:
+    """Stands in for the HTTP call to OpenRouter, recording requests."""
+
+    def __init__(self, response=None, exc: Exception | None = None):
+        self.response = response
+        self.exc = exc
+        self.requests = []
+
+    def __call__(self, url, payload, timeout, headers=None):
+        self.requests.append((url, payload, headers))
+        if self.exc is not None:
+            raise self.exc
+        return self.response
+
+
+def _openrouter_response(text: str = RESPONSE, finish_reason: str = "stop") -> dict:
+    return {
+        "choices": [{"message": {"content": text}, "finish_reason": finish_reason}],
+        "usage": {"prompt_tokens": 1100, "completion_tokens": 450},
+    }
+
+
+def test_openrouter_responses_are_validated_like_anthropic_ones(sample, tmp_path):
+    post = FakeOpenRouterPost(_openrouter_response())
+    backend = extract_mod.OpenRouterBackend("test-key", post=post)
+    result = extract_document(sample, backend, model="m", cache_dir=tmp_path)
+    assert result.error is None
+    assert len(result.claims) == 2
+    assert len(result.rejected) == 6
+    assert (result.usage.input_tokens, result.usage.output_tokens) == (1100, 450)
+
+
+def test_openrouter_request_is_schema_constrained_and_authenticated(sample, tmp_path):
+    post = FakeOpenRouterPost(_openrouter_response())
+    backend = extract_mod.OpenRouterBackend("test-key", post=post)
+    extract_document(sample, backend, model="m", max_tokens=777, cache_dir=tmp_path)
+    url, payload, headers = post.requests[0]
+    assert url.endswith("/chat/completions")
+    assert headers == {"Authorization": "Bearer test-key"}
+    assert payload["response_format"]["json_schema"]["schema"] == extract_mod.CLAIMS_SCHEMA
+    assert payload["response_format"]["json_schema"]["strict"] is True
+    assert (payload["temperature"], payload["max_tokens"]) == (0, 777)
+
+
+def test_an_openrouter_length_stop_is_reported_and_not_cached(sample, tmp_path):
+    post = FakeOpenRouterPost(_openrouter_response(finish_reason="length"))
+    backend = extract_mod.OpenRouterBackend("test-key", post=post)
+    result = extract_document(sample, backend, model="m", cache_dir=tmp_path)
+    assert result.error.startswith("max_tokens")
+    assert list(tmp_path.glob("*.json")) == []
+
+
+def test_a_response_without_choices_is_recorded(sample, tmp_path):
+    post = FakeOpenRouterPost({"usage": {}})
+    backend = extract_mod.OpenRouterBackend("test-key", post=post)
+    result = extract_document(sample, backend, model="m", cache_dir=tmp_path)
+    assert "no choices" in result.error
+
+
+def test_running_out_of_openrouter_credit_stops_the_run(sample, tmp_path):
+    post = FakeOpenRouterPost(exc=extract_mod.BackendUnavailable("out of credit"))
+    backend = extract_mod.OpenRouterBackend("test-key", post=post)
+    with pytest.raises(extract_mod.BackendUnavailable):
+        extract_document(sample, backend, model="m", cache_dir=tmp_path)
+
+
+def test_a_missing_openrouter_key_is_rejected_up_front():
+    with pytest.raises(extract_mod.BackendUnavailable):
+        extract_mod.OpenRouterBackend("")
