@@ -82,11 +82,20 @@ def cmd_extract(args: argparse.Namespace) -> int:
     if args.limit is not None:
         documents = documents[: args.limit]
 
+    if args.backend == "ollama":
+        args.model = args.model or extract_mod.DEFAULT_OLLAMA_MODEL
+        client = extract_mod.OllamaBackend(
+            args.ollama_url, num_ctx=args.num_ctx, timeout=args.timeout
+        )
+    else:
+        args.model = args.model or extract_mod.DEFAULT_MODEL
+        client = anthropic.Anthropic()
+
     prices = dict(extract_mod.PRICES)
+    if args.backend == "ollama":
+        prices.setdefault(args.model, (0.0, 0.0))  # runs locally, no per-token charge
     if args.price_in is not None and args.price_out is not None:
         prices[args.model] = (args.price_in, args.price_out)
-
-    client = anthropic.Anthropic()
 
     def run(document: Document) -> extract_mod.ExtractResult:
         return extract_mod.extract_document(
@@ -113,6 +122,9 @@ def cmd_extract(args: argparse.Namespace) -> int:
         return 2
     except anthropic.NotFoundError:
         print(f"unknown model {args.model!r}", file=sys.stderr)
+        return 2
+    except extract_mod.OllamaUnavailable as exc:
+        print(f"ollama: {exc}", file=sys.stderr)
         return 2
     elapsed = time.monotonic() - started
 
@@ -188,8 +200,9 @@ def _project(
     Input tokens are counted exactly for every file. Output tokens are scaled
     from the observed output-per-input ratio, so the number is an estimate.
     """
+    method = "estimating tokens" if args.backend == "ollama" else "counting tokens"
     print("\nprojecting full run over "
-          f"{len(all_documents)} files (counting tokens, no charge)")
+          f"{len(all_documents)} files ({method}, no charge)")
     with ThreadPoolExecutor(max_workers=args.concurrency) as pool:
         counts = list(
             pool.map(
@@ -248,7 +261,34 @@ def build_parser() -> argparse.ArgumentParser:
 
     extract = sub.add_parser("extract", parents=[common], help="extract claims")
     extract.add_argument("--files", nargs="+", metavar="PATH", help="only these files")
-    extract.add_argument("--model", default=extract_mod.DEFAULT_MODEL)
+    extract.add_argument(
+        "--backend",
+        choices=["anthropic", "ollama"],
+        default="anthropic",
+        help="where extraction requests go (default: %(default)s)",
+    )
+    extract.add_argument(
+        "--model",
+        help=f"model id (default: {extract_mod.DEFAULT_MODEL} for anthropic, "
+        f"{extract_mod.DEFAULT_OLLAMA_MODEL} for ollama)",
+    )
+    extract.add_argument(
+        "--ollama-url",
+        default=extract_mod.DEFAULT_OLLAMA_URL,
+        help="Ollama server (default: %(default)s)",
+    )
+    extract.add_argument(
+        "--num-ctx",
+        type=int,
+        default=extract_mod.DEFAULT_NUM_CTX,
+        help="Ollama context window in tokens (default: %(default)s)",
+    )
+    extract.add_argument(
+        "--timeout",
+        type=float,
+        default=extract_mod.DEFAULT_TIMEOUT,
+        help="seconds to wait for one Ollama response (default: %(default)s)",
+    )
     extract.add_argument(
         "--effort",
         default=extract_mod.DEFAULT_EFFORT,
