@@ -1,0 +1,117 @@
+import json
+
+from factdrift.extract import Usage
+from factdrift.normalize import distinct_pairs, language_of, normalize_claims, slug
+
+
+def claim(entity, attribute, value, path="src/oss/python/integrations/chat/a.mdx", context="prose"):
+    return {
+        "entity": entity,
+        "attribute": attribute,
+        "value": value,
+        "raw_value": value,
+        "source_path": path,
+        "line_start": 1,
+        "line_end": 1,
+        "quote": value,
+        "context": context,
+        "confidence": 0.9,
+    }
+
+
+JS = "src/oss/javascript/integrations/chat/a.mdx"
+
+
+class FakeBackend:
+    """Answers alias and cardinality requests from fixed tables."""
+
+    def __init__(self, aliases, cardinality, drop=()):
+        self.aliases = aliases
+        self.cardinality = cardinality
+        self.drop = set(drop)
+        self.calls = []
+
+    def complete_json(self, *, system, user, schema, model, max_tokens, schema_name="claims"):
+        self.calls.append(schema_name)
+        if schema_name == "aliases":
+            items = json.loads(user.split("Items:\n", 1)[1])
+            rows = [
+                {"id": it["id"], **dict(zip(("entity_id", "attribute_id"), self.aliases[(it["entity"], it["attribute"])]))}
+                for it in items
+                if (it["entity"], it["attribute"]) not in self.drop
+            ]
+            payload = {"items": rows}
+        else:
+            ids = json.loads(user.split("\n", 1)[1])
+            payload = {
+                "attributes": [
+                    {"attribute_id": a, "cardinality": self.cardinality[a], "reason": "test"}
+                    for a in ids
+                    if a in self.cardinality
+                ]
+            }
+        return json.dumps(payload), Usage(input_tokens=10, output_tokens=5), "end_turn"
+
+
+CLAIMS = [
+    claim("ChatAnthropic", "max_tokens", "4096"),
+    claim("@langchain/anthropic", "maxTokens", "1024", path=JS),
+    claim("ChatAnthropic", "package", "langchain-anthropic"),
+]
+ALIASES = {
+    ("ChatAnthropic", "max_tokens"): ("anthropic", "max_tokens"),
+    ("@langchain/anthropic", "maxTokens"): ("anthropic", "max_tokens"),
+    ("ChatAnthropic", "package"): ("anthropic", "package_name"),
+}
+
+
+def test_slug_and_language():
+    assert slug("@langchain/Anthropic") == "langchain_anthropic"
+    assert slug("!!") == "unknown"
+    assert language_of(JS) == "javascript"
+    assert language_of("README.md") == "unknown"
+
+
+def test_distinct_pairs_dedupes():
+    pairs = distinct_pairs(CLAIMS + [claim("ChatAnthropic", "max_tokens", "5000")])
+    assert len(pairs) == 3
+
+
+def test_normalize_maps_aliases_across_languages(tmp_path):
+    backend = FakeBackend(ALIASES, {"max_tokens": "free", "package_name": "single"})
+    out, result = normalize_claims(CLAIMS, backend, model="m", cache_dir=tmp_path)
+    assert {c["attribute_id"] for c in out[:2]} == {"max_tokens"}
+    assert out[1]["language"] == "javascript"
+    assert out[0]["cardinality"] == "free"
+    assert out[2]["cardinality"] == "single"
+    assert result.fallbacks == 0
+    assert result.api_calls == 2
+
+
+def test_normalize_uses_the_cache(tmp_path):
+    backend = FakeBackend(ALIASES, {"max_tokens": "free", "package_name": "single"})
+    normalize_claims(CLAIMS, backend, model="m", cache_dir=tmp_path)
+    again = FakeBackend(ALIASES, {"max_tokens": "free", "package_name": "single"})
+    _, result = normalize_claims(CLAIMS, again, model="m", cache_dir=tmp_path)
+    assert again.calls == []
+    assert result.api_calls == 0
+
+
+def test_missing_answers_fall_back_safely(tmp_path):
+    backend = FakeBackend(
+        ALIASES, {"max_tokens": "free"}, drop={("ChatAnthropic", "package")}
+    )
+    out, result = normalize_claims(CLAIMS, backend, model="m", cache_dir=tmp_path)
+    assert out[2]["entity_id"] == "chatanthropic"
+    assert out[2]["attribute_id"] == "package"
+    assert out[2]["cardinality"] == "free"
+    assert result.fallbacks == 2
+
+
+def test_malformed_ids_are_rejected(tmp_path):
+    bad = dict(ALIASES)
+    bad[("ChatAnthropic", "package")] = ("Anthropic Inc", "package_name")
+    backend = FakeBackend(bad, {"max_tokens": "free", "package_name": "single"})
+    out, result = normalize_claims(CLAIMS, backend, model="m", cache_dir=tmp_path)
+    assert out[2]["entity_id"] == "chatanthropic"
+    assert result.fallbacks >= 1
