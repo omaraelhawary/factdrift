@@ -10,6 +10,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
 from pathlib import Path
+from typing import Any
 
 import anthropic
 
@@ -73,6 +74,30 @@ def _fmt_cost(value: float | None) -> str:
     return "unpriced" if value is None else f"${value:,.2f}"
 
 
+def _make_backend(args: argparse.Namespace) -> Any:
+    """Build the client for args.backend and fill in the default model.
+
+    Returns None, after printing why, when the backend cannot be built."""
+    if args.backend == "ollama":
+        args.model = args.model or extract_mod.DEFAULT_OLLAMA_MODEL
+        return extract_mod.OllamaBackend(
+            args.ollama_url, num_ctx=args.num_ctx, timeout=args.timeout
+        )
+    if args.backend == "openrouter":
+        args.model = args.model or extract_mod.DEFAULT_OPENROUTER_MODEL
+        try:
+            return extract_mod.OpenRouterBackend(
+                os.environ.get("OPENROUTER_API_KEY", ""),
+                args.openrouter_url,
+                timeout=args.timeout,
+            )
+        except extract_mod.BackendUnavailable as exc:
+            print(f"openrouter: {exc}", file=sys.stderr)
+            return None
+    args.model = args.model or extract_mod.DEFAULT_MODEL
+    return anthropic.Anthropic()
+
+
 def cmd_extract(args: argparse.Namespace) -> int:
     all_documents = load_corpus(args.corpus)
     if not all_documents:
@@ -83,25 +108,9 @@ def cmd_extract(args: argparse.Namespace) -> int:
     if args.limit is not None:
         documents = documents[: args.limit]
 
-    if args.backend == "ollama":
-        args.model = args.model or extract_mod.DEFAULT_OLLAMA_MODEL
-        client = extract_mod.OllamaBackend(
-            args.ollama_url, num_ctx=args.num_ctx, timeout=args.timeout
-        )
-    elif args.backend == "openrouter":
-        args.model = args.model or extract_mod.DEFAULT_OPENROUTER_MODEL
-        try:
-            client = extract_mod.OpenRouterBackend(
-                os.environ.get("OPENROUTER_API_KEY", ""),
-                args.openrouter_url,
-                timeout=args.timeout,
-            )
-        except extract_mod.BackendUnavailable as exc:
-            print(f"openrouter: {exc}", file=sys.stderr)
-            return 2
-    else:
-        args.model = args.model or extract_mod.DEFAULT_MODEL
-        client = anthropic.Anthropic()
+    client = _make_backend(args)
+    if client is None:
+        return 2
 
     prices = dict(extract_mod.PRICES)
     if args.backend == "ollama":
