@@ -52,12 +52,13 @@ _WHITESPACE = re.compile(r"\s+")
 
 
 
-class OllamaUnavailable(RuntimeError):
-    """The server cannot be reached or does not have the model."""
+class BackendUnavailable(RuntimeError):
+    """An HTTP backend cannot serve any document: unreachable, bad key, no
+    credit, or unknown model."""
 
 
-class OllamaRequestError(RuntimeError):
-    """One Ollama request failed; the next document may still succeed."""
+class BackendRequestError(RuntimeError):
+    """One HTTP backend request failed; the next document may still succeed."""
 
 
 # Credentials, permissions, a missing model and an unreachable server are wrong
@@ -67,9 +68,9 @@ FATAL_API_ERRORS = (
     anthropic.AuthenticationError,
     anthropic.PermissionDeniedError,
     anthropic.NotFoundError,
-    OllamaUnavailable,
+    BackendUnavailable,
 )
-TRANSIENT_ERRORS = (anthropic.APIError, OllamaRequestError)
+TRANSIENT_ERRORS = (anthropic.APIError, BackendRequestError)
 
 
 @dataclass(frozen=True)
@@ -258,16 +259,16 @@ def _http_post(url: str, payload: dict[str, Any], timeout: float) -> dict[str, A
     except urllib.error.HTTPError as exc:
         body = exc.read().decode("utf-8", "replace")[:300]
         if exc.code == 404:
-            raise OllamaUnavailable(f"model not found: {body}") from exc
-        raise OllamaRequestError(f"HTTP {exc.code}: {body}") from exc
+            raise BackendUnavailable(f"model not found: {body}") from exc
+        raise BackendRequestError(f"HTTP {exc.code}: {body}") from exc
     except urllib.error.URLError as exc:
         if isinstance(exc.reason, TimeoutError):
-            raise OllamaRequestError(f"timed out after {timeout:.0f}s") from exc
-        raise OllamaUnavailable(f"cannot reach {url}: {exc.reason}") from exc
+            raise BackendRequestError(f"timed out after {timeout:.0f}s") from exc
+        raise BackendUnavailable(f"cannot reach {url}: {exc.reason}") from exc
     except TimeoutError as exc:
-        raise OllamaRequestError(f"timed out after {timeout:.0f}s") from exc
+        raise BackendRequestError(f"timed out after {timeout:.0f}s") from exc
     except json.JSONDecodeError as exc:
-        raise OllamaRequestError(f"server returned non-JSON: {exc}") from exc
+        raise BackendRequestError(f"server returned non-JSON: {exc}") from exc
 
 
 class OllamaBackend:
@@ -310,9 +311,9 @@ class OllamaBackend:
         }
         data = self._post(f"{self.base_url}/api/generate", payload, self.timeout)
         if not isinstance(data, dict):
-            raise OllamaRequestError("server returned a non-object response")
+            raise BackendRequestError("server returned a non-object response")
         if data.get("error"):
-            raise OllamaRequestError(str(data["error"]))
+            raise BackendRequestError(str(data["error"]))
         usage = Usage(
             input_tokens=int(data.get("prompt_eval_count") or 0),
             output_tokens=int(data.get("eval_count") or 0),

@@ -123,8 +123,8 @@ def cmd_extract(args: argparse.Namespace) -> int:
     except anthropic.NotFoundError:
         print(f"unknown model {args.model!r}", file=sys.stderr)
         return 2
-    except extract_mod.OllamaUnavailable as exc:
-        print(f"ollama: {exc}", file=sys.stderr)
+    except extract_mod.BackendUnavailable as exc:
+        print(f"{args.backend}: {exc}", file=sys.stderr)
         return 2
     elapsed = time.monotonic() - started
 

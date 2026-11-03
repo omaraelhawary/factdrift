@@ -314,7 +314,7 @@ def test_an_ollama_length_stop_is_reported_and_not_cached(sample, tmp_path):
 
 
 def test_a_failed_ollama_request_is_recorded_not_raised(sample, tmp_path):
-    post = FakeOllamaPost(exc=extract_mod.OllamaRequestError("timed out after 900s"))
+    post = FakeOllamaPost(exc=extract_mod.BackendRequestError("timed out after 900s"))
     backend = extract_mod.OllamaBackend(post=post)
     result = extract_document(sample, backend, model="qwen3:8b", cache_dir=tmp_path)
     assert result.claims == []
@@ -323,9 +323,9 @@ def test_a_failed_ollama_request_is_recorded_not_raised(sample, tmp_path):
 
 
 def test_an_unreachable_ollama_server_stops_the_run(sample, tmp_path):
-    post = FakeOllamaPost(exc=extract_mod.OllamaUnavailable("connection refused"))
+    post = FakeOllamaPost(exc=extract_mod.BackendUnavailable("connection refused"))
     backend = extract_mod.OllamaBackend(post=post)
-    with pytest.raises(extract_mod.OllamaUnavailable):
+    with pytest.raises(extract_mod.BackendUnavailable):
         extract_document(sample, backend, model="qwen3:8b", cache_dir=tmp_path)
 
 
