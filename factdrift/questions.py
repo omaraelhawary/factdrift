@@ -119,8 +119,14 @@ def mentions(text: str, value: str) -> bool:
 
     `4.8` does not match inside `4.85`, and `v3` does not match inside `v30`.
     """
-    pattern = r"(?<![\w.])" + re.escape(value.strip().casefold()) + r"(?!\w|\.\w)"
-    return re.search(pattern, text.casefold()) is not None
+    value = value.strip().casefold()
+    if not value:
+        return False
+    # Guard an edge only where the value has a word character, so `>=1.4.1`
+    # is found right after `langchain-openai`.
+    before = r"(?<![\w.])" if re.match(r"\w", value) else ""
+    after = r"(?!\w|\.\w)" if re.search(r"\w$", value) else ""
+    return re.search(before + re.escape(value) + after, text.casefold()) is not None
 
 
 @dataclass
