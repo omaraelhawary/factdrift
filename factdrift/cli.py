@@ -349,7 +349,11 @@ def cmd_detect(args: argparse.Namespace) -> int:
     if claims and "cardinality" not in claims[0]:
         print(f"{args.claims} is not normalized; run normalize first", file=sys.stderr)
         return 2
-    findings = detect_mod.detect(claims, divergence=not args.no_divergence)
+    findings = detect_mod.detect(
+        claims,
+        divergence=not args.no_divergence,
+        package_attributes=args.package_attributes,
+    )
     report = detect_mod.render_markdown(findings, claim_count=len(claims))
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
@@ -574,6 +578,14 @@ def build_parser() -> argparse.ArgumentParser:
         "--no-divergence",
         action="store_true",
         help="report contradictions only, not cross-language divergence",
+    )
+    detect.add_argument(
+        "--package-attributes",
+        nargs="+",
+        default=sorted(detect_mod.DEFAULT_PACKAGE_ATTRIBUTES),
+        metavar="ATTRIBUTE",
+        help="attributes whose Python values are PyPI names, compared by PEP 503 "
+        "(default: %(default)s)",
     )
     detect.set_defaults(func=cmd_detect)
 

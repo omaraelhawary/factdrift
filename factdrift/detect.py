@@ -29,6 +29,13 @@ SEVERITY_RANK = {"high": 0, "medium": 1, "low": 2}
 KIND_RANK = {"contradiction": 0, "divergence": 1}
 
 _QUOTES = "\"'`"
+# Attributes whose values are Python distribution names. PEP 503 makes
+# runs of - _ . equivalent in those, so langchain_openai and langchain-openai
+# name the same package on PyPI.
+DEFAULT_PACKAGE_ATTRIBUTES = frozenset(
+    {"package", "pypi_package", "recommended_package", "required_package"}
+)
+_PEP_503 = re.compile(r"[-_.]+")
 _SPACE = re.compile(r"\s+")
 
 
@@ -66,14 +73,15 @@ _PLACEHOLDER = re.compile(
 )
 
 
-def normalize_value(value: str) -> str | None:
+def normalize_value(value: str, *, package: bool = False) -> str | None:
     """Compare values without case, surrounding quotes, or spacing noise.
 
     Yes/no spellings (true, supported, a check mark) collapse to true or
     false, None/undefined/null collapse to null, NAME=value collapses to
     NAME, and install commands collapse to the sorted package list.
     Placeholders return None: they assert nothing, so they cannot agree or
-    disagree with anything.
+    disagree with anything. With `package`, the value is a Python
+    distribution name and is compared by PEP 503.
     """
     text = _SPACE.sub(" ", value.strip()).rstrip(".,;").strip(_QUOTES).strip()
     assignment = _ENV_ASSIGNMENT.match(text)
@@ -88,6 +96,8 @@ def normalize_value(value: str) -> str | None:
         return "false"
     if text in _NULL:
         return "null"
+    if package:
+        return _PEP_503.sub("-", text)
     return _install_packages(text) or text
 
 
@@ -140,10 +150,18 @@ def _group(claims: Iterable[dict[str, Any]]) -> dict[tuple[str, str], list[dict[
     return groups
 
 
-def _by_value(claims: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
+def _is_package(claim: dict[str, Any], package_attributes: Iterable[str]) -> bool:
+    return claim["language"] == "python" and claim["attribute_id"] in package_attributes
+
+
+def _by_value(
+    claims: list[dict[str, Any]], package_attributes: Iterable[str] = ()
+) -> dict[str, list[dict[str, Any]]]:
     by_value: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for claim in claims:
-        key = normalize_value(claim["value"])
+        key = normalize_value(
+            claim["value"], package=_is_package(claim, package_attributes)
+        )
         if key is not None:
             by_value[key].append(_site(claim))
     return dict(by_value)
@@ -173,15 +191,25 @@ def _twin_key(source_path: str) -> str:
     return _LANGUAGE_DIR.sub("/{language}/", source_path, count=1)
 
 
-def detect(claims: list[dict[str, Any]], *, divergence: bool = True) -> list[Finding]:
+def detect(
+    claims: list[dict[str, Any]],
+    *,
+    divergence: bool = True,
+    package_attributes: Iterable[str] = DEFAULT_PACKAGE_ATTRIBUTES,
+) -> list[Finding]:
     """Return findings, most severe first. Claims must carry entity_id,
-    attribute_id, language and cardinality (see normalize.normalize_claims)."""
+    attribute_id, language and cardinality (see normalize.normalize_claims).
+    `package_attributes` name the attributes whose Python values are
+    distribution names."""
+    package_attributes = frozenset(package_attributes)
     findings: list[Finding] = []
     for (entity_id, attribute_id), group in _group(claims).items():
         cardinality = group[0]["cardinality"]
         if cardinality == "single":
             for language in sorted({c["language"] for c in group}):
-                by_value = _by_value([c for c in group if c["language"] == language])
+                by_value = _by_value(
+                    [c for c in group if c["language"] == language], package_attributes
+                )
                 if _disagree(by_value):
                     findings.append(
                         Finding(
@@ -193,18 +221,14 @@ def detect(claims: list[dict[str, Any]], *, divergence: bool = True) -> list[Fin
             for claim in group:
                 pages[_twin_key(claim["source_path"])].append(claim)
             for _, page_claims in sorted(pages.items()):
-                python = {
-                    normalize_value(c["value"]) for c in page_claims if c["language"] == "python"
-                }
-                javascript = {
-                    normalize_value(c["value"])
-                    for c in page_claims
-                    if c["language"] == "javascript"
-                }
-                python.discard(None)
-                javascript.discard(None)
+                python = set(_by_value(
+                    [c for c in page_claims if c["language"] == "python"], package_attributes
+                ))
+                javascript = set(_by_value(
+                    [c for c in page_claims if c["language"] == "javascript"], package_attributes
+                ))
                 if python and javascript and not python & javascript:
-                    by_value = _by_value(page_claims)
+                    by_value = _by_value(page_claims, package_attributes)
                     findings.append(
                         Finding(
                             "divergence", _severity(by_value), entity_id, attribute_id, by_value

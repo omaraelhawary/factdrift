@@ -189,3 +189,29 @@ def test_divergence_compares_only_the_same_providers_pages():
     paths = {s["source_path"] for sites in findings[0].values.values() for s in sites}
     assert paths == {"src/oss/python/integrations/chat/index.mdx",
                      "src/oss/javascript/integrations/chat/index.mdx"}
+
+
+def test_python_package_names_compare_by_pep_503():
+    assert normalize_value("Langchain_OpenAI", package=True) == "langchain-openai"
+    assert normalize_value("langchain.openai", package=True) == "langchain-openai"
+    assert normalize_value("langchain_openai") == "langchain_openai"
+    assert detect([
+        norm("openai", "pypi_package", "langchain-openai"),
+        norm("openai", "pypi_package", "langchain_openai", context="code"),
+    ]) == []
+
+
+def test_pep_503_applies_to_package_attributes_in_python_only():
+    # Other identifiers keep - and _ distinct.
+    assert len(detect([
+        norm("x", "import_path", "langchain-openai"),
+        norm("x", "import_path", "langchain_openai"),
+    ])) == 1
+    # npm names are not PEP 503 names.
+    assert len(detect([
+        norm("x", "npm_package", "@langchain/open-ai", language="javascript"),
+        norm("x", "npm_package", "@langchain/open_ai", language="javascript"),
+    ])) == 1
+    assert detect([
+        norm("x", "my_pkg", "a-b"), norm("x", "my_pkg", "a_b"),
+    ], package_attributes={"my_pkg"}) == []
