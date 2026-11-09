@@ -301,6 +301,8 @@ def cmd_normalize(args: argparse.Namespace) -> int:
             cache_dir=args.cache_dir,
             frontmatter=frontmatter,
             page_keys=args.page_keys,
+            response_entities=args.response_entities,
+            response_window=args.response_window,
         )
     except extract_mod.BackendUnavailable as exc:
         print(f"{args.backend}: {exc}", file=sys.stderr)
@@ -349,7 +351,11 @@ def cmd_detect(args: argparse.Namespace) -> int:
     if claims and "cardinality" not in claims[0]:
         print(f"{args.claims} is not normalized; run normalize first", file=sys.stderr)
         return 2
-    findings = detect_mod.detect(claims, divergence=not args.no_divergence)
+    findings = detect_mod.detect(
+        claims,
+        divergence=not args.no_divergence,
+        package_attributes=args.package_attributes,
+    )
     report = detect_mod.render_markdown(findings, claim_count=len(claims))
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
@@ -552,6 +558,21 @@ def build_parser() -> argparse.ArgumentParser:
         help="frontmatter keys that describe the page, not the integration "
         "(default: %(default)s)",
     )
+    normalize.add_argument(
+        "--response-entities",
+        nargs="+",
+        default=list(normalize_mod.DEFAULT_RESPONSE_ENTITIES),
+        metavar="ENTITY",
+        help="entity ids of printed responses, whose fields belong to the call "
+        "above them (default: %(default)s)",
+    )
+    normalize.add_argument(
+        "--response-window",
+        type=int,
+        default=normalize_mod.DEFAULT_RESPONSE_WINDOW,
+        help="most lines between a call and its printed response "
+        "(default: %(default)s)",
+    )
     normalize.add_argument("--out", type=Path, required=True)
     normalize.add_argument(
         "--batch-size", type=int, default=normalize_mod.DEFAULT_BATCH_SIZE
@@ -574,6 +595,14 @@ def build_parser() -> argparse.ArgumentParser:
         "--no-divergence",
         action="store_true",
         help="report contradictions only, not cross-language divergence",
+    )
+    detect.add_argument(
+        "--package-attributes",
+        nargs="+",
+        default=sorted(detect_mod.DEFAULT_PACKAGE_ATTRIBUTES),
+        metavar="ATTRIBUTE",
+        help="attributes whose Python values are PyPI names, compared by PEP 503 "
+        "(default: %(default)s)",
     )
     detect.set_defaults(func=cmd_detect)
 
