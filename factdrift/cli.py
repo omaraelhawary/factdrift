@@ -474,6 +474,7 @@ def cmd_retrieve(args: argparse.Namespace) -> int:
         index_dir=args.index_dir,
         embed_model=args.embed_model,
         ollama_url=args.ollama_url,
+        batch_size=args.embed_batch_size,
     )
     print(
         f"{len(chunks)} chunks from {len(documents)} files, "
@@ -755,6 +756,12 @@ def build_parser() -> argparse.ArgumentParser:
         default=retrieve_mod.DEFAULT_EMBED_MODEL,
         help="'default' for Chroma's all-MiniLM-L6-v2, or an Ollama embedding "
         "model name (default: %(default)s)",
+    )
+    retrieve.add_argument(
+        "--embed-batch-size",
+        type=int,
+        default=retrieve_mod.DEFAULT_EMBED_BATCH,
+        help="chunks per embedding request while building the index (default: %(default)s)",
     )
     retrieve.add_argument(
         "--effort",

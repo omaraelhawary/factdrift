@@ -8,7 +8,10 @@ Chunking: one chunk per markdown section, where a section runs from one
 heading line to the next. A section longer than `max_chars` is split at
 blank lines outside code fences, so a code block is never cut in half unless
 it alone is longer than `max_chars`, in which case it is cut at line
-boundaries. Frontmatter is not indexed. Each chunk's text starts with the
+boundaries. Each row of a markdown table is its own chunk, written as
+`Column: value` pairs from the table's header row, with check marks spelled
+out as yes and no, so a feature-table row is indexed with the names of its
+columns. Frontmatter is not indexed. Each chunk's text starts with the
 page title and the section heading, so a chunk from deep in a page still says
 which integration it is about. Chunks keep their 1-indexed line range, which
 is how a retrieved chunk is matched to the claims it contains.
@@ -37,10 +40,13 @@ DEFAULT_TOP_K = 5
 DEFAULT_MAX_TOKENS = 1000
 DEFAULT_INDEX_DIR = Path(".cache/chroma")
 DEFAULT_CACHE_DIR = Path(".cache/answers")
+DEFAULT_EMBED_BATCH = 50  # Ollama drops the connection on batches of 500
 DEFAULT_EMBED_MODEL = "default"  # Chroma's built-in all-MiniLM-L6-v2
 
 _HEADING = re.compile(r"^#{1,6}\s+(.*\S)")
-_LEADING_YES_NO = re.compile(r"\s*(yes|no)\b", re.IGNORECASE)
+_TABLE_SEPARATOR = re.compile(r"^\s*\|?(\s*:?-+:?\s*\|)+\s*:?-*:?\s*$")
+_LINK = re.compile(r"!?\[([^\]]*)\]\([^)]*\)")
+_LEADING_YES_NO =re.compile(r"\s*(yes|no)\b", re.IGNORECASE)
 
 SYSTEM = """\
 Answer the developer's question using only the documentation excerpts given. \
@@ -137,10 +143,69 @@ def chunk_document(document: Document, max_chars: int = DEFAULT_MAX_CHARS) -> li
     chunks = []
     for heading, lines in sections:
         header = f"{title} > {heading}" if heading else title
-        for piece in _pieces(lines, max_chars):
+        rest, rows = _split_tables(lines)
+        # Text either side of a table is chunked separately, so no chunk's
+        # line range spans a row it does not contain.
+        runs: list[list[tuple[int, str]]] = []
+        for number, line in rest:
+            if not runs or number != runs[-1][-1][0] + 1:
+                runs.append([])
+            runs[-1].append((number, line))
+        for piece in (p for run in runs for p in _pieces(run, max_chars)):
             body = "\n".join(line for _, line in piece)
             chunks.append(Chunk(document.path, piece[0][0], piece[-1][0], f"{header}\n\n{body}"))
-    return chunks
+        for number, columns, separator, row in rows:
+            body = _linearize(columns, row)
+            chunks.append(Chunk(document.path, number, number, f"{header}\n\n{body}"))
+    return sorted(chunks, key=lambda c: c.line_start)
+
+
+_GLYPHS = {"✅": "yes", "❌": "no"}
+
+
+def _cells(row: str) -> list[str]:
+    cells = [_LINK.sub(r"\1", cell).strip() for cell in row.strip().strip("|").split("|")]
+    return [_GLYPHS.get(cell, cell) for cell in cells]
+
+
+def _linearize(columns: str, row: str) -> str:
+    """`Column: value` pairs with link targets dropped and check marks
+    spelled out, so the embedding sees what each cell says and which column
+    it belongs to rather than a row of bare symbols."""
+    return "; ".join(f"{c}: {v}" for c, v in zip(_cells(columns), _cells(row)) if c or v)
+
+
+def _split_tables(
+    lines: list[tuple[int, str]],
+) -> tuple[list[tuple[int, str]], list[tuple[int, str, str, str]]]:
+    """Take markdown tables out of a section. Returns the remaining lines and
+    one (line number, header row, separator row, data row) per table row, so
+    every row is indexed with the header that names its columns."""
+    rest: list[tuple[int, str]] = []
+    rows: list[tuple[int, str, str, str]] = []
+    fence: str | None = None
+    i = 0
+    while i < len(lines):
+        number, line = lines[i]
+        match = FENCE.match(line)
+        if fence is None and match:
+            fence = match.group(1)
+        elif fence is not None and line.strip().startswith(fence):
+            fence = None
+        if (fence is None and line.lstrip().startswith("|") and i + 1 < len(lines)
+                and _TABLE_SEPARATOR.match(lines[i + 1][1])):
+            columns, separator = line.strip(), lines[i + 1][1].strip()
+            i += 2
+            start = i - 2
+            while i < len(lines) and lines[i][1].lstrip().startswith("|"):
+                rows.append((lines[i][0], columns, separator, lines[i][1].strip()))
+                i += 1
+            if i == start + 2:  # a header with no rows stays as plain text
+                rest.extend(lines[start:i])
+            continue
+        rest.append((number, line))
+        i += 1
+    return rest, rows
 
 
 def _digest(*parts: Any) -> str:
@@ -176,6 +241,7 @@ class Index:
         ollama_url: str = "http://localhost:11434",
         client: Any = None,
         embedding_function: Any = None,
+        batch_size: int = DEFAULT_EMBED_BATCH,
     ) -> None:
         import chromadb
 
@@ -191,8 +257,8 @@ class Index:
         self.built = 0
         if self.collection.count() != len(chunks):
             ids = list(self.chunks)
-            for start in range(0, len(ids), 500):
-                batch = [self.chunks[i] for i in ids[start : start + 500]]
+            for start in range(0, len(ids), batch_size):
+                batch = [self.chunks[i] for i in ids[start : start + batch_size]]
                 self.collection.upsert(
                     ids=[c.id for c in batch],
                     documents=[c.text for c in batch],
