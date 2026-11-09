@@ -89,6 +89,15 @@ def _prose_span(lines: list[str], first_lineno: int) -> list[Span]:
     ]
 
 
+def _frontmatter_close(lines: list[str]) -> int | None:
+    """Index of the line that closes a leading frontmatter block, or None."""
+    if lines and lines[0].strip() == "---":
+        for j in range(1, len(lines)):
+            if lines[j].strip() == "---":
+                return j
+    return None
+
+
 def parse_spans(text: str) -> tuple[Span, ...]:
     """Split raw file text into prose and code spans.
 
@@ -101,12 +110,10 @@ def parse_spans(text: str) -> tuple[Span, ...]:
     spans: list[Span] = []
     i = 0
 
-    if n and lines[0].strip() == "---":
-        for j in range(1, n):
-            if lines[j].strip() == "---":
-                spans.extend(_prose_span(lines[1:j], 2))
-                i = j + 1
-                break
+    close = _frontmatter_close(lines)
+    if close is not None:
+        spans.extend(_prose_span(lines[1:close], 2))
+        i = close + 1
 
     buffer: list[str] = []
     buffer_start = i + 1
