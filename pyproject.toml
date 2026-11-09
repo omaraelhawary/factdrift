@@ -3,7 +3,10 @@ name = "factdrift"
 version = "0.1.0"
 description = "Detect corpus-level contradictions and measure which version retrieval serves."
 requires-python = ">=3.12"
-dependencies = ["anthropic>=0.75"]
+dependencies = [
+    "anthropic>=0.75",
+    "chromadb>=1.5.9",
+]
 
 [project.scripts]
 factdrift = "factdrift.cli:main"

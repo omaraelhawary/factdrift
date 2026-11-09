@@ -99,12 +99,19 @@ def check_question(question: str, finding: dict[str, Any]) -> str | None:
         return "empty"
     if not text.endswith("?"):
         return "not a question"
-    folded = text.casefold()
     for value in forbidden_values(finding):
-        pattern = r"(?<![\w.])" + re.escape(value.strip().casefold()) + r"(?![\w.])"
-        if re.search(pattern, folded):
+        if mentions(text, value):
             return f"names a disputed value: {value}"
     return None
+
+
+def mentions(text: str, value: str) -> bool:
+    """True when `value` appears in `text` as a whole token, ignoring case.
+
+    `4.8` does not match inside `4.85`, and `v3` does not match inside `v30`.
+    """
+    pattern = r"(?<![\w.])" + re.escape(value.strip().casefold()) + r"(?!\w|\.\w)"
+    return re.search(pattern, text.casefold()) is not None
 
 
 @dataclass

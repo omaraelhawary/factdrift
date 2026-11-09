@@ -126,3 +126,11 @@ def test_a_corrupt_cache_entry_is_discarded(tmp_path):
     for path in tmp_path.iterdir():
         path.write_text("{", encoding="utf-8")
     assert run(FakeBackend(q), [FINDING], tmp_path).api_calls == 1
+
+
+def test_a_value_at_the_end_of_a_sentence_is_mentioned():
+    from factdrift.questions import mentions
+
+    assert mentions("The default version is 4.8.", "4.8")
+    assert not mentions("Use 4.8.1 instead.", "4.8")
+    assert not mentions("Use 4.85 instead.", "4.8")
