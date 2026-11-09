@@ -110,7 +110,7 @@ def mentions(text: str, value: str) -> bool:
 
     `4.8` does not match inside `4.85`, and `v3` does not match inside `v30`.
     """
-    pattern = r"(?<![\w.])" + re.escape(value.strip().casefold()) + r"(?![\w.])"
+    pattern = r"(?<![\w.])" + re.escape(value.strip().casefold()) + r"(?!\w|\.\w)"
     return re.search(pattern, text.casefold()) is not None
 
 
