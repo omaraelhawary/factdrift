@@ -402,6 +402,9 @@ def test_running_out_of_openrouter_credit_stops_the_run(sample, tmp_path):
         extract_document(sample, backend, model="m", cache_dir=tmp_path)
 
 
-def test_a_missing_openrouter_key_is_rejected_up_front():
+def test_a_missing_openrouter_key_is_rejected_on_the_first_request(sample, tmp_path):
+    post = FakeOpenRouterPost()
+    backend = extract_mod.OpenRouterBackend("", post=post)
     with pytest.raises(extract_mod.BackendUnavailable):
-        extract_mod.OpenRouterBackend("")
+        extract_document(sample, backend, model="m", cache_dir=tmp_path)
+    assert post.requests == []
