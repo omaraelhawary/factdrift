@@ -15,6 +15,7 @@ from typing import Any
 import anthropic
 
 from factdrift import detect as detect_mod
+from factdrift import labeling as labeling_mod
 from factdrift import extract as extract_mod
 from factdrift import normalize as normalize_mod
 from factdrift import questions as questions_mod
@@ -375,6 +376,34 @@ def cmd_detect(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_candidates(args: argparse.Namespace) -> int:
+    claims = _load_claims(args.claims)
+    if claims and "cardinality" not in claims[0]:
+        print(f"{args.claims} is not normalized; run normalize first", file=sys.stderr)
+        return 2
+    pages = set(args.pages) if args.pages else _shared_pages(claims, set(args.exclude))
+    selected = [c for c in claims if c["source_path"].rsplit("/", 1)[-1] in pages]
+    findings = json.loads(args.findings.read_text(encoding="utf-8")) if args.findings else []
+    found = detect_mod.candidates(selected, package_attributes=args.package_attributes)
+    table = labeling_mod.rows(found, findings)
+    labeling_mod.write_csv(table, args.out)
+    flagged = sum(1 for row in table if row["detector"])
+    print(f"{len(table)} candidates from {len(selected)} claims on {len(pages)} page names "
+          f"({flagged} reported by detect)")
+    print(f"pages: {' '.join(sorted(pages))}")
+    print(f"wrote {args.out}")
+    return 0
+
+
+def _shared_pages(claims: list[dict[str, Any]], exclude: set[str]) -> set[str]:
+    """Page file names that have claims in both languages."""
+    by_language: dict[str, set[str]] = {}
+    for claim in claims:
+        by_language.setdefault(claim["language"], set()).add(claim["source_path"].rsplit("/", 1)[-1])
+    names = set.intersection(*by_language.values()) if len(by_language) == 2 else set()
+    return names - exclude
+
+
 def cmd_questions(args: argparse.Namespace) -> int:
     findings = json.loads(args.findings.read_text(encoding="utf-8"))
     selected = findings if args.limit is None else findings[: args.limit]
@@ -562,7 +591,7 @@ def _replace_section(report: str, heading: str, section: str) -> str:
 
 def cmd_score(args: argparse.Namespace) -> int:
     try:
-        labels = score_mod.load_labels(args.labels)
+        labels = score_mod.load_labels(args.labels, args.label_field, args.note_field)
     except (OSError, score_mod.LabelError) as error:
         print(f"cannot read labels: {error}", file=sys.stderr)
         return 2
@@ -746,6 +775,26 @@ def build_parser() -> argparse.ArgumentParser:
     )
     detect.set_defaults(func=cmd_detect)
 
+    cand = sub.add_parser("candidates", help="write the gold-set labeling file")
+    cand.add_argument("--claims", type=Path, required=True, help="output of normalize --out")
+    cand.add_argument("--findings", type=Path, help="output of detect --out, to mark what it reported")
+    cand.add_argument("--out", type=Path, required=True, help="CSV to write")
+    cand.add_argument(
+        "--pages", nargs="+", metavar="NAME",
+        help="page file names to include (default: names with claims in both languages)",
+    )
+    cand.add_argument("--exclude", nargs="+", default=["index.mdx", "TEMPLATE.mdx"], metavar="NAME",
+                      help="page file names to leave out of the default (default: %(default)s)")
+    cand.add_argument(
+        "--package-attributes",
+        nargs="+",
+        default=sorted(detect_mod.DEFAULT_PACKAGE_ATTRIBUTES),
+        metavar="ATTRIBUTE",
+        help="attributes whose Python values are PyPI names, compared by PEP 503 "
+        "(default: %(default)s)",
+    )
+    cand.set_defaults(func=cmd_candidates)
+
     questions = sub.add_parser(
         "questions",
         parents=[_backend_options("anthropic")],
@@ -824,6 +873,10 @@ def build_parser() -> argparse.ArgumentParser:
     score = sub.add_parser("score", help="precision and recall against a labeled set")
     score.add_argument("--findings", type=Path, required=True, help="output of detect --out")
     score.add_argument("--labels", type=Path, required=True, help="labeled set, JSONL")
+    score.add_argument("--label-field", default="label",
+                       help="column holding the label (default: %(default)s)")
+    score.add_argument("--note-field", default="note",
+                       help="column holding the reason for a label (default: %(default)s)")
     score.add_argument("--name", help="name used in the report heading (default: labels file name)")
     score.add_argument("--out", type=Path, help="write the full result here as JSON")
     score.add_argument("--report", type=Path,
