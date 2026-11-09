@@ -156,3 +156,15 @@ def test_null_spellings_compare_equal():
 def test_negated_support_is_false():
     assert normalize_value("not currently supported") == "false"
     assert normalize_value("Not yet supported") == "false"
+
+
+def test_install_command_with_extra_packages_agrees():
+    claims = [
+        norm("anthropic", "install_command", "pip install -U langchain-anthropic", context="code"),
+        norm("anthropic", "install_command", "pip install -qU langchain-anthropic defusedxml", context="code"),
+    ]
+    assert detect(claims) == []
+    # Disjoint package sets still disagree.
+    assert len(detect(claims + [
+        norm("anthropic", "install_command", "pip install anthropic-langchain", context="code"),
+    ])) == 1

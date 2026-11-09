@@ -148,6 +148,21 @@ def _by_value(claims: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
     return dict(by_value)
 
 
+def _disagree(values: Iterable[str]) -> bool:
+    """True when the normalized values do not all agree.
+
+    An install command whose packages are a subset of another's agrees
+    with it: `pip install a b` also installs `a`.
+    """
+    values = set(values)
+    installs = {v: set(v.split()[1:]) for v in values if v.startswith("install ")}
+    covered = {
+        v for v, packages in installs.items()
+        if any(packages < other for other in installs.values())
+    }
+    return len(values - covered) > 1
+
+
 def detect(claims: list[dict[str, Any]], *, divergence: bool = True) -> list[Finding]:
     """Return findings, most severe first. Claims must carry entity_id,
     attribute_id, language and cardinality (see normalize.normalize_claims)."""
@@ -157,7 +172,7 @@ def detect(claims: list[dict[str, Any]], *, divergence: bool = True) -> list[Fin
         if cardinality == "single":
             for language in sorted({c["language"] for c in group}):
                 by_value = _by_value([c for c in group if c["language"] == language])
-                if len(by_value) > 1:
+                if _disagree(by_value):
                     findings.append(
                         Finding(
                             "contradiction", _severity(by_value), entity_id, attribute_id, by_value
