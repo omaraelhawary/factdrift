@@ -439,6 +439,17 @@ class OpenRouterBackend:
         return str(text), usage, stop_reason
 
 
+def _usage(message: Any) -> Usage:
+    usage = message.usage
+    return Usage(
+        input_tokens=getattr(usage, "input_tokens", 0) or 0,
+        output_tokens=getattr(usage, "output_tokens", 0) or 0,
+        cache_read_input_tokens=getattr(usage, "cache_read_input_tokens", 0) or 0,
+        cache_creation_input_tokens=getattr(usage, "cache_creation_input_tokens", 0)
+        or 0,
+    )
+
+
 def call_model(
     client: Any,
     document: Document,
@@ -463,18 +474,7 @@ def call_model(
         messages=[{"role": "user", "content": user_message(document)}],
     ) as stream:
         message = stream.get_final_message()
-
-    usage = Usage(
-        input_tokens=getattr(message.usage, "input_tokens", 0) or 0,
-        output_tokens=getattr(message.usage, "output_tokens", 0) or 0,
-        cache_read_input_tokens=getattr(message.usage, "cache_read_input_tokens", 0)
-        or 0,
-        cache_creation_input_tokens=getattr(
-            message.usage, "cache_creation_input_tokens", 0
-        )
-        or 0,
-    )
-    return _response_text(message), usage, message.stop_reason
+    return _response_text(message), _usage(message), message.stop_reason
 
 
 def extract_document(
