@@ -80,7 +80,10 @@ def cmd_ingest(args: argparse.Namespace) -> int:
 
 
 def _fmt_cost(value: float | None) -> str:
-    return "unpriced" if value is None else f"${value:,.2f}"
+    if value is None:
+        return "unpriced"
+    # Cents hide a subset run that costs a fraction of one.
+    return f"${value:,.2f}" if value >= 1 else f"${value:.4f}"
 
 
 def _make_backend(args: argparse.Namespace) -> Any:
