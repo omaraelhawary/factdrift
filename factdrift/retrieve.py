@@ -40,6 +40,7 @@ DEFAULT_CACHE_DIR = Path(".cache/answers")
 DEFAULT_EMBED_MODEL = "default"  # Chroma's built-in all-MiniLM-L6-v2
 
 _HEADING = re.compile(r"^#{1,6}\s+(.*\S)")
+_LEADING_YES_NO = re.compile(r"\s*(yes|no)\b", re.IGNORECASE)
 
 SYSTEM = """\
 Answer the developer's question using only the documentation excerpts given. \
@@ -230,15 +231,22 @@ def served_value(finding: dict[str, Any], answer: str, value: str) -> str | None
     """Which of the finding's values the answer states.
 
     The model's own `value` field is compared first, by the same
-    normalization detect uses. If that names none of them, the answer text is
-    searched for each value's spellings. Returns the value key, "several"
+    normalization detect uses, but only when the answer text states it. A
+    leading yes or no answers a true/false finding. Otherwise the answer text
+    is searched for each value's spellings. Returns the value key, "several"
     when the text names more than one, "other" when it states a value outside
     the finding, or None when it states nothing.
     """
     keys = finding["values"]
-    normalized = normalize_value(value) if value.strip() else None
+    stated = value.strip()
+    if stated and not mentions(answer, stated):
+        stated = ""  # the model named a value its answer does not state
+    normalized = normalize_value(stated) if stated else None
     if normalized in keys:
         return normalized
+    polarity = _LEADING_YES_NO.match(answer)
+    if polarity and normalize_value(polarity.group(1)) in keys:
+        return normalize_value(polarity.group(1))
     named = {
         key
         for key, sites in keys.items()
