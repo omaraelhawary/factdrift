@@ -33,6 +33,11 @@ _SPACE = re.compile(r"\s+")
 
 _TRUE = {"true", "yes", "y", "supported", "✅", "✔", "✔️", "✓"}
 _FALSE = {"false", "no", "n", "not supported", "unsupported", "❌", "✗", "✖"}
+_NOT_SUPPORTED = re.compile(r"^not (?:currently |yet )?supported$")
+_NULL = {"none", "null", "undefined", "nil"}
+# NAME=value, as in a .env line. The claim is about the variable; the value
+# after = is an example.
+_ENV_ASSIGNMENT = re.compile(r"^([A-Z][A-Z0-9_]*)=")
 # Package-manager prefixes that mean "install these packages". Alternatives
 # (npm, yarn, pnpm; pip, uv) install the same thing and must compare equal.
 _INSTALL = re.compile(
@@ -53,18 +58,35 @@ def _install_packages(text: str) -> str | None:
     return "install " + " ".join(packages) if packages else None
 
 
-def normalize_value(value: str) -> str:
+# A value the reader is meant to replace: <SERVICE_URL>, {ORG_NAME},
+# (MODULE_NAME), YOUR_ENDPOINT_NAME, your-api-key, "paste your id here".
+_PLACEHOLDER = re.compile(
+    r"<[^<>]+>|\{[A-Za-z_][^{}]*\}|\([A-Z][A-Z_]{2,}\)|(?<![A-Za-z])(?i:your)(?![A-Za-z])"
+)
+
+
+def normalize_value(value: str) -> str | None:
     """Compare values without case, surrounding quotes, or spacing noise.
 
     Yes/no spellings (true, supported, a check mark) collapse to true or
-    false, and install commands collapse to the sorted package list.
+    false, None/undefined/null collapse to null, NAME=value collapses to
+    NAME, and install commands collapse to the sorted package list.
+    Placeholders return None: they assert nothing, so they cannot agree or
+    disagree with anything.
     """
     text = _SPACE.sub(" ", value.strip()).rstrip(".,;").strip(_QUOTES).strip()
+    assignment = _ENV_ASSIGNMENT.match(text)
+    if assignment:
+        text = assignment.group(1)
+    if _PLACEHOLDER.search(text):
+        return None
     text = text.casefold()
     if text in _TRUE:
         return "true"
-    if text in _FALSE:
+    if text in _FALSE or _NOT_SUPPORTED.match(text):
         return "false"
+    if text in _NULL:
+        return "null"
     return _install_packages(text) or text
 
 
@@ -120,8 +142,25 @@ def _group(claims: Iterable[dict[str, Any]]) -> dict[tuple[str, str], list[dict[
 def _by_value(claims: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
     by_value: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for claim in claims:
-        by_value[normalize_value(claim["value"])].append(_site(claim))
+        key = normalize_value(claim["value"])
+        if key is not None:
+            by_value[key].append(_site(claim))
     return dict(by_value)
+
+
+def _disagree(values: Iterable[str]) -> bool:
+    """True when the normalized values do not all agree.
+
+    An install command whose packages are a subset of another's agrees
+    with it: `pip install a b` also installs `a`.
+    """
+    values = set(values)
+    installs = {v: set(v.split()[1:]) for v in values if v.startswith("install ")}
+    covered = {
+        v for v, packages in installs.items()
+        if any(packages < other for other in installs.values())
+    }
+    return len(values - covered) > 1
 
 
 def detect(claims: list[dict[str, Any]], *, divergence: bool = True) -> list[Finding]:
@@ -133,7 +172,7 @@ def detect(claims: list[dict[str, Any]], *, divergence: bool = True) -> list[Fin
         if cardinality == "single":
             for language in sorted({c["language"] for c in group}):
                 by_value = _by_value([c for c in group if c["language"] == language])
-                if len(by_value) > 1:
+                if _disagree(by_value):
                     findings.append(
                         Finding(
                             "contradiction", _severity(by_value), entity_id, attribute_id, by_value
@@ -144,6 +183,8 @@ def detect(claims: list[dict[str, Any]], *, divergence: bool = True) -> list[Fin
             javascript = {
                 normalize_value(c["value"]) for c in group if c["language"] == "javascript"
             }
+            python.discard(None)
+            javascript.discard(None)
             if python and javascript and not python & javascript:
                 by_value = _by_value(group)
                 findings.append(

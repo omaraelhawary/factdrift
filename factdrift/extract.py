@@ -370,9 +370,9 @@ class OpenRouterBackend:
         timeout: float = DEFAULT_TIMEOUT,
         post: Any = _http_post,
     ) -> None:
-        if not api_key:
-            raise BackendUnavailable("no OpenRouter key: set OPENROUTER_API_KEY")
-        self._headers = {"Authorization": f"Bearer {api_key}"}
+        # The key is checked on the first request, not here, so a run served
+        # entirely from the cache needs no key.
+        self._api_key = api_key
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
         self._post = post
@@ -399,6 +399,8 @@ class OpenRouterBackend:
         schema_name: str = "claims",
     ) -> tuple[str, Usage, str | None]:
         """One schema-constrained request. Returns raw text, usage, stop reason."""
+        if not self._api_key:
+            raise BackendUnavailable("no OpenRouter key: set OPENROUTER_API_KEY")
         payload = {
             "model": model,
             "messages": [
@@ -413,7 +415,10 @@ class OpenRouterBackend:
             "max_tokens": max_tokens,
         }
         data = self._post(
-            f"{self.base_url}/chat/completions", payload, self.timeout, self._headers
+            f"{self.base_url}/chat/completions",
+            payload,
+            self.timeout,
+            {"Authorization": f"Bearer {self._api_key}"},
         )
         if not isinstance(data, dict):
             raise BackendRequestError("server returned a non-object response")

@@ -89,6 +89,39 @@ def _prose_span(lines: list[str], first_lineno: int) -> list[Span]:
     ]
 
 
+def _frontmatter_close(lines: list[str]) -> int | None:
+    """Index of the line that closes a leading frontmatter block, or None."""
+    if lines and lines[0].strip() == "---":
+        for j in range(1, len(lines)):
+            if lines[j].strip() == "---":
+                return j
+    return None
+
+
+_FRONTMATTER_KEY = re.compile(r"^([A-Za-z_][\w-]*)\s*:")
+
+
+def frontmatter_keys(text: str) -> dict[int, str]:
+    """Map each frontmatter line (1-indexed) to the top-level key it belongs to.
+
+    Continuation lines of a multi-line value belong to the key above them.
+    Lines before the first key are left out.
+    """
+    lines = text.splitlines()
+    close = _frontmatter_close(lines)
+    keys: dict[int, str] = {}
+    if close is None:
+        return keys
+    current = None
+    for index in range(1, close):
+        match = _FRONTMATTER_KEY.match(lines[index])
+        if match:
+            current = match.group(1)
+        if current is not None:
+            keys[index + 1] = current
+    return keys
+
+
 def parse_spans(text: str) -> tuple[Span, ...]:
     """Split raw file text into prose and code spans.
 
@@ -101,12 +134,10 @@ def parse_spans(text: str) -> tuple[Span, ...]:
     spans: list[Span] = []
     i = 0
 
-    if n and lines[0].strip() == "---":
-        for j in range(1, n):
-            if lines[j].strip() == "---":
-                spans.extend(_prose_span(lines[1:j], 2))
-                i = j + 1
-                break
+    close = _frontmatter_close(lines)
+    if close is not None:
+        spans.extend(_prose_span(lines[1:close], 2))
+        i = close + 1
 
     buffer: list[str] = []
     buffer_start = i + 1

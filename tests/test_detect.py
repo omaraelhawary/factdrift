@@ -113,3 +113,58 @@ def test_findings_are_ordered_and_rendered():
     report = render_markdown(findings, claim_count=len(claims))
     assert "6 claims, 3 findings." in report
     assert "| contradiction | 1 | 0 | 1 |" in report
+
+
+def test_placeholders_are_not_values():
+    for value in ["<SERVICE_URL>", "YOUR_ENDPOINT_NAME", "your-api-key", "langchain-(PACKAGE)",
+                  "PASTE YOUR PROJECT_ID HERE", "ft:gpt-3.5-turbo-0613:{ORG_NAME}::{MODEL_ID}",
+                  "https://your_custom_url.com"]:
+        assert normalize_value(value) is None, value
+    assert normalize_value("databricks-dbrx-instruct") == "databricks-dbrx-instruct"
+    assert detect([
+        norm("databricks", "endpoint", "databricks-dbrx-instruct", context="code"),
+        norm("databricks", "endpoint", "YOUR_ENDPOINT_NAME", context="code"),
+    ]) == []
+    # A placeholder on one side leaves nothing to diverge from.
+    assert detect([
+        norm("cohere_api_key", "value", "your-api-key", language="javascript", cardinality="free"),
+        norm("cohere_api_key", "value", "my-real-looking-key", cardinality="free"),
+    ]) == []
+
+
+def test_parenthesized_words_are_not_placeholders():
+    for value in ["cannot be an assistant (ai) message", "ChatVertexAI (Legacy)", "✅ (Gemini)"]:
+        assert normalize_value(value) is not None, value
+
+
+def test_env_assignment_compares_as_the_variable_name():
+    assert normalize_value("ANTHROPIC_API_KEY=your-api-key") == normalize_value("ANTHROPIC_API_KEY")
+    assert detect([
+        norm("anthropic", "required_env_var", "ANTHROPIC_API_KEY"),
+        norm("anthropic", "required_env_var", "ANTHROPIC_API_KEY=your-api-key", context="code"),
+    ]) == []
+
+
+def test_null_spellings_compare_equal():
+    assert {normalize_value(v) for v in ["None", "undefined", "null", "nil"]} == {"null"}
+    assert detect([
+        norm("groq", "max_tokens", "None", cardinality="free", context="code"),
+        norm("groq", "max_tokens", "undefined", language="javascript", cardinality="free", context="code"),
+    ]) == []
+
+
+def test_negated_support_is_false():
+    assert normalize_value("not currently supported") == "false"
+    assert normalize_value("Not yet supported") == "false"
+
+
+def test_install_command_with_extra_packages_agrees():
+    claims = [
+        norm("anthropic", "install_command", "pip install -U langchain-anthropic", context="code"),
+        norm("anthropic", "install_command", "pip install -qU langchain-anthropic defusedxml", context="code"),
+    ]
+    assert detect(claims) == []
+    # Disjoint package sets still disagree.
+    assert len(detect(claims + [
+        norm("anthropic", "install_command", "pip install anthropic-langchain", context="code"),
+    ])) == 1
