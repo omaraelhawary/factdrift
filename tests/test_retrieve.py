@@ -64,6 +64,8 @@ title: ChatHuggingFace integration
 | :---: | :---: | :---: |
 | ✅ | ❌ | ✅ |
 | ❌ | ✅ | ❌ |
+
+See the API reference.
 """
 
 
@@ -76,8 +78,11 @@ def test_each_table_row_is_a_chunk_that_carries_its_header_and_heading():
         "Tool calling: yes; Image input: no; Native async: yes"
     )
     assert "Image input: yes" in rows[12].text
-    # The rows are not also indexed a second time inside the section chunk.
+    # The rows are not also indexed a second time inside the section chunk,
+    # and no other chunk's line range claims them.
     assert not any("✅" in c.text for c in chunks)
+    others = [c for c in chunks if c.line_start != c.line_end]
+    assert not any(c.line_start <= 11 <= c.line_end for c in others)
 
 
 def test_a_table_header_without_rows_stays_in_the_section_text():

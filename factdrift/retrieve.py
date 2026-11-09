@@ -144,7 +144,14 @@ def chunk_document(document: Document, max_chars: int = DEFAULT_MAX_CHARS) -> li
     for heading, lines in sections:
         header = f"{title} > {heading}" if heading else title
         rest, rows = _split_tables(lines)
-        for piece in _pieces(rest, max_chars):
+        # Text either side of a table is chunked separately, so no chunk's
+        # line range spans a row it does not contain.
+        runs: list[list[tuple[int, str]]] = []
+        for number, line in rest:
+            if not runs or number != runs[-1][-1][0] + 1:
+                runs.append([])
+            runs[-1].append((number, line))
+        for piece in (p for run in runs for p in _pieces(run, max_chars)):
             body = "\n".join(line for _, line in piece)
             chunks.append(Chunk(document.path, piece[0][0], piece[-1][0], f"{header}\n\n{body}"))
         for number, columns, separator, row in rows:
