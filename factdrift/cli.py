@@ -18,6 +18,7 @@ from factdrift import detect as detect_mod
 from factdrift import extract as extract_mod
 from factdrift import normalize as normalize_mod
 from factdrift import questions as questions_mod
+from factdrift import retrieve as retrieve_mod
 from factdrift.ingest import (
     Document,
     find_sources,
@@ -449,6 +450,98 @@ def cmd_questions(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_retrieve(args: argparse.Namespace) -> int:
+    findings = json.loads(args.findings.read_text(encoding="utf-8"))
+    payload = json.loads(args.questions.read_text(encoding="utf-8"))
+    questions = {
+        q["finding_id"]: q["question"] for q in payload["questions"] if q.get("question")
+    }
+    selected = findings if args.limit is None else findings[: args.limit]
+    documents = load_corpus(args.corpus)
+    if not documents:
+        print(f"no markdown or mdx files under {args.corpus}", file=sys.stderr)
+        return 1
+    client = _make_backend(args)
+    if client is None:
+        return 2
+    if args.backend == "anthropic":
+        client = extract_mod.AnthropicBackend(client, effort=args.effort)
+
+    started = time.monotonic()
+    chunks = [c for d in documents for c in retrieve_mod.chunk_document(d, args.max_chars)]
+    index = retrieve_mod.Index(
+        chunks,
+        index_dir=args.index_dir,
+        embed_model=args.embed_model,
+        ollama_url=args.ollama_url,
+    )
+    print(
+        f"{len(chunks)} chunks from {len(documents)} files, "
+        f"{'embedded ' + str(index.built) if index.built else 'index reused'}"
+    )
+    try:
+        result = retrieve_mod.run(
+            selected,
+            questions,
+            index,
+            client,
+            model=args.model,
+            top_k=args.top_k,
+            max_tokens=args.max_tokens,
+            cache_dir=args.cache_dir,
+        )
+    except (extract_mod.BackendUnavailable, anthropic.AuthenticationError) as exc:
+        print(f"{args.backend}: {exc}", file=sys.stderr)
+        return 2
+    elapsed = time.monotonic() - started
+
+    prices = dict(extract_mod.PRICES)
+    if args.backend == "ollama":
+        prices.setdefault(args.model, (0.0, 0.0))  # runs locally, no per-token charge
+    if args.price_in is not None and args.price_out is not None:
+        prices[args.model] = (args.price_in, args.price_out)
+    print(
+        f"{len(selected)} of {len(findings)} findings: {result.api_calls} requests, "
+        f"{result.cached} from cache"
+    )
+    print(
+        f"tokens: {result.usage.input_tokens:,} in / {result.usage.output_tokens:,} out, "
+        f"cost {_fmt_cost(extract_mod.cost(result.usage, args.model, prices))}, "
+        f"{elapsed:.1f}s"
+    )
+    if result.api_calls and len(selected) < len(findings):
+        scale = len(findings) / result.api_calls
+        projected = extract_mod.Usage(
+            input_tokens=round(result.usage.input_tokens * scale),
+            output_tokens=round(result.usage.output_tokens * scale),
+        )
+        print(
+            f"projected for all {len(findings)} findings: "
+            f"{projected.input_tokens:,} in / {projected.output_tokens:,} out, "
+            f"cost {_fmt_cost(extract_mod.cost(projected, args.model, prices))}"
+        )
+    for finding, record in zip(selected, result.served):
+        print(
+            f"  {finding['entity_id']}/{finding['attribute_id']}: "
+            f"{record.get('served') or record.get('error')}"
+        )
+
+    served = {r["finding_id"]: r for r in result.served}
+    annotated = [
+        {**f, "served": served.get(questions_mod.finding_id(f))} for f in findings
+    ]
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    args.out.write_text(json.dumps(annotated, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"wrote {args.out}")
+    if args.report:
+        existing = args.report.read_text(encoding="utf-8") if args.report.exists() else ""
+        base = existing.split("\n## What retrieval serves", 1)[0].rstrip("\n")
+        section = retrieve_mod.render_served(selected, result.served)
+        args.report.write_text(f"{base}\n\n{section}" if base else section, encoding="utf-8")
+        print(f"wrote {args.report}")
+    return 0
+
+
 def _backend_options(default_backend: str) -> argparse.ArgumentParser:
     """Backend flags, as a fresh parent parser per command so each command
     can have its own default backend (parents share action objects)."""
@@ -631,6 +724,49 @@ def build_parser() -> argparse.ArgumentParser:
     questions.add_argument("--price-in", type=float, help="dollars per million input tokens")
     questions.add_argument("--price-out", type=float, help="dollars per million output tokens")
     questions.set_defaults(func=cmd_questions)
+
+    retrieve = sub.add_parser(
+        "retrieve",
+        parents=[_backend_options("ollama")],
+        help="answer each question from retrieved chunks and record the value served",
+    )
+    retrieve.add_argument("--corpus", type=Path, default=DEFAULT_CORPUS)
+    retrieve.add_argument("--findings", type=Path, required=True, help="output of detect --out")
+    retrieve.add_argument("--questions", type=Path, required=True, help="output of questions --out")
+    retrieve.add_argument(
+        "--out", type=Path, required=True, help="findings JSON with a served record each"
+    )
+    retrieve.add_argument(
+        "--report", type=Path, help="markdown report to add the served-value section to"
+    )
+    retrieve.add_argument(
+        "--limit", type=int, help="only the first N findings, for a cost check"
+    )
+    retrieve.add_argument("--top-k", type=int, default=retrieve_mod.DEFAULT_TOP_K)
+    retrieve.add_argument(
+        "--max-chars",
+        type=int,
+        default=retrieve_mod.DEFAULT_MAX_CHARS,
+        help="longest chunk before a section is split (default: %(default)s)",
+    )
+    retrieve.add_argument("--index-dir", type=Path, default=retrieve_mod.DEFAULT_INDEX_DIR)
+    retrieve.add_argument(
+        "--embed-model",
+        default=retrieve_mod.DEFAULT_EMBED_MODEL,
+        help="'default' for Chroma's all-MiniLM-L6-v2, or an Ollama embedding "
+        "model name (default: %(default)s)",
+    )
+    retrieve.add_argument(
+        "--effort",
+        default="low",
+        choices=["low", "medium", "high", "xhigh", "max"],
+        help="anthropic backend only (default: %(default)s)",
+    )
+    retrieve.add_argument("--max-tokens", type=int, default=retrieve_mod.DEFAULT_MAX_TOKENS)
+    retrieve.add_argument("--cache-dir", type=Path, default=retrieve_mod.DEFAULT_CACHE_DIR)
+    retrieve.add_argument("--price-in", type=float, help="dollars per million input tokens")
+    retrieve.add_argument("--price-out", type=float, help="dollars per million output tokens")
+    retrieve.set_defaults(func=cmd_retrieve)
 
     return parser
 

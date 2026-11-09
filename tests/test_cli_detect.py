@@ -81,3 +81,36 @@ def test_questions_runs_a_subset_and_projects_the_full_cost(tmp_path, monkeypatc
 def test_questions_defaults_to_anthropic_at_low_effort():
     args = cli.build_parser().parse_args(["questions", "--findings", "a", "--out", "b"])
     assert (args.backend, args.effort) == ("anthropic", "low")
+
+
+def test_retrieve_writes_served_findings_and_a_report_section(tmp_path, monkeypatch, capsys):
+    import chromadb
+
+    from factdrift import retrieve as retrieve_mod
+    from factdrift.questions import finding_id
+    from tests.test_retrieve import FINDING, PAGE, FakeBackend, WordEmbedding
+
+    corpus = tmp_path / "corpus" / "src/oss/python/integrations/chat"
+    corpus.mkdir(parents=True)
+    (corpus / "example.mdx").write_text(PAGE)
+    real_index = retrieve_mod.Index
+    monkeypatch.setattr(retrieve_mod, "Index", lambda chunks, **kw: real_index(
+        chunks, client=chromadb.PersistentClient(path=str(tmp_path / "chroma")),
+        embedding_function=WordEmbedding()))
+    backend = FakeBackend({"answer": "Use model-a.", "value": "model-a"})
+    monkeypatch.setattr(cli, "_make_backend", lambda args: backend)
+    findings, questions = tmp_path / "findings.json", tmp_path / "questions.json"
+    findings.write_text(json.dumps([FINDING]))
+    questions.write_text(json.dumps({"questions": [
+        {"finding_id": finding_id(FINDING), "question": "Which model?"}]}))
+    report = tmp_path / "report.md"
+    report.write_text("# Report\n\nbody\n\n## What retrieval serves\n\nold\n")
+    out = tmp_path / "served.json"
+    rc = cli.main(["retrieve", "--corpus", str(tmp_path / "corpus"), "--findings", str(findings),
+                   "--questions", str(questions), "--out", str(out), "--report", str(report),
+                   "--model", "m", "--cache-dir", str(tmp_path / "answers")])
+    assert rc == 0
+    assert json.loads(out.read_text())[0]["served"]["served"] == "model-a"
+    text = report.read_text()
+    assert text.startswith("# Report\n\nbody\n\n## What retrieval serves")
+    assert "old" not in text and text.count("## What retrieval serves") == 1
