@@ -1,0 +1,509 @@
+id,scope,entity_id,attribute_id,cardinality,detector,values,sites,label,note,label_2,note_2
+g-268f3b5f,javascript,ai_message,content,free,,"j'adore la programmation
+  javascript/cerebras.mdx:108 [code] ""content"": ""J'adore la programmation.""
+{""result"":4}
+  javascript/cerebras.mdx:164 [code] aiInvokeMsgContent: '{""result"":4}'
+j'adore programmer
+  javascript/cohere.mdx:124 [code] ""content"": ""J'adore programmer.""
+  javascript/xai.mdx:105 [code] ""content"": ""J'adore programmer."",",src/oss/javascript/integrations/chat/cerebras.mdx:108 src/oss/javascript/integrations/chat/cerebras.mdx:164 src/oss/javascript/integrations/chat/cohere.mdx:124 src/oss/javascript/integrations/chat/xai.mdx:105,,,,
+g-51634164,javascript,ai_message,input_tokens,free,,"29
+  javascript/anthropic.mdx:111 [code] ""input_tokens"": 29,
+449
+  javascript/anthropic.mdx:218 [code] ""input_tokens"": 449,
+18
+  javascript/anthropic.mdx:635 [code] input_tokens: 18,
+55
+  javascript/cerebras.mdx:127 [code] ""input_tokens"": 55
+89
+  javascript/cohere.mdx:197 [code] ""input_tokens"": 89
+21
+  javascript/google_generative_ai.mdx:166 [code] ""input_tokens"": 21,
+31
+  javascript/groq.mdx:108 [code] ""promptTokens"": 31,
+30
+  javascript/xai.mdx:109 [code] ""promptTokens"": 30,",src/oss/javascript/integrations/chat/anthropic.mdx:111 src/oss/javascript/integrations/chat/anthropic.mdx:218 src/oss/javascript/integrations/chat/anthropic.mdx:635 src/oss/javascript/integrations/chat/cerebras.mdx:127 src/oss/javascript/integrations/chat/cohere.mdx:197 src/oss/javascript/integrations/chat/google_generative_ai.mdx:166 src/oss/javascript/integrations/chat/groq.mdx:108 src/oss/javascript/integrations/chat/xai.mdx:109,,,,
+g-66f2c4d5,javascript,ai_message,output_tokens,free,,"20
+  javascript/anthropic.mdx:112 [code] ""output_tokens"": 20
+100
+  javascript/anthropic.mdx:219 [code] ""output_tokens"": 100
+433
+  javascript/anthropic.mdx:639 [code] output_tokens: 433,
+393
+  javascript/anthropic.mdx:661 [code] output_tokens: 393,
+9
+  javascript/cerebras.mdx:128 [code] ""output_tokens"": 9
+5
+  javascript/cohere.mdx:198 [code] ""output_tokens"": 5
+  javascript/google_generative_ai.mdx:167 [code] ""output_tokens"": 5,
+73
+  javascript/groq.mdx:107 [code] ""completionTokens"": 73,
+6
+  javascript/xai.mdx:110 [code] ""completionTokens"": 6,",src/oss/javascript/integrations/chat/anthropic.mdx:112 src/oss/javascript/integrations/chat/anthropic.mdx:219 src/oss/javascript/integrations/chat/anthropic.mdx:639 src/oss/javascript/integrations/chat/anthropic.mdx:661 src/oss/javascript/integrations/chat/cerebras.mdx:128 src/oss/javascript/integrations/chat/cohere.mdx:198 src/oss/javascript/integrations/chat/google_generative_ai.mdx:167 src/oss/javascript/integrations/chat/groq.mdx:107 src/oss/javascript/integrations/chat/xai.mdx:110,,,,
+g-6955e29e,javascript,ai_message,stop_reason,free,,"end_turn
+  javascript/anthropic.mdx:108 [code] ""stop_reason"": ""end_turn"",
+tool_use
+  javascript/anthropic.mdx:215 [code] ""stop_reason"": ""tool_use"",
+stop
+  javascript/groq.mdx:111 [code] ""finish_reason"": ""stop""
+  javascript/xai.mdx:113 [code] ""finish_reason"": ""stop"",",src/oss/javascript/integrations/chat/anthropic.mdx:108 src/oss/javascript/integrations/chat/anthropic.mdx:215 src/oss/javascript/integrations/chat/groq.mdx:111 src/oss/javascript/integrations/chat/xai.mdx:113,,,,
+g-95f4be11,javascript,ai_message,total_tokens,free,,"49
+  javascript/anthropic.mdx:132 [code] ""total_tokens"": 49
+549
+  javascript/anthropic.mdx:250 [code] ""total_tokens"": 549
+64
+  javascript/cerebras.mdx:129 [code] ""total_tokens"": 64
+94
+  javascript/cohere.mdx:199 [code] ""total_tokens"": 94
+26
+  javascript/google_generative_ai.mdx:168 [code] ""total_tokens"": 26
+104
+  javascript/groq.mdx:109 [code] ""totalTokens"": 104
+36
+  javascript/xai.mdx:111 [code] ""totalTokens"": 36",src/oss/javascript/integrations/chat/anthropic.mdx:132 src/oss/javascript/integrations/chat/anthropic.mdx:250 src/oss/javascript/integrations/chat/cerebras.mdx:129 src/oss/javascript/integrations/chat/cohere.mdx:199 src/oss/javascript/integrations/chat/google_generative_ai.mdx:168 src/oss/javascript/integrations/chat/groq.mdx:109 src/oss/javascript/integrations/chat/xai.mdx:111,,,,
+g-6508c561,twin anthropic.mdx,anthropic,install_command,single,,"install @langchain/anthropic @langchain/core
+  javascript/anthropic.mdx:60 [code] npm install @langchain/anthropic @langchain/core
+  javascript/anthropic.mdx:63 [code] yarn add @langchain/anthropic @langchain/core
+  javascript/anthropic.mdx:66 [code] pnpm add @langchain/anthropic @langchain/core
+install langchain-anthropic
+  python/anthropic.mdx:52 [code] pip install -U langchain-anthropic
+  python/anthropic.mdx:55 [code] uv add langchain-anthropic",src/oss/javascript/integrations/chat/anthropic.mdx:60 src/oss/javascript/integrations/chat/anthropic.mdx:63 src/oss/javascript/integrations/chat/anthropic.mdx:66 src/oss/python/integrations/chat/anthropic.mdx:52 src/oss/python/integrations/chat/anthropic.mdx:55,,,,
+g-2bdad130,javascript,anthropic,max_retries,free,,"2
+  javascript/anthropic.mdx:81 [code] maxRetries: 2,
+0
+  javascript/anthropic.mdx:714 [code] maxRetries: 0,",src/oss/javascript/integrations/chat/anthropic.mdx:81 src/oss/javascript/integrations/chat/anthropic.mdx:714,,,,
+g-60859b9c,javascript,anthropic,max_tokens,free,divergence low,"null
+  javascript/anthropic.mdx:80 [code] maxTokens: undefined,
+1024
+  javascript/anthropic.mdx:264 [code] maxTokens: 1024,",src/oss/javascript/integrations/chat/anthropic.mdx:80 src/oss/javascript/integrations/chat/anthropic.mdx:264,,,,
+g-ef307ac1,twin anthropic.mdx,anthropic,max_tokens,free,divergence low,"null
+  javascript/anthropic.mdx:80 [code] maxTokens: undefined,
+1024
+  javascript/anthropic.mdx:264 [code] maxTokens: 1024,
+5000
+  python/anthropic.mdx:751 [code] max_tokens=5000,",src/oss/javascript/integrations/chat/anthropic.mdx:80 src/oss/javascript/integrations/chat/anthropic.mdx:264 src/oss/python/integrations/chat/anthropic.mdx:751,,,,
+g-81a6aee8,python,anthropic,model,free,,"claude-haiku-4-5-20251001
+  python/anthropic.mdx:86 [code] model=""claude-haiku-4-5-20251001"",
+  python/anthropic.mdx:207 [code] model = ChatAnthropic(model=""claude-haiku-4-5-20251001"")
+claude-sonnet-4-6
+  python/anthropic.mdx:178 [code] ""model"": ""claude-sonnet-4-6"",
+claude-opus-4-8
+  python/anthropic.mdx:764 [code] model=""claude-opus-4-8"",
+claude-opus-4-5-20251101
+  python/anthropic.mdx:822 [code] model=""claude-opus-4-5-20251101"",",src/oss/python/integrations/chat/anthropic.mdx:86 src/oss/python/integrations/chat/anthropic.mdx:207 src/oss/python/integrations/chat/anthropic.mdx:178 src/oss/python/integrations/chat/anthropic.mdx:764 src/oss/python/integrations/chat/anthropic.mdx:822,,,,
+g-2ba89cd8,javascript,anthropic,model,free,contradiction low,"claude-haiku-4-5-20251001
+  javascript/anthropic.mdx:78 [code] model: ""claude-haiku-4-5-20251001"",
+  javascript/anthropic.mdx:107 [code] ""model"": ""claude-haiku-4-5-20251001"",
+  javascript/anthropic.mdx:172 [code] model: ""claude-haiku-4-5-20251001"",
+  javascript/anthropic.mdx:733 [code] model: ""claude-haiku-4-5-20251001"",
+  javascript/anthropic.mdx:817 [code] model: ""claude-haiku-4-5-20251001"",
+  javascript/anthropic.mdx:910 [code] model: ""claude-haiku-4-5-20251001"",
+claude-sonnet-4-6
+  javascript/anthropic.mdx:263 [code] model: ""claude-sonnet-4-6"",
+  javascript/anthropic.mdx:601 [code] model: ""claude-sonnet-4-6"",
+  javascript/anthropic.mdx:713 [code] modelName: ""claude-sonnet-4-6"",
+  javascript/anthropic.mdx:972 [code] model: ""claude-sonnet-4-6"",
+  javascript/anthropic.mdx:1016 [code] model: ""claude-sonnet-4-6"",
+claude-3-sonnet-20240229
+  javascript/anthropic.mdx:283 [code] ""model"": ""claude-3-sonnet-20240229"",",src/oss/javascript/integrations/chat/anthropic.mdx:78 src/oss/javascript/integrations/chat/anthropic.mdx:107 src/oss/javascript/integrations/chat/anthropic.mdx:172 src/oss/javascript/integrations/chat/anthropic.mdx:733 src/oss/javascript/integrations/chat/anthropic.mdx:817 src/oss/javascript/integrations/chat/anthropic.mdx:910 src/oss/javascript/integrations/chat/anthropic.mdx:263 src/oss/javascript/integrations/chat/anthropic.mdx:601 src/oss/javascript/integrations/chat/anthropic.mdx:713 src/oss/javascript/integrations/chat/anthropic.mdx:972 src/oss/javascript/integrations/chat/anthropic.mdx:1016 src/oss/javascript/integrations/chat/anthropic.mdx:283,,,,
+g-59948fe7,twin anthropic.mdx,anthropic,serializable,single,,"true
+  javascript/anthropic.mdx:25 [prose] | ✅ | ✅ |
+beta
+  python/anthropic.mdx:36 [prose] beta",src/oss/javascript/integrations/chat/anthropic.mdx:25 src/oss/python/integrations/chat/anthropic.mdx:36,,,,
+g-b67aff2e,python,app_attribution,env_var,single,contradiction low,"openrouter_app_url
+  python/openrouter.mdx:733 [code] # or OPENROUTER_APP_URL env var
+openrouter_app_title
+  python/openrouter.mdx:734 [code] # or OPENROUTER_APP_TITLE env var",src/oss/python/integrations/chat/openrouter.mdx:733 src/oss/python/integrations/chat/openrouter.mdx:734,,,,
+g-b1c1ec4e,javascript,audio_output_format,format,free,,"wav
+  javascript/openai.mdx:1295 [code] format: ""wav"",
+pcm16
+  javascript/openai.mdx:1333 [code] format: ""pcm16"", // Format must be `pcm16` for streaming",src/oss/javascript/integrations/chat/openai.mdx:1295 src/oss/javascript/integrations/chat/openai.mdx:1333,,,,
+g-6bc913a9,python,bash_tool,required_parameter,single,contradiction high,"required
+  python/anthropic.mdx:1863 [prose] `command` (required): The bash command to execute
+optional
+  python/anthropic.mdx:1864 [prose] `restart` (optional): Set to `true` to restart the bash session",src/oss/python/integrations/chat/anthropic.mdx:1863 src/oss/python/integrations/chat/anthropic.mdx:1864,,,,
+g-7d503bc0,python,chat_cerebras,model,free,,"llama-3.3-70b
+  python/cerebras.mdx:92 [code] model=""llama-3.3-70b""
+  python/cerebras.mdx:122 [code] model=""llama-3.3-70b""
+  python/cerebras.mdx:161 [code] model=""llama-3.3-70b""
+  python/cerebras.mdx:188 [code] model=""llama-3.3-70b""
+llama3-8b-8192
+  python/cerebras.mdx:112 [code] 'model_name': 'llama3-8b-8192'
+  python/cerebras.mdx:178 [code] 'model_name': 'llama3-8b-8192'",src/oss/python/integrations/chat/cerebras.mdx:92 src/oss/python/integrations/chat/cerebras.mdx:122 src/oss/python/integrations/chat/cerebras.mdx:161 src/oss/python/integrations/chat/cerebras.mdx:188 src/oss/python/integrations/chat/cerebras.mdx:112 src/oss/python/integrations/chat/cerebras.mdx:178,,,,
+g-d82c55c9,twin cerebras.mdx,chat_cerebras,serializable,single,,"false
+  javascript/cerebras.mdx:31 [prose] ❌ | ✅
+beta
+  python/cerebras.mdx:35 [prose] beta",src/oss/javascript/integrations/chat/cerebras.mdx:31 src/oss/python/integrations/chat/cerebras.mdx:35,,,,
+g-85806e05,python,chat_cohere,content,free,,"4 && 5
+  python/cohere.mdx:65 [code] AIMessage(content='4 && 5'
+the value of magic_function(2) is 12
+  python/cohere.mdx:135 [code] content='The value of magic_function(2) is 12.'",src/oss/python/integrations/chat/cohere.mdx:65 src/oss/python/integrations/chat/cohere.mdx:135,,,,
+g-bc35b93d,twin groq.mdx,chat_groq,image_input,single,,"false
+  javascript/groq.mdx:34 [prose] | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
+true
+  python/groq.mdx:39 [prose] | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ |",src/oss/javascript/integrations/chat/groq.mdx:34 src/oss/python/integrations/chat/groq.mdx:39,,,,
+g-ea0de456,python,chat_groq,model,free,divergence low,"qwen/qwen3-32b
+  python/groq.mdx:87 [code] model=""qwen/qwen3-32b""
+deepseek-r1-distill-llama-70b
+  python/groq.mdx:112 [code] 'model_name': 'deepseek-r1-distill-llama-70b'
+meta-llama/llama-4-scout-17b-16e-instruct
+  python/groq.mdx:140 [code] llm = ChatGroq(model=""meta-llama/llama-4-scout-17b-16e-instruct"")",src/oss/python/integrations/chat/groq.mdx:87 src/oss/python/integrations/chat/groq.mdx:112 src/oss/python/integrations/chat/groq.mdx:140,,,,
+g-20246bf2,twin groq.mdx,chat_groq,model,free,divergence low,"openai/gpt-oss-120b
+  javascript/groq.mdx:80 [code] model: ""openai/gpt-oss-120b"",
+qwen/qwen3-32b
+  python/groq.mdx:87 [code] model=""qwen/qwen3-32b""
+deepseek-r1-distill-llama-70b
+  python/groq.mdx:112 [code] 'model_name': 'deepseek-r1-distill-llama-70b'
+meta-llama/llama-4-scout-17b-16e-instruct
+  python/groq.mdx:140 [code] llm = ChatGroq(model=""meta-llama/llama-4-scout-17b-16e-instruct"")",src/oss/javascript/integrations/chat/groq.mdx:80 src/oss/python/integrations/chat/groq.mdx:87 src/oss/python/integrations/chat/groq.mdx:112 src/oss/python/integrations/chat/groq.mdx:140,,,,
+g-9e273043,twin groq.mdx,chat_groq,multimodal,single,,"false
+  javascript/groq.mdx:11 [prose] multimodal: false
+true
+  python/groq.mdx:12 [prose] multimodal: true",src/oss/javascript/integrations/chat/groq.mdx:11 src/oss/python/integrations/chat/groq.mdx:12,,,,
+g-d21c67bc,twin groq.mdx,chat_groq,serializable,single,,"false
+  javascript/groq.mdx:26 [prose] | ❌ | ✅ |
+beta
+  python/groq.mdx:33 [prose] | @[`ChatGroq`] | @[`langchain-groq`] | beta | ✅ |",src/oss/javascript/integrations/chat/groq.mdx:26 src/oss/python/integrations/chat/groq.mdx:33,,,,
+g-2426ad1b,python,chat_groq,supported_model,free,,"meta-llama/llama-4-scout-17b-16e-instruct
+  python/groq.mdx:130 [prose] - `meta-llama/llama-4-scout-17b-16e-instruct`
+meta-llama/llama-4-maverick-17b-128e-instruct
+  python/groq.mdx:131 [prose] - `meta-llama/llama-4-maverick-17b-128e-instruct`",src/oss/python/integrations/chat/groq.mdx:130 src/oss/python/integrations/chat/groq.mdx:131,,,,
+g-d09e8961,python,chat_vertex_ai,bound_tool,free,,"google_search
+  python/google_vertex_ai.mdx:137 [code] bind_tools([{""google_search"": {}}])
+code_execution
+  python/google_vertex_ai.mdx:153 [code] bind_tools([{""code_execution"": {}}])",src/oss/python/integrations/chat/google_vertex_ai.mdx:137 src/oss/python/integrations/chat/google_vertex_ai.mdx:153,,,,
+g-0edbca43,twin google_vertex_ai.mdx,chat_vertex_ai,max_retries,free,divergence low,"2
+  javascript/google_vertex_ai.mdx:127 [code] maxRetries: 2,
+6
+  python/google_vertex_ai.mdx:90 [code] max_retries=6,",src/oss/javascript/integrations/chat/google_vertex_ai.mdx:127 src/oss/python/integrations/chat/google_vertex_ai.mdx:90,,,,
+g-6557b1f6,javascript,chat_vertex_ai,model,free,divergence medium,"gemini-2.5-pro
+  javascript/google_vertex_ai.mdx:14 [prose] like `gemini-2.5-pro`, `gemini-2.5-flash`, etc.
+gemini-2.5-flash
+  javascript/google_vertex_ai.mdx:125 [code] model: ""gemini-2.5-flash""",src/oss/javascript/integrations/chat/google_vertex_ai.mdx:14 src/oss/javascript/integrations/chat/google_vertex_ai.mdx:125,,,,
+g-392a4425,twin google_vertex_ai.mdx,chat_vertex_ai,model,free,divergence medium,"gemini-2.5-pro
+  javascript/google_vertex_ai.mdx:14 [prose] like `gemini-2.5-pro`, `gemini-2.5-flash`, etc.
+gemini-2.5-flash
+  javascript/google_vertex_ai.mdx:125 [code] model: ""gemini-2.5-flash""
+gemini-3.7-flash
+  python/google_vertex_ai.mdx:87 [code] model=""gemini-3.7-flash"",
+  python/google_vertex_ai.mdx:137 [code] ChatVertexAI(model=""gemini-3.7-flash"")
+  python/google_vertex_ai.mdx:153 [code] ChatVertexAI(model=""gemini-3.7-flash"")",src/oss/javascript/integrations/chat/google_vertex_ai.mdx:14 src/oss/javascript/integrations/chat/google_vertex_ai.mdx:125 src/oss/python/integrations/chat/google_vertex_ai.mdx:87 src/oss/python/integrations/chat/google_vertex_ai.mdx:137 src/oss/python/integrations/chat/google_vertex_ai.mdx:153,,,,
+g-b9ed840a,twin google_vertex_ai.mdx,chat_vertex_ai,replaced_by,single,,"chatgoogle
+  javascript/google_vertex_ai.mdx:22 [prose] This library will be replaced by the [ChatGoogle](/oss/integrations/chat/google) library.
+chatgooglegenerativeai
+  python/google_vertex_ai.mdx:18 [prose] Please use [`ChatGoogleGenerativeAI`](/oss/integrations/chat/google_generative_ai) instead",src/oss/javascript/integrations/chat/google_vertex_ai.mdx:22 src/oss/python/integrations/chat/google_vertex_ai.mdx:18,,,,
+g-cf878a1f,twin google_vertex_ai.mdx,chat_vertex_ai,serializable,single,,"true
+  javascript/google_vertex_ai.mdx:33 [prose] | ✅ | ✅ |
+beta
+  python/google_vertex_ai.mdx:41 [prose] | @[`ChatVertexAI`] | @[`langchain-google-vertexai`] | beta |",src/oss/javascript/integrations/chat/google_vertex_ai.mdx:33 src/oss/python/integrations/chat/google_vertex_ai.mdx:41,,,,
+g-82148b23,python,chat_xai,model,free,,"grok-beta
+  python/xai.mdx:103 [code] 'model_name': 'grok-beta'
+  python/xai.mdx:153 [code] 'model_name': 'grok-beta'
+grok-4
+  python/xai.mdx:165 [code] model=""grok-4""
+grok-4.3
+  python/xai.mdx:181 [code] model = ChatXAI(model=""grok-4.3"")",src/oss/python/integrations/chat/xai.mdx:103 src/oss/python/integrations/chat/xai.mdx:153 src/oss/python/integrations/chat/xai.mdx:165 src/oss/python/integrations/chat/xai.mdx:181,,,,
+g-74603b4f,python,code_execution_tool,minimum_version,single,contradiction high,"1.0.3
+  python/anthropic.mdx:1875 [prose] Anthropic's `2025-08-25` code execution tools are supported since `langchain-anthropic>=1.0.3`.
+0.3.14
+  python/anthropic.mdx:1877 [prose] tool is supported since `langchain-anthropic>=0.3.14`.",src/oss/python/integrations/chat/anthropic.mdx:1875 src/oss/python/integrations/chat/anthropic.mdx:1877,,,,
+g-39d7e254,python,computer_use_tool,supported_model,free,,"claude opus 4.5, claude 4, or claude sonnet 3.7
+  python/anthropic.mdx:2040 [prose] Claude Opus 4.5, Claude 4, or Claude Sonnet 3.7
+claude 4 and claude sonnet 3.7
+  python/anthropic.mdx:2206 [prose] `computer_20250124` (for Claude 4 and Claude Sonnet 3.7)
+claude opus 4.5
+  python/anthropic.mdx:2207 [prose] `computer_20251124` (for Claude Opus 4.5)",src/oss/python/integrations/chat/anthropic.mdx:2040 src/oss/python/integrations/chat/anthropic.mdx:2206 src/oss/python/integrations/chat/anthropic.mdx:2207,,,,
+g-d6e85072,twin google_generative_ai.mdx,context_caching,ttl_seconds,free,divergence low,"300
+  javascript/google_generative_ai.mdx:603 [code] ttlSeconds: 300,
+300s
+  python/google_generative_ai.mdx:1401 [code] ttl=""300s""",src/oss/javascript/integrations/chat/google_generative_ai.mdx:603 src/oss/python/integrations/chat/google_generative_ai.mdx:1401,,,,
+g-2f464e9a,python,effort_level,supported_model,free,,"claude opus 4.6
+  python/anthropic.mdx:815 [prose] The `max` effort level is only supported on Claude Opus 4.6.
+claude opus 4.7
+  python/anthropic.mdx:815 [prose] The `xhigh` effort level is supported on Claude Opus 4.7.",src/oss/python/integrations/chat/anthropic.mdx:815 src/oss/python/integrations/chat/anthropic.mdx:815,,,,
+g-7fbb6fa5,python,fireworks,model,free,divergence low,"accounts/fireworks/models/kimi-k2-instruct-0905
+  python/fireworks.mdx:74 [code] model=""accounts/fireworks/models/kimi-k2-instruct-0905"",
+  python/fireworks.mdx:98 [code] 'model_name': 'accounts/fireworks/models/kimi-k2-instruct-0905'
+accounts/fireworks/models/deepseek-v4-pro
+  python/fireworks.mdx:116 [code] model = ChatFireworks(model=""accounts/fireworks/models/deepseek-v4-pro"")",src/oss/python/integrations/chat/fireworks.mdx:74 src/oss/python/integrations/chat/fireworks.mdx:98 src/oss/python/integrations/chat/fireworks.mdx:116,,,,
+g-d9721672,twin fireworks.mdx,fireworks,model,free,divergence low,"accounts/fireworks/models/llama-v3p1-70b-instruct
+  javascript/fireworks.mdx:77 [code] model: ""accounts/fireworks/models/llama-v3p1-70b-instruct"",
+accounts/fireworks/models/kimi-k2-instruct-0905
+  python/fireworks.mdx:74 [code] model=""accounts/fireworks/models/kimi-k2-instruct-0905"",
+  python/fireworks.mdx:98 [code] 'model_name': 'accounts/fireworks/models/kimi-k2-instruct-0905'
+accounts/fireworks/models/deepseek-v4-pro
+  python/fireworks.mdx:116 [code] model = ChatFireworks(model=""accounts/fireworks/models/deepseek-v4-pro"")",src/oss/javascript/integrations/chat/fireworks.mdx:77 src/oss/python/integrations/chat/fireworks.mdx:74 src/oss/python/integrations/chat/fireworks.mdx:98 src/oss/python/integrations/chat/fireworks.mdx:116,,,,
+g-7d45895e,python,fireworks,reasoning_effort,free,,"forwarded unchanged as the reasoning_effort request field
+  python/fireworks.mdx:111 [prose] `ChatFireworks` forwards it unchanged as the `reasoning_effort` request field.
+high
+  python/fireworks.mdx:119 [code] reasoning_effort=""high"",",src/oss/python/integrations/chat/fireworks.mdx:111 src/oss/python/integrations/chat/fireworks.mdx:119,,,,
+g-66365f91,javascript,google_genai,max_retries,free,,"2
+  javascript/google_generative_ai.mdx:98 [code] maxRetries: 2,
+0
+  javascript/google_generative_ai.mdx:279 [code] maxRetries: 0,
+  javascript/google_generative_ai.mdx:477 [code] maxRetries: 0,
+  javascript/google_vertex_ai.mdx:198 [code] maxRetries: 0,",src/oss/javascript/integrations/chat/google_generative_ai.mdx:98 src/oss/javascript/integrations/chat/google_generative_ai.mdx:279 src/oss/javascript/integrations/chat/google_generative_ai.mdx:477 src/oss/javascript/integrations/chat/google_vertex_ai.mdx:198,,,,
+g-1e01488b,javascript,google_genai,model,free,divergence low,"gemini-2.5-pro
+  javascript/google_generative_ai.mdx:96 [code] model: ""gemini-2.5-pro"",
+  javascript/google_generative_ai.mdx:190 [code] model: ""gemini-2.5-pro"",
+  javascript/google_vertex_ai.mdx:196 [code] model: ""gemini-2.5-pro""
+  javascript/google_vertex_ai.mdx:242 [code] model: ""gemini-2.5-pro""
+gemini-pro
+  javascript/google_generative_ai.mdx:234 [code] model: ""gemini-pro"",
+models/gemini-2.5-flash
+  javascript/google_generative_ai.mdx:586 [code] model: ""models/gemini-2.5-flash"",",src/oss/javascript/integrations/chat/google_generative_ai.mdx:96 src/oss/javascript/integrations/chat/google_generative_ai.mdx:190 src/oss/javascript/integrations/chat/google_vertex_ai.mdx:196 src/oss/javascript/integrations/chat/google_vertex_ai.mdx:242 src/oss/javascript/integrations/chat/google_generative_ai.mdx:234 src/oss/javascript/integrations/chat/google_generative_ai.mdx:586,,,,
+g-a067e62b,twin google_generative_ai.mdx,google_genai,model,free,divergence low,"gemini-2.5-pro
+  javascript/google_generative_ai.mdx:96 [code] model: ""gemini-2.5-pro"",
+  javascript/google_generative_ai.mdx:190 [code] model: ""gemini-2.5-pro"",
+gemini-pro
+  javascript/google_generative_ai.mdx:234 [code] model: ""gemini-pro"",
+models/gemini-2.5-flash
+  javascript/google_generative_ai.mdx:586 [code] model: ""models/gemini-2.5-flash"",
+gemini-3.7-flash
+  python/google_generative_ai.mdx:110 [code] model=""gemini-3.7-flash""",src/oss/javascript/integrations/chat/google_generative_ai.mdx:96 src/oss/javascript/integrations/chat/google_generative_ai.mdx:190 src/oss/javascript/integrations/chat/google_generative_ai.mdx:234 src/oss/javascript/integrations/chat/google_generative_ai.mdx:586 src/oss/python/integrations/chat/google_generative_ai.mdx:110,,,,
+g-2b4ece34,python,google_genai,service_tier,free,,"flex
+  python/google_generative_ai.mdx:960 [code] service_tier=""flex""
+priority
+  python/google_generative_ai.mdx:964 [code] service_tier=""priority""",src/oss/python/integrations/chat/google_generative_ai.mdx:960 src/oss/python/integrations/chat/google_generative_ai.mdx:964,,,,
+g-264d7154,python,google_genai,temperature,free,divergence high,"1.0
+  python/google_generative_ai.mdx:183 [code] temperature=1.0,
+  python/google_generative_ai.mdx:215 [prose] it will be automatically set to `1.0`
+0.7
+  python/google_generative_ai.mdx:215 [prose] instead of the default `0.7`",src/oss/python/integrations/chat/google_generative_ai.mdx:183 src/oss/python/integrations/chat/google_generative_ai.mdx:215 src/oss/python/integrations/chat/google_generative_ai.mdx:215,,,,
+g-e3cc3678,twin google_generative_ai.mdx,google_genai,temperature,free,divergence high,"0
+  javascript/google_generative_ai.mdx:97 [code] temperature: 0,
+1.0
+  python/google_generative_ai.mdx:183 [code] temperature=1.0,
+  python/google_generative_ai.mdx:215 [prose] it will be automatically set to `1.0`
+0.7
+  python/google_generative_ai.mdx:215 [prose] instead of the default `0.7`",src/oss/javascript/integrations/chat/google_generative_ai.mdx:97 src/oss/python/integrations/chat/google_generative_ai.mdx:183 src/oss/python/integrations/chat/google_generative_ai.mdx:215 src/oss/python/integrations/chat/google_generative_ai.mdx:215,,,,
+g-4bbaa5ab,python,google_vertexai,model,free,,"gemini-3.1-pro-preview
+  python/google_vertex_ai.mdx:21 [prose] like `gemini-3.1-pro-preview`, `gemini-3.7-flash`, etc.
+gemini-3.7-flash
+  python/google_vertex_ai.mdx:21 [prose] like `gemini-3.1-pro-preview`, `gemini-3.7-flash`, etc.",src/oss/python/integrations/chat/google_vertex_ai.mdx:21 src/oss/python/integrations/chat/google_vertex_ai.mdx:21,,,,
+g-05d85baf,python,langchain_google_vertexai,minimum_version,single,contradiction high,">=2.0.11
+  python/google_vertex_ai.mdx:129 [prose] Requires `langchain-google-vertexai>=2.0.11`
+>=2.0.25
+  python/google_vertex_ai.mdx:145 [prose] Requires `langchain-google-vertexai>=2.0.25`",src/oss/python/integrations/chat/google_vertex_ai.mdx:129 src/oss/python/integrations/chat/google_vertex_ai.mdx:145,,,,
+g-98c4170b,javascript,ollama,input_tokens,free,,"35
+  javascript/ollama.mdx:108 [code] ""prompt_eval_count"": 35,
+1
+  javascript/ollama.mdx:307 [code] ""prompt_eval_count"": 1,",src/oss/javascript/integrations/chat/ollama.mdx:108 src/oss/javascript/integrations/chat/ollama.mdx:307,,,,
+g-1bf950e2,python,ollama,install_command,single,contradiction medium,"brew install ollama
+  python/ollama.mdx:45 [prose] `brew install ollama`
+install langchain-ollama
+  python/ollama.mdx:72 [code] pip install -qU langchain-ollama
+install pillow
+  python/ollama.mdx:177 [code] pip install pillow",src/oss/python/integrations/chat/ollama.mdx:45 src/oss/python/integrations/chat/ollama.mdx:72 src/oss/python/integrations/chat/ollama.mdx:177,,,,
+g-882925e1,twin ollama.mdx,ollama,install_command,single,contradiction medium,"install @langchain/core @langchain/ollama
+  javascript/ollama.mdx:59 [code] npm install @langchain/ollama @langchain/core
+  javascript/ollama.mdx:62 [code] yarn add @langchain/ollama @langchain/core
+  javascript/ollama.mdx:65 [code] pnpm add @langchain/ollama @langchain/core
+brew install ollama
+  python/ollama.mdx:45 [prose] `brew install ollama`
+install langchain-ollama
+  python/ollama.mdx:72 [code] pip install -qU langchain-ollama
+install pillow
+  python/ollama.mdx:177 [code] pip install pillow",src/oss/javascript/integrations/chat/ollama.mdx:59 src/oss/javascript/integrations/chat/ollama.mdx:62 src/oss/javascript/integrations/chat/ollama.mdx:65 src/oss/python/integrations/chat/ollama.mdx:45 src/oss/python/integrations/chat/ollama.mdx:72 src/oss/python/integrations/chat/ollama.mdx:177,,,,
+g-4b08a6b5,python,ollama,logprobs,free,divergence high,"logprobs and top_logprobs
+  python/ollama.mdx:268 [prose] via the `logprobs` and `top_logprobs` parameters.
+true
+  python/ollama.mdx:275 [code] llm = ChatOllama(model=""llama3.1"", logprobs=True)",src/oss/python/integrations/chat/ollama.mdx:268 src/oss/python/integrations/chat/ollama.mdx:275,,,,
+g-ed3f5803,twin ollama.mdx,ollama,logprobs,free,divergence high,"false
+  javascript/ollama.mdx:38 [prose] | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ |
+logprobs and top_logprobs
+  python/ollama.mdx:268 [prose] via the `logprobs` and `top_logprobs` parameters.
+true
+  python/ollama.mdx:275 [code] llm = ChatOllama(model=""llama3.1"", logprobs=True)",src/oss/javascript/integrations/chat/ollama.mdx:38 src/oss/python/integrations/chat/ollama.mdx:268 src/oss/python/integrations/chat/ollama.mdx:275,,,,
+g-3270d456,python,ollama,model,free,,"gpt-oss
+  python/ollama.mdx:14 [prose] such as `gpt-oss`, locally.
+llama3.1
+  python/ollama.mdx:83 [code] model=""llama3.1"",
+  python/ollama.mdx:275 [code] llm = ChatOllama(model=""llama3.1"", logprobs=True)
+gpt-oss:20b
+  python/ollama.mdx:151 [code] model=""gpt-oss:20b"",
+bakllava
+  python/ollama.mdx:229 [code] llm = ChatOllama(model=""bakllava"", temperature=0)",src/oss/python/integrations/chat/ollama.mdx:14 src/oss/python/integrations/chat/ollama.mdx:83 src/oss/python/integrations/chat/ollama.mdx:275 src/oss/python/integrations/chat/ollama.mdx:151 src/oss/python/integrations/chat/ollama.mdx:229,,,,
+g-f2fbe1af,javascript,ollama,model,free,,"llama3
+  javascript/ollama.mdx:77 [code] model: ""llama3"",
+  javascript/ollama.mdx:102 [code] ""model"": ""llama3"",
+llama3-groq-tool-use
+  javascript/ollama.mdx:152 [code] model: ""llama3-groq-tool-use"",
+  javascript/ollama.mdx:170 [code] ""model"": ""llama3-groq-tool-use"",
+llama3.1
+  javascript/ollama.mdx:217 [code] model: ""llama3.1"",
+  javascript/ollama.mdx:249 [code] model: ""llama3.1"",
+llava
+  javascript/ollama.mdx:276 [code] model: ""llava"",
+  javascript/ollama.mdx:301 [code] ""model"": ""llava"",",src/oss/javascript/integrations/chat/ollama.mdx:77 src/oss/javascript/integrations/chat/ollama.mdx:102 src/oss/javascript/integrations/chat/ollama.mdx:152 src/oss/javascript/integrations/chat/ollama.mdx:170 src/oss/javascript/integrations/chat/ollama.mdx:217 src/oss/javascript/integrations/chat/ollama.mdx:249 src/oss/javascript/integrations/chat/ollama.mdx:276 src/oss/javascript/integrations/chat/ollama.mdx:301,,,,
+g-27ba1f0b,python,ollama,model_storage_directory,single,contradiction high,"~/.ollama/models
+  python/ollama.mdx:51 [prose] On Mac, the models will be download to `~/.ollama/models`
+/usr/share/ollama/.ollama/models
+  python/ollama.mdx:53 [prose] `/usr/share/ollama/.ollama/models`",src/oss/python/integrations/chat/ollama.mdx:51 src/oss/python/integrations/chat/ollama.mdx:53,,,,
+g-bd266045,javascript,ollama,output_tokens,free,,"43
+  javascript/ollama.mdx:110 [code] ""eval_count"": 43,
+127
+  javascript/ollama.mdx:309 [code] ""eval_count"": 127,",src/oss/javascript/integrations/chat/ollama.mdx:110 src/oss/javascript/integrations/chat/ollama.mdx:309,,,,
+g-a3133c0f,twin ollama.mdx,ollama,serializable,single,,"beta
+  javascript/ollama.mdx:30 [prose] | beta |
+false
+  python/ollama.mdx:32 [prose] | @[`ChatOllama`] | @[`langchain-ollama`] | ❌ | ✅ |",src/oss/javascript/integrations/chat/ollama.mdx:30 src/oss/python/integrations/chat/ollama.mdx:32,,,,
+g-6891155b,javascript,ollama,structured_output,free,,"true
+  javascript/ollama.mdx:10 [prose] structured_output: true
+  javascript/ollama.mdx:38 [prose] | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ |
+all models
+  javascript/ollama.mdx:202 [prose] Ollama natively supports [structured output](https://docs.ollama.com/capabilities/structured-outputs) for all models",src/oss/javascript/integrations/chat/ollama.mdx:10 src/oss/javascript/integrations/chat/ollama.mdx:38 src/oss/javascript/integrations/chat/ollama.mdx:202,,,,
+g-08972ba1,twin openai.mdx,openai,install_command,single,,"install @langchain/core @langchain/openai
+  javascript/openai.mdx:72 [code] npm install @langchain/openai @langchain/core
+  javascript/openai.mdx:75 [code] yarn add @langchain/openai @langchain/core
+  javascript/openai.mdx:78 [code] pnpm add @langchain/openai @langchain/core
+install langchain-openai
+  python/openai.mdx:56 [code] pip install -U langchain-openai
+  python/openai.mdx:59 [code] uv add langchain-openai",src/oss/javascript/integrations/chat/openai.mdx:72 src/oss/javascript/integrations/chat/openai.mdx:75 src/oss/javascript/integrations/chat/openai.mdx:78 src/oss/python/integrations/chat/openai.mdx:56 src/oss/python/integrations/chat/openai.mdx:59,,,,
+g-e06d80b2,python,openai,model,free,,"gpt-5-nano
+  python/openai.mdx:96 [code] model=""gpt-5-nano"",
+gpt-5.4-mini
+  python/openai.mdx:157 [code] llm = ChatOpenAI(model=""gpt-5.4-mini"", stream_usage=True)
+gpt-5-mini
+  python/openai.mdx:180 [code] model=""gpt-5-mini"",  # Your Azure deployment name
+o4-mini
+  python/openai.mdx:1969 [code] llm = ChatOpenAI(model=""o4-mini"", service_tier=""flex"")
+gpt-5.5
+  python/openai.mdx:363 [code] llm = ChatOpenAI(model=""gpt-5.5"", use_responses_api=True)",src/oss/python/integrations/chat/openai.mdx:96 src/oss/python/integrations/chat/openai.mdx:157 src/oss/python/integrations/chat/openai.mdx:180 src/oss/python/integrations/chat/openai.mdx:1969 src/oss/python/integrations/chat/openai.mdx:363,,,,
+g-d7455b99,twin openai.mdx,openai,serializable,single,,"true
+  javascript/openai.mdx:37 [prose] | ✅ | ✅ | ![NPM - Downloads]
+beta
+  python/openai.mdx:40 [prose] | @[`ChatOpenAI`] | @[`langchain-openai`] | beta |",src/oss/javascript/integrations/chat/openai.mdx:37 src/oss/python/integrations/chat/openai.mdx:40,,,,
+g-45b9b741,twin openai.mdx,openai,stream_usage,free,divergence medium,"false
+  javascript/openai.mdx:196 [code] streamUsage: false,
+true
+  python/openai.mdx:152 [prose] set `stream_usage=True` as an initialization parameter",src/oss/javascript/integrations/chat/openai.mdx:196 src/oss/python/integrations/chat/openai.mdx:152,,,,
+g-f76577cc,javascript,openai,temperature,free,,"0
+  javascript/openai.mdx:91 [code] temperature: 0,
+0.9
+  javascript/openai.mdx:153 [code] temperature: 0.9,",src/oss/javascript/integrations/chat/openai.mdx:91 src/oss/javascript/integrations/chat/openai.mdx:153,,,,
+g-f70b4fcf,python,openrouter,max_tokens,free,,"1024
+  python/openrouter.mdx:85 [code] max_tokens=1024,
+16384
+  python/openrouter.mdx:273 [code] max_tokens=16384,",src/oss/python/integrations/chat/openrouter.mdx:85 src/oss/python/integrations/chat/openrouter.mdx:273,,,,
+g-150904f3,python,openrouter,model,free,,"anthropic/claude-sonnet-4.5
+  python/openrouter.mdx:83 [code] model=""anthropic/claude-sonnet-4.5""
+openai/gpt-5.5
+  python/openrouter.mdx:202 [code] model = ChatOpenRouter(model=""openai/gpt-5.5"")
+openai/gpt-4o
+  python/openrouter.mdx:330 [code] model = ChatOpenRouter(model=""openai/gpt-4o"")
+google/gemini-2.5-flash
+  python/openrouter.mdx:379 [code] model = ChatOpenRouter(model=""google/gemini-2.5-flash"")",src/oss/python/integrations/chat/openrouter.mdx:83 src/oss/python/integrations/chat/openrouter.mdx:202 src/oss/python/integrations/chat/openrouter.mdx:330 src/oss/python/integrations/chat/openrouter.mdx:379,,,,
+g-77e44a95,javascript,openrouter,model,free,,"anthropic/claude-sonnet-4.5
+  javascript/openrouter.mdx:81 [code] model: ""anthropic/claude-sonnet-4.5"",
+openai/gpt-5.5
+  javascript/openrouter.mdx:198 [code] const model = new ChatOpenRouter({ model: ""openai/gpt-5.5"" });",src/oss/javascript/integrations/chat/openrouter.mdx:81 src/oss/javascript/integrations/chat/openrouter.mdx:198,,,,
+g-c9f4eca5,javascript,perplexity,endpoint,single,contradiction high,"agent api
+  javascript/perplexity.mdx:142 [prose] | `true` | Agent API |
+chat completions
+  javascript/perplexity.mdx:143 [prose] | `false` | Chat Completions |",src/oss/javascript/integrations/chat/perplexity.mdx:142 src/oss/javascript/integrations/chat/perplexity.mdx:143,,,,
+g-7afcf43f,python,perplexity,model,free,,"sonar
+  python/perplexity.mdx:61 [code] model=""sonar""
+  python/perplexity.mdx:67 [code] model=""sonar""
+  python/perplexity.mdx:87 [code] model=""sonar""
+  python/perplexity.mdx:153 [code] model=""sonar""
+  python/perplexity.mdx:171 [code] model=""sonar""
+  python/perplexity.mdx:204 [code] model=""sonar""
+openai/gpt-5.5
+  python/perplexity.mdx:114 [code] model=""openai/gpt-5.5""
+  python/perplexity.mdx:124 [code] model=""openai/gpt-5.5""
+sonar-pro
+  python/perplexity.mdx:241 [code] model=""sonar-pro""",src/oss/python/integrations/chat/perplexity.mdx:61 src/oss/python/integrations/chat/perplexity.mdx:67 src/oss/python/integrations/chat/perplexity.mdx:87 src/oss/python/integrations/chat/perplexity.mdx:153 src/oss/python/integrations/chat/perplexity.mdx:171 src/oss/python/integrations/chat/perplexity.mdx:204 src/oss/python/integrations/chat/perplexity.mdx:114 src/oss/python/integrations/chat/perplexity.mdx:124 src/oss/python/integrations/chat/perplexity.mdx:241,,,,
+g-5d2bb264,twin perplexity.mdx,perplexity,required_env_var,single,,"perplexity_api_key
+  javascript/perplexity.mdx:40 [prose] set the `PERPLEXITY_API_KEY` environment variable
+pplx_api_key
+  python/perplexity.mdx:36 [prose] set the `PPLX_API_KEY` environment variable",src/oss/javascript/integrations/chat/perplexity.mdx:40 src/oss/python/integrations/chat/perplexity.mdx:36,,,,
+g-816f6437,javascript,perplexity,structured_output,free,,"true
+  javascript/perplexity.mdx:10 [prose] structured_output: true
+  javascript/perplexity.mdx:30 [prose] | ❌ | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ |
+only on certain usage tiers
+  javascript/perplexity.mdx:32 [prose] Perplexity only supports structured outputs on certain usage tiers",src/oss/javascript/integrations/chat/perplexity.mdx:10 src/oss/javascript/integrations/chat/perplexity.mdx:30 src/oss/javascript/integrations/chat/perplexity.mdx:32,,,,
+g-63c95028,python,perplexity,temperature,free,,"0
+  python/perplexity.mdx:61 [code] temperature=0
+  python/perplexity.mdx:67 [code] temperature=0
+  python/perplexity.mdx:87 [code] temperature=0
+  python/perplexity.mdx:171 [code] temperature=0
+0.7
+  python/perplexity.mdx:153 [code] temperature=0.7
+  python/perplexity.mdx:204 [code] temperature=0.7
+  python/perplexity.mdx:241 [code] temperature=0.7",src/oss/python/integrations/chat/perplexity.mdx:61 src/oss/python/integrations/chat/perplexity.mdx:67 src/oss/python/integrations/chat/perplexity.mdx:87 src/oss/python/integrations/chat/perplexity.mdx:171 src/oss/python/integrations/chat/perplexity.mdx:153 src/oss/python/integrations/chat/perplexity.mdx:204 src/oss/python/integrations/chat/perplexity.mdx:241,,,,
+g-75149061,python,perplexity,use_responses_api,free,,"null
+  python/perplexity.mdx:104 [prose] `None` (default)
+true
+  python/perplexity.mdx:115 [code] use_responses_api=True",src/oss/python/integrations/chat/perplexity.mdx:104 src/oss/python/integrations/chat/perplexity.mdx:115,,,,
+g-01ffc8b4,javascript,perplexity,use_responses_api,free,,"useresponsesapi
+  javascript/perplexity.mdx:137 [prose] by setting `useResponsesApi`
+true
+  javascript/perplexity.mdx:152 [code] useResponsesApi: true",src/oss/javascript/integrations/chat/perplexity.mdx:137 src/oss/javascript/integrations/chat/perplexity.mdx:152,,,,
+g-749a9379,python,perplexity_agent_api,model,free,,"openai/gpt-5.5
+  python/perplexity.mdx:146 [prose] `openai/gpt-5.5`
+anthropic/claude-sonnet-4-6
+  python/perplexity.mdx:146 [prose] `anthropic/claude-sonnet-4-6`
+google/gemini-3-1-pro
+  python/perplexity.mdx:146 [prose] `google/gemini-3-1-pro`",src/oss/python/integrations/chat/perplexity.mdx:146 src/oss/python/integrations/chat/perplexity.mdx:146 src/oss/python/integrations/chat/perplexity.mdx:146,,,,
+g-9ee2884b,twin openai.mdx,predicted_outputs,supported_model,free,divergence high,"gpt-4o and gpt-4o-mini series
+  javascript/openai.mdx:1180 [prose] (such as their `gpt-4o` and `gpt-4o-mini` series)
+gpt-4o and gpt-4o-mini
+  python/openai.mdx:1714 [prose] Some OpenAI models (such as their `gpt-4o` and `gpt-4o-mini` series) support",src/oss/javascript/integrations/chat/openai.mdx:1180 src/oss/python/integrations/chat/openai.mdx:1714,,,,
+g-b10992d9,python,provider_routing,allow_fallbacks,free,,"true
+  python/openrouter.mdx:631 [code] ""allow_fallbacks"": True,
+false
+  python/openrouter.mdx:715 [code] ""allow_fallbacks"": False,",src/oss/python/integrations/chat/openrouter.mdx:631 src/oss/python/integrations/chat/openrouter.mdx:715,,,,
+g-aa851640,javascript,provider_routing,allow_fallbacks,free,,"true
+  javascript/openrouter.mdx:348 [code] allow_fallbacks: true,
+false
+  javascript/openrouter.mdx:414 [code] allow_fallbacks: false,",src/oss/javascript/integrations/chat/openrouter.mdx:348 src/oss/javascript/integrations/chat/openrouter.mdx:414,,,,
+g-f02fad8c,python,provider_routing,sort,free,,"throughput
+  python/openrouter.mdx:660 [code] openrouter_provider={""sort"": ""throughput""},
+latency
+  python/openrouter.mdx:666 [code] openrouter_provider={""sort"": ""latency""},",src/oss/python/integrations/chat/openrouter.mdx:660 src/oss/python/integrations/chat/openrouter.mdx:666,,,,
+g-1ebd5610,javascript,provider_routing,sort,free,,"throughput
+  javascript/openrouter.mdx:374 [code] provider: { sort: ""throughput"" },
+latency
+  javascript/openrouter.mdx:379 [code] provider: { sort: ""latency"" },",src/oss/javascript/integrations/chat/openrouter.mdx:374 src/oss/javascript/integrations/chat/openrouter.mdx:379,,,,
+g-49e1e18e,python,reasoning_effort,minimum_version,single,contradiction high,"1.5.3
+  python/anthropic.mdx:836 [prose] `reasoning_effort` requires `langchain-anthropic>=1.5.3`.
+>=4.3.1
+  python/google_generative_ai.mdx:1006 [prose] `reasoning_effort` as a standard parameter requires `langchain-google-genai>=4.3.1`.
+>=1.4.1
+  python/openai.mdx:1561 [prose] `reasoning_effort` as a standard parameter requires `langchain-openai>=1.4.1`.
+>=1.3.0
+  python/xai.mdx:189 [prose] `langchain-xai>=1.3.0`",src/oss/python/integrations/chat/anthropic.mdx:836 src/oss/python/integrations/chat/google_generative_ai.mdx:1006 src/oss/python/integrations/chat/openai.mdx:1561 src/oss/python/integrations/chat/xai.mdx:189,,,,
+g-a5ce24fa,python,reasoning_models,models,free,,"anthropic/claude-sonnet-4.5, deepseek/deepseek-r1
+  python/openrouter.mdx:268 [prose] For models that support reasoning (e.g., `anthropic/claude-sonnet-4.5`, `deepseek/deepseek-r1`)
+deepseek/deepseek-r1, openai/o3
+  python/openrouter.mdx:512 [prose] (e.g., `deepseek/deepseek-r1`, `openai/o3`)",src/oss/python/integrations/chat/openrouter.mdx:268 src/oss/python/integrations/chat/openrouter.mdx:512,,,,
+g-d664d1da,twin openai.mdx,strict_argument,minimum_version,single,,"0.2.6
+  javascript/openai.mdx:399 [prose] Requires `@langchain/openai >= 0.2.6`
+>=0.1.21
+  python/openai.mdx:304 [prose] **Requires `langchain-openai>=0.1.21`**",src/oss/javascript/integrations/chat/openai.mdx:399 src/oss/python/integrations/chat/openai.mdx:304,,,,
+g-24a92448,python,tool_search,tool_type,free,,"tool_search_tool_regex_20251119
+  python/anthropic.mdx:2826 [prose] `tool_search_tool_regex_20251119`
+tool_search_tool_bm25_20251119
+  python/anthropic.mdx:2827 [prose] `tool_search_tool_bm25_20251119`",src/oss/python/integrations/chat/anthropic.mdx:2826 src/oss/python/integrations/chat/anthropic.mdx:2827,,,,
+g-6486fbf5,javascript,web_search_tool,type,free,,"web_search_20250305
+  javascript/anthropic.mdx:1024 [code] { type: ""web_search_20250305"", name: ""web_search"" }
+web_search_preview
+  javascript/openai.mdx:537 [prose] pass `{""type"": ""web_search_preview""}` to the model",src/oss/javascript/integrations/chat/anthropic.mdx:1024 src/oss/javascript/integrations/chat/openai.mdx:537,,,,
+g-63e86e32,python,with_structured_output,default_method,single,contradiction high,"function calling
+  python/anthropic.mdx:1622 [prose] otherwise the method defaults to using function calling
+json_schema
+  python/google_generative_ai.mdx:887 [prose] `method=""json_schema""` (default)
+function_calling
+  python/openrouter.mdx:192 [prose] `function_calling` (default)",src/oss/python/integrations/chat/anthropic.mdx:1622 src/oss/python/integrations/chat/google_generative_ai.mdx:887 src/oss/python/integrations/chat/openrouter.mdx:192,,,,
+g-0bbf73a9,javascript,with_structured_output,method,free,divergence low,"functioncalling
+  javascript/ollama.mdx:236 [prose] method: ""functionCalling""
+jsonschema
+  javascript/openrouter.mdx:209 [code] method: ""jsonSchema"", // [!code highlight]",src/oss/javascript/integrations/chat/ollama.mdx:236 src/oss/javascript/integrations/chat/openrouter.mdx:209,,,,
+g-83c2744a,twin openrouter.mdx,with_structured_output,method,free,divergence low,"jsonschema
+  javascript/openrouter.mdx:209 [code] method: ""jsonSchema"", // [!code highlight]
+json_schema
+  python/openrouter.mdx:211 [code] structured_model = model.with_structured_output(Movie, method=""json_schema"")",src/oss/javascript/integrations/chat/openrouter.mdx:209 src/oss/python/integrations/chat/openrouter.mdx:211,,,,
+g-ce98f3f7,twin xai.mdx,xai,serializable,single,,"true
+  javascript/xai.mdx:28 [prose] | ✅ | ✅ |
+beta
+  python/xai.mdx:32 [prose] beta",src/oss/javascript/integrations/chat/xai.mdx:28 src/oss/python/integrations/chat/xai.mdx:32,,,,
