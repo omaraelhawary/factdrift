@@ -7,10 +7,11 @@ Two kinds of finding:
   are compared per language because package names, install commands and
   feature support legitimately differ between the Python and JavaScript
   libraries.
-- divergence: a "free" attribute of one entity has values in both the
-  Python and JavaScript docs, and the two sets share nothing. Neither is wrong on its
-  own, but the two docs teach different things, which is how stale examples
-  (an old model id in one language) show up.
+- divergence: a "free" attribute of one entity has values on both the
+  Python and the JavaScript version of the same page, and the two sets share
+  nothing. Pages without a twin in the other language are not compared.
+  Neither is wrong on its own, but the two docs teach different things,
+  which is how stale examples (an old model id in one language) show up.
 
 Severity follows where the values were written. Prose is what readers trust,
 so a disagreement between two prose statements ranks above one involving
@@ -163,6 +164,15 @@ def _disagree(values: Iterable[str]) -> bool:
     return len(values - covered) > 1
 
 
+_LANGUAGE_DIR = re.compile(r"/(?:python|javascript)/")
+
+
+def _twin_key(source_path: str) -> str:
+    """The same page in either language: src/oss/python/x.mdx and
+    src/oss/javascript/x.mdx share a key."""
+    return _LANGUAGE_DIR.sub("/{language}/", source_path, count=1)
+
+
 def detect(claims: list[dict[str, Any]], *, divergence: bool = True) -> list[Finding]:
     """Return findings, most severe first. Claims must carry entity_id,
     attribute_id, language and cardinality (see normalize.normalize_claims)."""
@@ -179,17 +189,27 @@ def detect(claims: list[dict[str, Any]], *, divergence: bool = True) -> list[Fin
                         )
                     )
         elif divergence:
-            python = {normalize_value(c["value"]) for c in group if c["language"] == "python"}
-            javascript = {
-                normalize_value(c["value"]) for c in group if c["language"] == "javascript"
-            }
-            python.discard(None)
-            javascript.discard(None)
-            if python and javascript and not python & javascript:
-                by_value = _by_value(group)
-                findings.append(
-                    Finding("divergence", _severity(by_value), entity_id, attribute_id, by_value)
-                )
+            pages: dict[str, list[dict[str, Any]]] = defaultdict(list)
+            for claim in group:
+                pages[_twin_key(claim["source_path"])].append(claim)
+            for _, page_claims in sorted(pages.items()):
+                python = {
+                    normalize_value(c["value"]) for c in page_claims if c["language"] == "python"
+                }
+                javascript = {
+                    normalize_value(c["value"])
+                    for c in page_claims
+                    if c["language"] == "javascript"
+                }
+                python.discard(None)
+                javascript.discard(None)
+                if python and javascript and not python & javascript:
+                    by_value = _by_value(page_claims)
+                    findings.append(
+                        Finding(
+                            "divergence", _severity(by_value), entity_id, attribute_id, by_value
+                        )
+                    )
     findings.sort(
         key=lambda f: (KIND_RANK[f.kind], SEVERITY_RANK[f.severity], f.entity_id, f.attribute_id)
     )

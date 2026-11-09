@@ -168,3 +168,24 @@ def test_install_command_with_extra_packages_agrees():
     assert len(detect(claims + [
         norm("anthropic", "install_command", "pip install anthropic-langchain", context="code"),
     ])) == 1
+
+
+def on_page(claim, page):
+    return {**claim, "source_path": f"src/oss/{claim['language']}/integrations/chat/{page}.mdx"}
+
+
+def test_divergence_compares_only_the_same_providers_pages():
+    claims = [
+        on_page(norm("x", "model", "a", cardinality="free"), "anthropic"),
+        on_page(norm("x", "model", "a", language="javascript", cardinality="free"), "anthropic"),
+        on_page(norm("x", "model", "b", language="javascript", cardinality="free"), "index"),
+    ]
+    # The python anthropic page shares a value with its javascript twin; the
+    # javascript index page has no python twin, so it is not compared.
+    assert detect(claims) == []
+    paired = claims + [on_page(norm("x", "model", "c", cardinality="free"), "index")]
+    findings = detect(paired)
+    assert len(findings) == 1
+    paths = {s["source_path"] for sites in findings[0].values.values() for s in sites}
+    assert paths == {"src/oss/python/integrations/chat/index.mdx",
+                     "src/oss/javascript/integrations/chat/index.mdx"}
