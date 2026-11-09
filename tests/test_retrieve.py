@@ -151,3 +151,15 @@ def test_the_index_is_reused_when_chunks_are_unchanged(tmp_path):
     first = Index(chunks, client=client, embedding_function=WordEmbedding())
     second = Index(chunks, client=client, embedding_function=WordEmbedding())
     assert (first.built, second.built) == (len(chunks), 0)
+
+
+def test_a_value_the_answer_does_not_state_is_ignored():
+    # The model filled `value` from the excerpts, not from its own answer.
+    assert served_value(FINDING, "See the provider docs for model names.", "model-b") is None
+
+
+def test_a_leading_yes_or_no_is_the_served_polarity():
+    finding = {**FINDING, "values": {"true": FINDING["values"]["model-a"],
+                                     "false": FINDING["values"]["model-b"]}}
+    assert served_value(finding, "Yes", "logprobs") == "true"
+    assert served_value(finding, "No, it does not.", "") == "false"

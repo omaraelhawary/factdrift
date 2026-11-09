@@ -55,9 +55,18 @@ QUESTION_SCHEMA = {
 }
 
 
+# The fields of detect.Finding.as_dict.
+_REPORTED = ("kind", "severity", "entity_id", "attribute_id", "values")
+
+
 def finding_id(finding: dict[str, Any]) -> str:
-    """Stable id for a finding: a hash of everything detect reported."""
-    canonical = json.dumps(finding, sort_keys=True, ensure_ascii=False)
+    """Stable id for a finding: a hash of the fields detect reported.
+
+    Records later stages add to a finding (retrieve's served record) do not
+    change its id.
+    """
+    reported = {key: finding[key] for key in _REPORTED if key in finding}
+    canonical = json.dumps(reported, sort_keys=True, ensure_ascii=False)
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:16]
 
 
@@ -110,8 +119,14 @@ def mentions(text: str, value: str) -> bool:
 
     `4.8` does not match inside `4.85`, and `v3` does not match inside `v30`.
     """
-    pattern = r"(?<![\w.])" + re.escape(value.strip().casefold()) + r"(?!\w|\.\w)"
-    return re.search(pattern, text.casefold()) is not None
+    value = value.strip().casefold()
+    if not value:
+        return False
+    # Guard an edge only where the value has a word character, so `>=1.4.1`
+    # is found right after `langchain-openai`.
+    before = r"(?<![\w.])" if re.match(r"\w", value) else ""
+    after = r"(?!\w|\.\w)" if re.search(r"\w$", value) else ""
+    return re.search(before + re.escape(value) + after, text.casefold()) is not None
 
 
 @dataclass

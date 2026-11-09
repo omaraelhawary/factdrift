@@ -134,3 +134,15 @@ def test_a_value_at_the_end_of_a_sentence_is_mentioned():
     assert mentions("The default version is 4.8.", "4.8")
     assert not mentions("Use 4.8.1 instead.", "4.8")
     assert not mentions("Use 4.85 instead.", "4.8")
+
+
+def test_finding_id_ignores_records_added_after_detect():
+    assert finding_id({**FINDING, "served": {"served": "x"}}) == finding_id(FINDING)
+
+
+def test_a_value_that_starts_with_a_symbol_is_found_after_a_word():
+    from factdrift.questions import mentions
+
+    assert mentions("It needs langchain-openai>=1.4.1.", ">=1.4.1")
+    assert not mentions("It needs langchain-openai>=1.4.10.", ">=1.4.1")
+    assert mentions("Set it in ~/.ollama/models", "~/.ollama/models")
