@@ -55,9 +55,18 @@ QUESTION_SCHEMA = {
 }
 
 
+# The fields of detect.Finding.as_dict.
+_REPORTED = ("kind", "severity", "entity_id", "attribute_id", "values")
+
+
 def finding_id(finding: dict[str, Any]) -> str:
-    """Stable id for a finding: a hash of everything detect reported."""
-    canonical = json.dumps(finding, sort_keys=True, ensure_ascii=False)
+    """Stable id for a finding: a hash of the fields detect reported.
+
+    Records later stages add to a finding (retrieve's served record) do not
+    change its id.
+    """
+    reported = {key: finding[key] for key in _REPORTED if key in finding}
+    canonical = json.dumps(reported, sort_keys=True, ensure_ascii=False)
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:16]
 
 
