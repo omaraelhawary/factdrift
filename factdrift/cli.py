@@ -17,6 +17,7 @@ import anthropic
 from factdrift import detect as detect_mod
 from factdrift import extract as extract_mod
 from factdrift import normalize as normalize_mod
+from factdrift import questions as questions_mod
 from factdrift.ingest import (
     Document,
     find_sources,
@@ -79,7 +80,10 @@ def cmd_ingest(args: argparse.Namespace) -> int:
 
 
 def _fmt_cost(value: float | None) -> str:
-    return "unpriced" if value is None else f"${value:,.2f}"
+    if value is None:
+        return "unpriced"
+    # Cents hide a subset run that costs a fraction of one.
+    return f"${value:,.2f}" if value >= 1 else f"${value:.4f}"
 
 
 def _make_backend(args: argparse.Namespace) -> Any:
@@ -363,6 +367,82 @@ def cmd_detect(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_questions(args: argparse.Namespace) -> int:
+    findings = json.loads(args.findings.read_text(encoding="utf-8"))
+    selected = findings if args.limit is None else findings[: args.limit]
+    if args.backend == "anthropic":
+        args.model = args.model or questions_mod.DEFAULT_MODEL
+    client = _make_backend(args)
+    if client is None:
+        return 2
+    effort = None
+    if args.backend == "anthropic":
+        client = extract_mod.AnthropicBackend(client, effort=args.effort)
+        effort = args.effort
+
+    prices = dict(extract_mod.PRICES)
+    if args.backend == "ollama":
+        prices.setdefault(args.model, (0.0, 0.0))  # runs locally, no per-token charge
+    if args.price_in is not None and args.price_out is not None:
+        prices[args.model] = (args.price_in, args.price_out)
+
+    started = time.monotonic()
+    try:
+        result = questions_mod.generate_questions(
+            selected,
+            client,
+            model=args.model,
+            max_tokens=args.max_tokens,
+            cache_dir=args.cache_dir,
+            effort=effort,
+        )
+    except (extract_mod.BackendUnavailable, anthropic.AuthenticationError) as exc:
+        print(f"{args.backend}: {exc}", file=sys.stderr)
+        return 2
+    elapsed = time.monotonic() - started
+
+    failed = [q for q in result.questions if q["error"]]
+    print(
+        f"{len(selected)} of {len(findings)} findings: "
+        f"{len(selected) - len(failed)} questions, {len(failed)} failed, "
+        f"{result.cached} from cache, {result.api_calls} requests"
+    )
+    for q in failed:
+        print(f"  {q['entity_id']}/{q['attribute_id']}: {q['error']}")
+    print(
+        f"tokens: {result.usage.input_tokens:,} in / {result.usage.output_tokens:,} out, "
+        f"cost {_fmt_cost(extract_mod.cost(result.usage, args.model, prices))}, "
+        f"{elapsed:.1f}s"
+    )
+    if result.api_calls and len(selected) < len(findings):
+        scale = len(findings) / result.api_calls
+        projected = extract_mod.Usage(
+            input_tokens=round(result.usage.input_tokens * scale),
+            output_tokens=round(result.usage.output_tokens * scale),
+        )
+        print(
+            f"projected for all {len(findings)} findings: "
+            f"{projected.input_tokens:,} in / {projected.output_tokens:,} out, "
+            f"cost {_fmt_cost(extract_mod.cost(projected, args.model, prices))}, "
+            f"{elapsed * scale:,.0f}s"
+        )
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    args.out.write_text(
+        json.dumps(
+            {
+                "model": args.model,
+                "prompt_version": questions_mod.PROMPT_VERSION,
+                "questions": result.questions,
+            },
+            indent=2,
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    print(f"wrote {args.out}")
+    return 0
+
+
 def _backend_options(default_backend: str) -> argparse.ArgumentParser:
     """Backend flags, as a fresh parent parser per command so each command
     can have its own default backend (parents share action objects)."""
@@ -496,6 +576,32 @@ def build_parser() -> argparse.ArgumentParser:
         help="report contradictions only, not cross-language divergence",
     )
     detect.set_defaults(func=cmd_detect)
+
+    questions = sub.add_parser(
+        "questions",
+        parents=[_backend_options("anthropic")],
+        help="write one user question per finding",
+    )
+    questions.add_argument("--findings", type=Path, required=True, help="output of detect --out")
+    questions.add_argument("--out", type=Path, required=True)
+    questions.add_argument(
+        "--limit", type=int, help="only the first N findings, for a cost check"
+    )
+    questions.add_argument(
+        "--effort",
+        default="low",
+        choices=["low", "medium", "high", "xhigh", "max"],
+        help="anthropic backend only (default: %(default)s)",
+    )
+    questions.add_argument(
+        "--max-tokens", type=int, default=questions_mod.DEFAULT_MAX_TOKENS
+    )
+    questions.add_argument(
+        "--cache-dir", type=Path, default=questions_mod.DEFAULT_CACHE_DIR
+    )
+    questions.add_argument("--price-in", type=float, help="dollars per million input tokens")
+    questions.add_argument("--price-out", type=float, help="dollars per million output tokens")
+    questions.set_defaults(func=cmd_questions)
 
     return parser
 

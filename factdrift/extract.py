@@ -47,6 +47,11 @@ PRICES = {
     "claude-opus-4-8": (5.0, 25.0),
     "claude-sonnet-5": (3.0, 15.0),
     "claude-haiku-4-5": (1.0, 5.0),
+    # Haiku 5.5 doubles to (0.50, 2.50) above 100K prompt tokens; no request
+    # in this pipeline comes close.
+    "claude-haiku-5-5": (0.10, 0.50),
+    "claude-sonnet-5-5": (2.0, 10.0),
+    "claude-opus-5-5": (4.0, 20.0),
 }
 
 CONTEXTS = ("prose", "code")
@@ -439,6 +444,54 @@ class OpenRouterBackend:
         return str(text), usage, stop_reason
 
 
+class AnthropicBackend:
+    """Sends one schema-constrained request to the Anthropic API.
+
+    Gives the Anthropic SDK the same complete_json interface as the HTTP
+    backends, so passes other than extraction can run on any of the three.
+    The API accepts no temperature setting; effort is the knob it has.
+    """
+
+    def __init__(self, client: Any, *, effort: str = DEFAULT_EFFORT) -> None:
+        self.client = client
+        self.effort = effort
+
+    def complete_json(
+        self,
+        *,
+        system: str,
+        user: str,
+        schema: dict[str, Any],
+        model: str,
+        max_tokens: int,
+        schema_name: str = "claims",
+    ) -> tuple[str, Usage, str | None]:
+        """One schema-constrained request. Returns raw text, usage, stop reason."""
+        with self.client.messages.stream(
+            model=model,
+            max_tokens=max_tokens,
+            system=system,
+            output_config={
+                "effort": self.effort,
+                "format": {"type": "json_schema", "schema": schema},
+            },
+            messages=[{"role": "user", "content": user}],
+        ) as stream:
+            message = stream.get_final_message()
+        return _response_text(message), _usage(message), message.stop_reason
+
+
+def _usage(message: Any) -> Usage:
+    usage = message.usage
+    return Usage(
+        input_tokens=getattr(usage, "input_tokens", 0) or 0,
+        output_tokens=getattr(usage, "output_tokens", 0) or 0,
+        cache_read_input_tokens=getattr(usage, "cache_read_input_tokens", 0) or 0,
+        cache_creation_input_tokens=getattr(usage, "cache_creation_input_tokens", 0)
+        or 0,
+    )
+
+
 def call_model(
     client: Any,
     document: Document,
@@ -463,18 +516,7 @@ def call_model(
         messages=[{"role": "user", "content": user_message(document)}],
     ) as stream:
         message = stream.get_final_message()
-
-    usage = Usage(
-        input_tokens=getattr(message.usage, "input_tokens", 0) or 0,
-        output_tokens=getattr(message.usage, "output_tokens", 0) or 0,
-        cache_read_input_tokens=getattr(message.usage, "cache_read_input_tokens", 0)
-        or 0,
-        cache_creation_input_tokens=getattr(
-            message.usage, "cache_creation_input_tokens", 0
-        )
-        or 0,
-    )
-    return _response_text(message), usage, message.stop_reason
+    return _response_text(message), _usage(message), message.stop_reason
 
 
 def extract_document(

@@ -54,3 +54,30 @@ def test_normalize_end_to_end_with_a_fake_backend(tmp_path, monkeypatch):
     payload = json.loads(dest.read_text())
     assert payload["claims"][0]["cardinality"] == "single"
     assert payload["cardinality"] == {"package_name": "single"}
+
+
+def test_questions_runs_a_subset_and_projects_the_full_cost(tmp_path, monkeypatch, capsys):
+    from tests.test_questions import BOOLEAN, FINDING, FakeBackend
+
+    backend = FakeBackend("Where do I get a Together AI key?")
+    monkeypatch.setattr(cli, "_make_backend", lambda args: backend)
+    findings = tmp_path / "findings.json"
+    findings.write_text(json.dumps([FINDING, BOOLEAN]))
+    dest = tmp_path / "questions.json"
+    rc = cli.main([
+        "questions", "--backend", "openrouter", "--model", "claude-haiku-5-5",
+        "--findings", str(findings), "--out", str(dest), "--limit", "1",
+        "--cache-dir", str(tmp_path / "c"),
+    ])
+    assert rc == 0
+    assert len(backend.requests) == 1
+    out = capsys.readouterr().out
+    assert "1 of 2 findings: 1 questions, 0 failed" in out
+    assert "projected for all 2 findings: 600 in / 40 out" in out
+    payload = json.loads(dest.read_text())
+    assert payload["questions"][0]["question"] == "Where do I get a Together AI key?"
+
+
+def test_questions_defaults_to_anthropic_at_low_effort():
+    args = cli.build_parser().parse_args(["questions", "--findings", "a", "--out", "b"])
+    assert (args.backend, args.effort) == ("anthropic", "low")
