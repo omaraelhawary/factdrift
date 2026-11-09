@@ -93,7 +93,8 @@ def test_render_lists_every_false_positive_and_miss(tmp_path):
 
 def test_replace_section_keeps_the_other_sections():
     report = "# Report\n\n## A\n\nold\n\n## B\n\nkeep\n"
-    assert _replace_section(report, "A", "## A\n\nnew\n") == "# Report\n\n## B\n\nkeep\n\n## A\n\nnew\n"
+    assert _replace_section(report, "A", "## A\n\nnew\n") == "# Report\n\n## A\n\nnew\n\n## B\n\nkeep\n"
+    assert _replace_section(report, "C", "## C\n") == report + "\n## C\n"
     assert _replace_section("", "A", "## A\n") == "## A\n"
 
 

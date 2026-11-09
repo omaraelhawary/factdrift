@@ -537,9 +537,10 @@ def cmd_retrieve(args: argparse.Namespace) -> int:
     print(f"wrote {args.out}")
     if args.report:
         existing = args.report.read_text(encoding="utf-8") if args.report.exists() else ""
-        base = existing.split("\n## What retrieval serves", 1)[0].rstrip("\n")
         section = retrieve_mod.render_served(selected, result.served)
-        args.report.write_text(f"{base}\n\n{section}" if base else section, encoding="utf-8")
+        args.report.write_text(
+            _replace_section(existing, "What retrieval serves", section), encoding="utf-8"
+        )
         print(f"wrote {args.report}")
     return 0
 
@@ -552,8 +553,9 @@ def _replace_section(report: str, heading: str, section: str) -> str:
     if marker in text:
         before, rest = text.split(marker, 1)
         after = rest.split("\n## ", 1)
-        tail = "\n## " + after[1] if len(after) > 1 else ""
-        text = before + tail
+        tail = "\n## " + after[1].strip("\n") + "\n" if len(after) > 1 else ""
+        before = before.strip("\n")
+        return (f"{before}\n\n{section}" if before else section).rstrip("\n") + "\n" + tail
     text = text.strip("\n")
     return f"{text}\n\n{section}" if text else section
 
