@@ -113,3 +113,25 @@ def test_findings_are_ordered_and_rendered():
     report = render_markdown(findings, claim_count=len(claims))
     assert "6 claims, 3 findings." in report
     assert "| contradiction | 1 | 0 | 1 |" in report
+
+
+def test_placeholders_are_not_values():
+    for value in ["<SERVICE_URL>", "YOUR_ENDPOINT_NAME", "your-api-key", "langchain-(PACKAGE)",
+                  "PASTE YOUR PROJECT_ID HERE", "ft:gpt-3.5-turbo-0613:{ORG_NAME}::{MODEL_ID}",
+                  "https://your_custom_url.com"]:
+        assert normalize_value(value) is None, value
+    assert normalize_value("databricks-dbrx-instruct") == "databricks-dbrx-instruct"
+    assert detect([
+        norm("databricks", "endpoint", "databricks-dbrx-instruct", context="code"),
+        norm("databricks", "endpoint", "YOUR_ENDPOINT_NAME", context="code"),
+    ]) == []
+    # A placeholder on one side leaves nothing to diverge from.
+    assert detect([
+        norm("cohere_api_key", "value", "your-api-key", language="javascript", cardinality="free"),
+        norm("cohere_api_key", "value", "my-real-looking-key", cardinality="free"),
+    ]) == []
+
+
+def test_parenthesized_words_are_not_placeholders():
+    for value in ["cannot be an assistant (ai) message", "ChatVertexAI (Legacy)", "✅ (Gemini)"]:
+        assert normalize_value(value) is not None, value
