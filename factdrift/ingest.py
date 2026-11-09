@@ -98,6 +98,30 @@ def _frontmatter_close(lines: list[str]) -> int | None:
     return None
 
 
+_FRONTMATTER_KEY = re.compile(r"^([A-Za-z_][\w-]*)\s*:")
+
+
+def frontmatter_keys(text: str) -> dict[int, str]:
+    """Map each frontmatter line (1-indexed) to the top-level key it belongs to.
+
+    Continuation lines of a multi-line value belong to the key above them.
+    Lines before the first key are left out.
+    """
+    lines = text.splitlines()
+    close = _frontmatter_close(lines)
+    keys: dict[int, str] = {}
+    if close is None:
+        return keys
+    current = None
+    for index in range(1, close):
+        match = _FRONTMATTER_KEY.match(lines[index])
+        if match:
+            current = match.group(1)
+        if current is not None:
+            keys[index + 1] = current
+    return keys
+
+
 def parse_spans(text: str) -> tuple[Span, ...]:
     """Split raw file text into prose and code spans.
 

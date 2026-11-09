@@ -95,3 +95,13 @@ def test_import_inside_a_code_block_is_not_stripped():
 
 def test_empty_code_block_produces_no_span():
     assert parse_spans("```python\n```\n") == ()
+
+
+def test_frontmatter_keys_cover_continuation_lines():
+    from factdrift.ingest import frontmatter_keys
+
+    text = "---\ntitle: A\ndescription: >\n  folded\n  text\npypi: pkg\n---\nBody: not frontmatter\n"
+    assert frontmatter_keys(text) == {
+        2: "title", 3: "description", 4: "description", 5: "description", 6: "pypi"
+    }
+    assert frontmatter_keys("No frontmatter\ntitle: x\n") == {}
