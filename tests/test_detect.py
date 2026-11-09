@@ -135,3 +135,24 @@ def test_placeholders_are_not_values():
 def test_parenthesized_words_are_not_placeholders():
     for value in ["cannot be an assistant (ai) message", "ChatVertexAI (Legacy)", "✅ (Gemini)"]:
         assert normalize_value(value) is not None, value
+
+
+def test_env_assignment_compares_as_the_variable_name():
+    assert normalize_value("ANTHROPIC_API_KEY=your-api-key") == normalize_value("ANTHROPIC_API_KEY")
+    assert detect([
+        norm("anthropic", "required_env_var", "ANTHROPIC_API_KEY"),
+        norm("anthropic", "required_env_var", "ANTHROPIC_API_KEY=your-api-key", context="code"),
+    ]) == []
+
+
+def test_null_spellings_compare_equal():
+    assert {normalize_value(v) for v in ["None", "undefined", "null", "nil"]} == {"null"}
+    assert detect([
+        norm("groq", "max_tokens", "None", cardinality="free", context="code"),
+        norm("groq", "max_tokens", "undefined", language="javascript", cardinality="free", context="code"),
+    ]) == []
+
+
+def test_negated_support_is_false():
+    assert normalize_value("not currently supported") == "false"
+    assert normalize_value("Not yet supported") == "false"

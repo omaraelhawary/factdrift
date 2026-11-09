@@ -33,6 +33,11 @@ _SPACE = re.compile(r"\s+")
 
 _TRUE = {"true", "yes", "y", "supported", "✅", "✔", "✔️", "✓"}
 _FALSE = {"false", "no", "n", "not supported", "unsupported", "❌", "✗", "✖"}
+_NOT_SUPPORTED = re.compile(r"^not (?:currently |yet )?supported$")
+_NULL = {"none", "null", "undefined", "nil"}
+# NAME=value, as in a .env line. The claim is about the variable; the value
+# after = is an example.
+_ENV_ASSIGNMENT = re.compile(r"^([A-Z][A-Z0-9_]*)=")
 # Package-manager prefixes that mean "install these packages". Alternatives
 # (npm, yarn, pnpm; pip, uv) install the same thing and must compare equal.
 _INSTALL = re.compile(
@@ -64,18 +69,24 @@ def normalize_value(value: str) -> str | None:
     """Compare values without case, surrounding quotes, or spacing noise.
 
     Yes/no spellings (true, supported, a check mark) collapse to true or
-    false, and install commands collapse to the sorted package list.
+    false, None/undefined/null collapse to null, NAME=value collapses to
+    NAME, and install commands collapse to the sorted package list.
     Placeholders return None: they assert nothing, so they cannot agree or
     disagree with anything.
     """
     text = _SPACE.sub(" ", value.strip()).rstrip(".,;").strip(_QUOTES).strip()
+    assignment = _ENV_ASSIGNMENT.match(text)
+    if assignment:
+        text = assignment.group(1)
     if _PLACEHOLDER.search(text):
         return None
     text = text.casefold()
     if text in _TRUE:
         return "true"
-    if text in _FALSE:
+    if text in _FALSE or _NOT_SUPPORTED.match(text):
         return "false"
+    if text in _NULL:
+        return "null"
     return _install_packages(text) or text
 
 
