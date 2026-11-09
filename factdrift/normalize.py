@@ -30,6 +30,10 @@ DEFAULT_BATCH_SIZE = 80
 DEFAULT_MAX_TOKENS = 16000
 DEFAULT_CACHE_DIR = Path(".cache/normalize")
 CARDINALITIES = ("single", "free")
+# Frontmatter keys that describe the page itself rather than the integration
+# it documents. `pypi` and `npm` are deliberately absent: those are facts
+# about the integration.
+DEFAULT_PAGE_KEYS = ("title", "sidebarTitle", "description", "mode")
 
 ALIAS_SYSTEM = """\
 You normalize names extracted from the LangChain chat model integration docs, \
@@ -307,6 +311,27 @@ def classify_attributes(
                 result.fallbacks += 1
 
 
+def page_entity(
+    claim: dict[str, Any],
+    frontmatter: dict[str, dict[int, str]],
+    page_keys: Iterable[str],
+) -> str | None:
+    """The page's own entity id when every cited line is a page-metadata
+    frontmatter line, else None.
+
+    The alias pass works on distinct (entity, attribute) names without the
+    file, so a page-relative name such as "document" gets one id for every
+    page that uses it. A page title is a fact about the page, so it is keyed
+    to the page and never clusters with another page's title.
+    """
+    keys = frontmatter.get(claim["source_path"], {})
+    wanted = set(page_keys)
+    lines = range(claim["line_start"], claim["line_end"] + 1)
+    if lines and all(keys.get(line) in wanted for line in lines):
+        return "page_" + slug(claim["source_path"])
+    return None
+
+
 def normalize_claims(
     claims: list[dict[str, Any]],
     backend: Any,
@@ -315,9 +340,16 @@ def normalize_claims(
     batch_size: int = DEFAULT_BATCH_SIZE,
     max_tokens: int = DEFAULT_MAX_TOKENS,
     cache_dir: Path = DEFAULT_CACHE_DIR,
+    frontmatter: dict[str, dict[int, str]] | None = None,
+    page_keys: Iterable[str] = DEFAULT_PAGE_KEYS,
 ) -> tuple[list[dict[str, Any]], NormalizeResult]:
     """Return claims annotated with entity_id, attribute_id, language and
-    cardinality, plus the run summary."""
+    cardinality, plus the run summary.
+
+    `frontmatter` maps a source path to its frontmatter line keys (see
+    ingest.frontmatter_keys). Claims read from a key in `page_keys` describe
+    the page, so they get an entity id of their own page; see page_entity.
+    """
     result = NormalizeResult()
     pairs = distinct_pairs(claims)
     build_aliases(
@@ -332,6 +364,8 @@ def normalize_claims(
     annotated = []
     for claim in claims:
         entity_id, attribute_id = result.aliases[(claim["entity"], claim["attribute"])]
+        if frontmatter:
+            entity_id = page_entity(claim, frontmatter, page_keys) or entity_id
         annotated.append(
             {
                 **claim,

@@ -115,3 +115,46 @@ def test_malformed_ids_are_rejected(tmp_path):
     out, result = normalize_claims(CLAIMS, backend, model="m", cache_dir=tmp_path)
     assert out[2]["entity_id"] == "chatanthropic"
     assert result.fallbacks >= 1
+
+
+# Two JavaScript pages whose frontmatter the extractor attributed to the same
+# raw entity, "document". The alias pass sees one (entity, attribute) pair,
+# with azure.mdx's value as the example, and maps both pages to the Azure
+# integration. Reproduces the azure_chat_openai/title finding on the corpus.
+AZURE = "src/oss/javascript/integrations/chat/azure.mdx"
+INDEX = "src/oss/javascript/integrations/chat/index.mdx"
+PAGE_TEXT = {
+    AZURE: "---\ntitle: AzureChatOpenAI integration\nnpm: \"@langchain/openai\"\n---\nBody.\n",
+    INDEX: "---\ntitle: \"Chat model integrations\"\n---\nBody.\n",
+}
+
+
+def frontmatter_claim(path, attribute, value, line):
+    return {**claim("document", attribute, value, path=path), "line_start": line, "line_end": line}
+
+
+def test_frontmatter_page_metadata_stays_on_its_page(tmp_path):
+    from factdrift.detect import detect
+    from factdrift.ingest import frontmatter_keys
+
+    claims = [
+        frontmatter_claim(AZURE, "title", "AzureChatOpenAI integration", 2),
+        frontmatter_claim(INDEX, "title", "Chat model integrations", 2),
+        frontmatter_claim(AZURE, "npm", "@langchain/openai", 3),
+    ]
+    aliases = {
+        ("document", "title"): ("azure_chat_openai", "title"),
+        ("document", "npm"): ("azure_chat_openai", "npm_package"),
+    }
+    backend = FakeBackend(aliases, {"title": "single", "npm_package": "single"})
+    out, _ = normalize_claims(
+        claims,
+        backend,
+        model="m",
+        cache_dir=tmp_path,
+        frontmatter={path: frontmatter_keys(text) for path, text in PAGE_TEXT.items()},
+    )
+    assert out[0]["entity_id"] != out[1]["entity_id"]
+    # The package key is a fact about the integration, not the page.
+    assert out[2]["entity_id"] == "azure_chat_openai"
+    assert detect(out) == []

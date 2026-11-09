@@ -17,7 +17,13 @@ import anthropic
 from factdrift import detect as detect_mod
 from factdrift import extract as extract_mod
 from factdrift import normalize as normalize_mod
-from factdrift.ingest import Document, load_corpus, load_document, find_sources
+from factdrift.ingest import (
+    Document,
+    find_sources,
+    frontmatter_keys,
+    load_corpus,
+    load_document,
+)
 from factdrift.prompts.extraction import PROMPT_VERSION, render_document
 
 DEFAULT_CORPUS = Path("corpus")
@@ -270,6 +276,14 @@ def cmd_normalize(args: argparse.Namespace) -> int:
         print("normalize needs --backend ollama or openrouter", file=sys.stderr)
         return 2
     claims = _load_claims(args.claims)
+    frontmatter = {d.path: frontmatter_keys(d.text) for d in load_corpus(args.corpus)}
+    missing = {c["source_path"] for c in claims} - frontmatter.keys()
+    if missing:
+        print(
+            f"warning: {len(missing)} claim sources are not under {args.corpus}; "
+            "their frontmatter page metadata is not scoped to the page",
+            file=sys.stderr,
+        )
     client = _make_backend(args)
     if client is None:
         return 2
@@ -281,6 +295,8 @@ def cmd_normalize(args: argparse.Namespace) -> int:
             batch_size=args.batch_size,
             max_tokens=args.max_tokens,
             cache_dir=args.cache_dir,
+            frontmatter=frontmatter,
+            page_keys=args.page_keys,
         )
     except extract_mod.BackendUnavailable as exc:
         print(f"{args.backend}: {exc}", file=sys.stderr)
@@ -442,6 +458,20 @@ def build_parser() -> argparse.ArgumentParser:
         help="canonical ids and cardinality for extracted claims",
     )
     normalize.add_argument("--claims", type=Path, required=True, help="output of extract --out")
+    normalize.add_argument(
+        "--corpus",
+        type=Path,
+        default=DEFAULT_CORPUS,
+        help="corpus the claims came from, read for frontmatter (default: %(default)s)",
+    )
+    normalize.add_argument(
+        "--page-keys",
+        nargs="+",
+        default=list(normalize_mod.DEFAULT_PAGE_KEYS),
+        metavar="KEY",
+        help="frontmatter keys that describe the page, not the integration "
+        "(default: %(default)s)",
+    )
     normalize.add_argument("--out", type=Path, required=True)
     normalize.add_argument(
         "--batch-size", type=int, default=normalize_mod.DEFAULT_BATCH_SIZE
