@@ -37,6 +37,7 @@ DEFAULT_TOP_K = 5
 DEFAULT_MAX_TOKENS = 1000
 DEFAULT_INDEX_DIR = Path(".cache/chroma")
 DEFAULT_CACHE_DIR = Path(".cache/answers")
+DEFAULT_EMBED_BATCH = 50  # Ollama drops the connection on batches of 500
 DEFAULT_EMBED_MODEL = "default"  # Chroma's built-in all-MiniLM-L6-v2
 
 _HEADING = re.compile(r"^#{1,6}\s+(.*\S)")
@@ -176,6 +177,7 @@ class Index:
         ollama_url: str = "http://localhost:11434",
         client: Any = None,
         embedding_function: Any = None,
+        batch_size: int = DEFAULT_EMBED_BATCH,
     ) -> None:
         import chromadb
 
@@ -191,8 +193,8 @@ class Index:
         self.built = 0
         if self.collection.count() != len(chunks):
             ids = list(self.chunks)
-            for start in range(0, len(ids), 500):
-                batch = [self.chunks[i] for i in ids[start : start + 500]]
+            for start in range(0, len(ids), batch_size):
+                batch = [self.chunks[i] for i in ids[start : start + batch_size]]
                 self.collection.upsert(
                     ids=[c.id for c in batch],
                     documents=[c.text for c in batch],
