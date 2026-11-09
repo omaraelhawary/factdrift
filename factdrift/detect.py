@@ -10,6 +10,12 @@ Two kinds of finding:
 - divergence: a "free" attribute of one entity has values on both the
   Python and the JavaScript version of the same page, and the two sets share
   nothing. Pages without a twin in the other language are not compared.
+- contradiction, also: a printed response reports a different value than
+  the call it was printed under (normalize.attribute_responses links the
+  two), as when an example configures one model and shows output from
+  another. This applies to "free" attributes: the example chose its value,
+  and its own output disagrees with it. A "single" attribute is already
+  compared across all of its language's docs.
   Neither is wrong on its own, but the two docs teach different things,
   which is how stale examples (an old model id in one language) show up.
 
@@ -191,6 +197,34 @@ def _twin_key(source_path: str) -> str:
     return _LANGUAGE_DIR.sub("/{language}/", source_path, count=1)
 
 
+def _response_mismatches(
+    claims: list[dict[str, Any]], package_attributes: Iterable[str]
+) -> list[Finding]:
+    calls = {
+        (c["source_path"], c["line_start"], c["entity_id"], c["attribute_id"]): c
+        for c in claims
+        if "reports_on_line" not in c
+    }
+    findings = []
+    for response in claims:
+        # A "single" attribute is already compared across the whole language.
+        if "reports_on_line" not in response or response["cardinality"] == "single":
+            continue
+        call = calls.get((
+            response["source_path"], response["reports_on_line"],
+            response["entity_id"], response["attribute_id"],
+        ))
+        if call is None:
+            continue
+        by_value = _by_value([call, response], package_attributes)
+        if len(by_value) > 1:
+            findings.append(Finding(
+                "contradiction", _severity(by_value),
+                response["entity_id"], response["attribute_id"], by_value,
+            ))
+    return findings
+
+
 def detect(
     claims: list[dict[str, Any]],
     *,
@@ -234,6 +268,7 @@ def detect(
                             "divergence", _severity(by_value), entity_id, attribute_id, by_value
                         )
                     )
+    findings.extend(_response_mismatches(claims, package_attributes))
     findings.sort(
         key=lambda f: (KIND_RANK[f.kind], SEVERITY_RANK[f.severity], f.entity_id, f.attribute_id)
     )

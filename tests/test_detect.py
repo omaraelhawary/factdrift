@@ -215,3 +215,23 @@ def test_pep_503_applies_to_package_attributes_in_python_only():
     assert detect([
         norm("x", "my_pkg", "a-b"), norm("x", "my_pkg", "a_b"),
     ], package_attributes={"my_pkg"}) == []
+
+
+def test_a_response_that_reports_a_different_value_than_its_call_is_a_contradiction():
+    call = norm("anthropic", "model", "claude-sonnet-4-6", language="javascript",
+                cardinality="free", context="code", line=263)
+    response = {**norm("anthropic", "model", "claude-3-sonnet-20240229", language="javascript",
+                       cardinality="free", context="code", line=283), "reports_on_line": 263}
+    findings = detect([call, response], divergence=False)
+    assert [(f.kind, f.entity_id, f.attribute_id) for f in findings] == [
+        ("contradiction", "anthropic", "model")
+    ]
+    assert set(findings[0].values) == {"claude-sonnet-4-6", "claude-3-sonnet-20240229"}
+    # A response that matches its call is fine.
+    assert detect([call, {**response, "value": "claude-sonnet-4-6"}], divergence=False) == []
+
+
+def test_a_single_attribute_response_mismatch_is_reported_once():
+    call = norm("x", "base_url", "https://a", context="code", line=1)
+    response = {**norm("x", "base_url", "https://b", context="code", line=5), "reports_on_line": 1}
+    assert len(detect([call, response])) == 1
