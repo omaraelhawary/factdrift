@@ -52,6 +52,40 @@ def test_a_long_section_splits_between_blocks_not_inside_a_fence():
     assert "Install it:" not in setup[0].text
 
 
+FEATURE_TABLE = """---
+title: ChatHuggingFace integration
+---
+
+## Overview
+
+### Model features
+
+| [Tool calling](/oss/langchain/tools) | [Image input](/oss/langchain/messages#multimodal) | Native async |
+| :---: | :---: | :---: |
+| ✅ | ❌ | ✅ |
+| ❌ | ✅ | ❌ |
+"""
+
+
+def test_each_table_row_is_a_chunk_that_carries_its_header_and_heading():
+    chunks = chunk_document(doc(FEATURE_TABLE))
+    rows = {c.line_start: c for c in chunks if c.line_start == c.line_end}
+    assert set(rows) == {11, 12}
+    assert rows[11].text == (
+        "ChatHuggingFace integration > Model features\n\n"
+        "Tool calling: yes; Image input: no; Native async: yes"
+    )
+    assert "Image input: yes" in rows[12].text
+    # The rows are not also indexed a second time inside the section chunk.
+    assert not any("✅" in c.text for c in chunks)
+
+
+def test_a_table_header_without_rows_stays_in_the_section_text():
+    text = "## Models\n\n| Model | Context |\n| --- | --- |\n\nAfter.\n"
+    chunks = chunk_document(doc(text))
+    assert len(chunks) == 1 and "| Model | Context |" in chunks[0].text
+
+
 class WordEmbedding:
     """Deterministic bag-of-letters embedding, so tests need no model."""
 
