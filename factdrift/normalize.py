@@ -20,6 +20,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable
@@ -33,6 +34,11 @@ CARDINALITIES = ("single", "free")
 # Frontmatter keys that describe the page itself rather than the integration
 # it documents. `pypi` and `npm` are deliberately absent: those are facts
 # about the integration.
+# Entities that are a response printed under an example (an AIMessage and its
+# metadata), not something the reader configures.
+DEFAULT_RESPONSE_ENTITIES = ("ai_message", "response_metadata", "chat_response")
+# How many lines below a call its printed response may start.
+DEFAULT_RESPONSE_WINDOW = 40
 DEFAULT_PAGE_KEYS = ("title", "sidebarTitle", "description", "mode")
 
 ALIAS_SYSTEM = """\
@@ -332,6 +338,38 @@ def page_entity(
     return None
 
 
+def attribute_responses(
+    annotated: list[dict[str, Any]],
+    response_entities: Iterable[str] = DEFAULT_RESPONSE_ENTITIES,
+    window: int = DEFAULT_RESPONSE_WINDOW,
+) -> None:
+    """Give a response's fields to the call that produced it, in place.
+
+    A field of a response object (the model an AIMessage reports, say) is a
+    statement about the call printed above it. When a claim of a configured
+    entity with the same attribute ends at most `window` lines above it on
+    the same page, the nearest one wins: the response claim takes its
+    entity_id and records its line as reports_on_line.
+    """
+    response_entities = set(response_entities)
+    calls: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
+    for claim in annotated:
+        if claim["entity_id"] not in response_entities:
+            calls[(claim["source_path"], claim["attribute_id"])].append(claim)
+    for claim in annotated:
+        if claim["entity_id"] not in response_entities:
+            continue
+        above = [
+            call
+            for call in calls[(claim["source_path"], claim["attribute_id"])]
+            if 0 < claim["line_start"] - call["line_end"] <= window
+        ]
+        if above:
+            call = max(above, key=lambda c: c["line_end"])
+            claim["entity_id"] = call["entity_id"]
+            claim["reports_on_line"] = call["line_start"]
+
+
 def normalize_claims(
     claims: list[dict[str, Any]],
     backend: Any,
@@ -342,6 +380,8 @@ def normalize_claims(
     cache_dir: Path = DEFAULT_CACHE_DIR,
     frontmatter: dict[str, dict[int, str]] | None = None,
     page_keys: Iterable[str] = DEFAULT_PAGE_KEYS,
+    response_entities: Iterable[str] = DEFAULT_RESPONSE_ENTITIES,
+    response_window: int = DEFAULT_RESPONSE_WINDOW,
 ) -> tuple[list[dict[str, Any]], NormalizeResult]:
     """Return claims annotated with entity_id, attribute_id, language and
     cardinality, plus the run summary.
@@ -349,6 +389,8 @@ def normalize_claims(
     `frontmatter` maps a source path to its frontmatter line keys (see
     ingest.frontmatter_keys). Claims read from a key in `page_keys` describe
     the page, so they get an entity id of their own page; see page_entity.
+    Response objects are attributed to the call above them; see
+    attribute_responses.
     """
     result = NormalizeResult()
     pairs = distinct_pairs(claims)
@@ -375,4 +417,5 @@ def normalize_claims(
                 "cardinality": result.cardinality[attribute_id],
             }
         )
+    attribute_responses(annotated, response_entities, response_window)
     return annotated, result

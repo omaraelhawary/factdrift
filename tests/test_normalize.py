@@ -158,3 +158,32 @@ def test_frontmatter_page_metadata_stays_on_its_page(tmp_path):
     # The package key is a fact about the integration, not the page.
     assert out[2]["entity_id"] == "azure_chat_openai"
     assert detect(out) == []
+
+
+def test_a_response_object_reports_on_the_call_above_it(tmp_path):
+    def at(c, line):
+        return {**c, "line_start": line, "line_end": line, "context": "code"}
+
+    claims = [
+        at(claim("ChatAnthropic", "model", "claude-sonnet-4-6", path=JS), 263),
+        at(claim("custom headers output AIMessage", "model", "claude-3-sonnet-20240229", path=JS), 283),
+        # Too far below any call, and on a page with no call: left alone.
+        at(claim("AIMessage", "model", "m", path=JS), 900),
+        at(claim("AIMessage", "model", "m"), 10),
+        at(claim("AIMessage", "content", "hi", path=JS), 284),
+    ]
+    aliases = {
+        ("ChatAnthropic", "model"): ("anthropic", "model"),
+        ("custom headers output AIMessage", "model"): ("ai_message", "model"),
+        ("AIMessage", "model"): ("ai_message", "model"),
+        ("AIMessage", "content"): ("ai_message", "content"),
+    }
+    backend = FakeBackend(aliases, {"model": "free", "content": "free"})
+    annotated, _ = normalize_claims(claims, backend, model="m", cache_dir=tmp_path)
+    assert [(c["entity_id"], c.get("reports_on_line")) for c in annotated] == [
+        ("anthropic", None),
+        ("anthropic", 263),
+        ("ai_message", None),
+        ("ai_message", None),
+        ("ai_message", None),
+    ]

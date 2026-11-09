@@ -301,6 +301,8 @@ def cmd_normalize(args: argparse.Namespace) -> int:
             cache_dir=args.cache_dir,
             frontmatter=frontmatter,
             page_keys=args.page_keys,
+            response_entities=args.response_entities,
+            response_window=args.response_window,
         )
     except extract_mod.BackendUnavailable as exc:
         print(f"{args.backend}: {exc}", file=sys.stderr)
@@ -554,6 +556,21 @@ def build_parser() -> argparse.ArgumentParser:
         default=list(normalize_mod.DEFAULT_PAGE_KEYS),
         metavar="KEY",
         help="frontmatter keys that describe the page, not the integration "
+        "(default: %(default)s)",
+    )
+    normalize.add_argument(
+        "--response-entities",
+        nargs="+",
+        default=list(normalize_mod.DEFAULT_RESPONSE_ENTITIES),
+        metavar="ENTITY",
+        help="entity ids of printed responses, whose fields belong to the call "
+        "above them (default: %(default)s)",
+    )
+    normalize.add_argument(
+        "--response-window",
+        type=int,
+        default=normalize_mod.DEFAULT_RESPONSE_WINDOW,
+        help="most lines between a call and its printed response "
         "(default: %(default)s)",
     )
     normalize.add_argument("--out", type=Path, required=True)
