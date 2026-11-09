@@ -408,3 +408,21 @@ def test_a_missing_openrouter_key_is_rejected_on_the_first_request(sample, tmp_p
     with pytest.raises(extract_mod.BackendUnavailable):
         extract_document(sample, backend, model="m", cache_dir=tmp_path)
     assert post.requests == []
+
+
+def test_the_anthropic_backend_sends_a_schema_constrained_request():
+    client = FakeClient(text='{"ok": true}')
+    sent = {}
+    stream = client.messages.stream
+    client.messages.stream = lambda **kw: (sent.update(kw), stream(**kw))[1]
+    backend = extract_mod.AnthropicBackend(client, effort="low")
+    schema = {"type": "object", "properties": {"ok": {"type": "boolean"}}}
+    text, usage, stop = backend.complete_json(
+        system="s", user="u", schema=schema, model="m", max_tokens=10
+    )
+    assert (text, usage.input_tokens, stop) == ('{"ok": true}', 1000, "end_turn")
+    assert sent["output_config"] == {
+        "effort": "low",
+        "format": {"type": "json_schema", "schema": schema},
+    }
+    assert "temperature" not in sent

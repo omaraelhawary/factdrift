@@ -439,6 +439,43 @@ class OpenRouterBackend:
         return str(text), usage, stop_reason
 
 
+class AnthropicBackend:
+    """Sends one schema-constrained request to the Anthropic API.
+
+    Gives the Anthropic SDK the same complete_json interface as the HTTP
+    backends, so passes other than extraction can run on any of the three.
+    The API accepts no temperature setting; effort is the knob it has.
+    """
+
+    def __init__(self, client: Any, *, effort: str = DEFAULT_EFFORT) -> None:
+        self.client = client
+        self.effort = effort
+
+    def complete_json(
+        self,
+        *,
+        system: str,
+        user: str,
+        schema: dict[str, Any],
+        model: str,
+        max_tokens: int,
+        schema_name: str = "claims",
+    ) -> tuple[str, Usage, str | None]:
+        """One schema-constrained request. Returns raw text, usage, stop reason."""
+        with self.client.messages.stream(
+            model=model,
+            max_tokens=max_tokens,
+            system=system,
+            output_config={
+                "effort": self.effort,
+                "format": {"type": "json_schema", "schema": schema},
+            },
+            messages=[{"role": "user", "content": user}],
+        ) as stream:
+            message = stream.get_final_message()
+        return _response_text(message), _usage(message), message.stop_reason
+
+
 def _usage(message: Any) -> Usage:
     usage = message.usage
     return Usage(
