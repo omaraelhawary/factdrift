@@ -19,6 +19,7 @@ from factdrift import extract as extract_mod
 from factdrift import normalize as normalize_mod
 from factdrift import questions as questions_mod
 from factdrift import retrieve as retrieve_mod
+from factdrift import score as score_mod
 from factdrift.ingest import (
     Document,
     find_sources,
@@ -536,9 +537,54 @@ def cmd_retrieve(args: argparse.Namespace) -> int:
     print(f"wrote {args.out}")
     if args.report:
         existing = args.report.read_text(encoding="utf-8") if args.report.exists() else ""
-        base = existing.split("\n## What retrieval serves", 1)[0].rstrip("\n")
         section = retrieve_mod.render_served(selected, result.served)
-        args.report.write_text(f"{base}\n\n{section}" if base else section, encoding="utf-8")
+        args.report.write_text(
+            _replace_section(existing, "What retrieval serves", section), encoding="utf-8"
+        )
+        print(f"wrote {args.report}")
+    return 0
+
+
+def _replace_section(report: str, heading: str, section: str) -> str:
+    """Put `section` in place of the `## heading` section of a markdown report,
+    or append it, leaving every other section as it was."""
+    marker = f"\n## {heading}"
+    text = "\n" + report.strip("\n")
+    if marker in text:
+        before, rest = text.split(marker, 1)
+        after = rest.split("\n## ", 1)
+        tail = "\n## " + after[1].strip("\n") + "\n" if len(after) > 1 else ""
+        before = before.strip("\n")
+        return (f"{before}\n\n{section}" if before else section).rstrip("\n") + "\n" + tail
+    text = text.strip("\n")
+    return f"{text}\n\n{section}" if text else section
+
+
+def cmd_score(args: argparse.Namespace) -> int:
+    try:
+        labels = score_mod.load_labels(args.labels)
+    except (OSError, score_mod.LabelError) as error:
+        print(f"cannot read labels: {error}", file=sys.stderr)
+        return 2
+    findings = json.loads(args.findings.read_text(encoding="utf-8"))
+    result = score_mod.score(findings, labels)
+    name = args.name or args.labels.name
+    section = score_mod.render(result, name)
+    print(section.split("\n### ", 1)[0].rstrip())
+    for item in result.false_positives:
+        f = item["finding"]
+        print(f"  FP {f['entity_id']}/{f['attribute_id']}: {item['reason']}")
+    for row in result.missed:
+        print(f"  missed {row['id']}: {row.get('note', '')}")
+    if args.out:
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text(json.dumps(score_mod.as_dict(result), indent=2, ensure_ascii=False),
+                            encoding="utf-8")
+        print(f"wrote {args.out}")
+    if args.report:
+        existing = args.report.read_text(encoding="utf-8") if args.report.exists() else ""
+        heading = section.splitlines()[0].removeprefix("## ")
+        args.report.write_text(_replace_section(existing, heading, section), encoding="utf-8")
         print(f"wrote {args.report}")
     return 0
 
@@ -774,6 +820,15 @@ def build_parser() -> argparse.ArgumentParser:
     retrieve.add_argument("--price-in", type=float, help="dollars per million input tokens")
     retrieve.add_argument("--price-out", type=float, help="dollars per million output tokens")
     retrieve.set_defaults(func=cmd_retrieve)
+
+    score = sub.add_parser("score", help="precision and recall against a labeled set")
+    score.add_argument("--findings", type=Path, required=True, help="output of detect --out")
+    score.add_argument("--labels", type=Path, required=True, help="labeled set, JSONL")
+    score.add_argument("--name", help="name used in the report heading (default: labels file name)")
+    score.add_argument("--out", type=Path, help="write the full result here as JSON")
+    score.add_argument("--report", type=Path,
+                       help="add or replace this labeled set's section in a markdown report")
+    score.set_defaults(func=cmd_score)
 
     return parser
 
