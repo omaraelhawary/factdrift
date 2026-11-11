@@ -5,7 +5,7 @@ g-268f3b5f,javascript,ai_message,content,free,,"j'adore la programmation
   javascript/cerebras.mdx:164 [code] aiInvokeMsgContent: '{""result"":4}'
 j'adore programmer
   javascript/cohere.mdx:124 [code] ""content"": ""J'adore programmer.""
-  javascript/xai.mdx:105 [code] ""content"": ""J'adore programmer."",",src/oss/javascript/integrations/chat/cerebras.mdx:108 src/oss/javascript/integrations/chat/cerebras.mdx:164 src/oss/javascript/integrations/chat/cohere.mdx:124 src/oss/javascript/integrations/chat/xai.mdx:105,,,,
+  javascript/xai.mdx:105 [code] ""content"": ""J'adore programmer."",",src/oss/javascript/integrations/chat/cerebras.mdx:108 src/oss/javascript/integrations/chat/cerebras.mdx:164 src/oss/javascript/integrations/chat/cohere.mdx:124 src/oss/javascript/integrations/chat/xai.mdx:105,not-real,"These are generated responses to separate translation and JSON-output examples, not competing definitions of message content.",not-real,"The content values come from separate translation and arithmetic requests, so the responses need not match."
 g-51634164,javascript,ai_message,input_tokens,free,,"29
   javascript/anthropic.mdx:111 [code] ""input_tokens"": 29,
 449
@@ -21,7 +21,7 @@ g-51634164,javascript,ai_message,input_tokens,free,,"29
 31
   javascript/groq.mdx:108 [code] ""promptTokens"": 31,
 30
-  javascript/xai.mdx:109 [code] ""promptTokens"": 30,",src/oss/javascript/integrations/chat/anthropic.mdx:111 src/oss/javascript/integrations/chat/anthropic.mdx:218 src/oss/javascript/integrations/chat/anthropic.mdx:635 src/oss/javascript/integrations/chat/cerebras.mdx:127 src/oss/javascript/integrations/chat/cohere.mdx:197 src/oss/javascript/integrations/chat/google_generative_ai.mdx:166 src/oss/javascript/integrations/chat/groq.mdx:108 src/oss/javascript/integrations/chat/xai.mdx:109,,,,
+  javascript/xai.mdx:109 [code] ""promptTokens"": 30,",src/oss/javascript/integrations/chat/anthropic.mdx:111 src/oss/javascript/integrations/chat/anthropic.mdx:218 src/oss/javascript/integrations/chat/anthropic.mdx:635 src/oss/javascript/integrations/chat/cerebras.mdx:127 src/oss/javascript/integrations/chat/cohere.mdx:197 src/oss/javascript/integrations/chat/google_generative_ai.mdx:166 src/oss/javascript/integrations/chat/groq.mdx:108 src/oss/javascript/integrations/chat/xai.mdx:109,not-real,"Input token counts describe different requests and providers, so they need not match.",not-real,The input-token counts describe different requests and cache states rather than a fixed property of AIMessage.
 g-66f2c4d5,javascript,ai_message,output_tokens,free,,"20
   javascript/anthropic.mdx:112 [code] ""output_tokens"": 20
 100
@@ -38,14 +38,14 @@ g-66f2c4d5,javascript,ai_message,output_tokens,free,,"20
 73
   javascript/groq.mdx:107 [code] ""completionTokens"": 73,
 6
-  javascript/xai.mdx:110 [code] ""completionTokens"": 6,",src/oss/javascript/integrations/chat/anthropic.mdx:112 src/oss/javascript/integrations/chat/anthropic.mdx:219 src/oss/javascript/integrations/chat/anthropic.mdx:639 src/oss/javascript/integrations/chat/anthropic.mdx:661 src/oss/javascript/integrations/chat/cerebras.mdx:128 src/oss/javascript/integrations/chat/cohere.mdx:198 src/oss/javascript/integrations/chat/google_generative_ai.mdx:167 src/oss/javascript/integrations/chat/groq.mdx:107 src/oss/javascript/integrations/chat/xai.mdx:110,,,,
+  javascript/xai.mdx:110 [code] ""completionTokens"": 6,",src/oss/javascript/integrations/chat/anthropic.mdx:112 src/oss/javascript/integrations/chat/anthropic.mdx:219 src/oss/javascript/integrations/chat/anthropic.mdx:639 src/oss/javascript/integrations/chat/anthropic.mdx:661 src/oss/javascript/integrations/chat/cerebras.mdx:128 src/oss/javascript/integrations/chat/cohere.mdx:198 src/oss/javascript/integrations/chat/google_generative_ai.mdx:167 src/oss/javascript/integrations/chat/groq.mdx:107 src/oss/javascript/integrations/chat/xai.mdx:110,not-real,"Output token counts describe separate generations, including repeated cached requests, and can differ.",not-real,"The output-token values measure separate model responses, including different cache invocations."
 g-6955e29e,javascript,ai_message,stop_reason,free,,"end_turn
   javascript/anthropic.mdx:108 [code] ""stop_reason"": ""end_turn"",
 tool_use
   javascript/anthropic.mdx:215 [code] ""stop_reason"": ""tool_use"",
 stop
   javascript/groq.mdx:111 [code] ""finish_reason"": ""stop""
-  javascript/xai.mdx:113 [code] ""finish_reason"": ""stop"",",src/oss/javascript/integrations/chat/anthropic.mdx:108 src/oss/javascript/integrations/chat/anthropic.mdx:215 src/oss/javascript/integrations/chat/groq.mdx:111 src/oss/javascript/integrations/chat/xai.mdx:113,,,,
+  javascript/xai.mdx:113 [code] ""finish_reason"": ""stop"",",src/oss/javascript/integrations/chat/anthropic.mdx:108 src/oss/javascript/integrations/chat/anthropic.mdx:215 src/oss/javascript/integrations/chat/groq.mdx:111 src/oss/javascript/integrations/chat/xai.mdx:113,not-real,"The stop reasons describe different outcomes, including ordinary completion and tool invocation.",not-real,"The stop reasons belong to different responses, including ordinary completion and tool invocation."
 g-95f4be11,javascript,ai_message,total_tokens,free,,"49
   javascript/anthropic.mdx:132 [code] ""total_tokens"": 49
 549
@@ -59,28 +59,28 @@ g-95f4be11,javascript,ai_message,total_tokens,free,,"49
 104
   javascript/groq.mdx:109 [code] ""totalTokens"": 104
 36
-  javascript/xai.mdx:111 [code] ""totalTokens"": 36",src/oss/javascript/integrations/chat/anthropic.mdx:132 src/oss/javascript/integrations/chat/anthropic.mdx:250 src/oss/javascript/integrations/chat/cerebras.mdx:129 src/oss/javascript/integrations/chat/cohere.mdx:199 src/oss/javascript/integrations/chat/google_generative_ai.mdx:168 src/oss/javascript/integrations/chat/groq.mdx:109 src/oss/javascript/integrations/chat/xai.mdx:111,,,,
+  javascript/xai.mdx:111 [code] ""totalTokens"": 36",src/oss/javascript/integrations/chat/anthropic.mdx:132 src/oss/javascript/integrations/chat/anthropic.mdx:250 src/oss/javascript/integrations/chat/cerebras.mdx:129 src/oss/javascript/integrations/chat/cohere.mdx:199 src/oss/javascript/integrations/chat/google_generative_ai.mdx:168 src/oss/javascript/integrations/chat/groq.mdx:109 src/oss/javascript/integrations/chat/xai.mdx:111,not-real,Total token counts belong to different example requests rather than one shared measurement.,not-real,The total-token values describe different model responses and requests.
 g-6508c561,twin anthropic.mdx,anthropic,install_command,single,,"install @langchain/anthropic @langchain/core
   javascript/anthropic.mdx:60 [code] npm install @langchain/anthropic @langchain/core
   javascript/anthropic.mdx:63 [code] yarn add @langchain/anthropic @langchain/core
   javascript/anthropic.mdx:66 [code] pnpm add @langchain/anthropic @langchain/core
 install langchain-anthropic
   python/anthropic.mdx:52 [code] pip install -U langchain-anthropic
-  python/anthropic.mdx:55 [code] uv add langchain-anthropic",src/oss/javascript/integrations/chat/anthropic.mdx:60 src/oss/javascript/integrations/chat/anthropic.mdx:63 src/oss/javascript/integrations/chat/anthropic.mdx:66 src/oss/python/integrations/chat/anthropic.mdx:52 src/oss/python/integrations/chat/anthropic.mdx:55,,,,
+  python/anthropic.mdx:55 [code] uv add langchain-anthropic",src/oss/javascript/integrations/chat/anthropic.mdx:60 src/oss/javascript/integrations/chat/anthropic.mdx:63 src/oss/javascript/integrations/chat/anthropic.mdx:66 src/oss/python/integrations/chat/anthropic.mdx:52 src/oss/python/integrations/chat/anthropic.mdx:55,not-real,The commands install the respective JavaScript and Python integration packages.,not-real,The installation commands target the distinct JavaScript and Python Anthropic integration packages.
 g-2bdad130,javascript,anthropic,max_retries,free,,"2
   javascript/anthropic.mdx:81 [code] maxRetries: 2,
 0
-  javascript/anthropic.mdx:714 [code] maxRetries: 0,",src/oss/javascript/integrations/chat/anthropic.mdx:81 src/oss/javascript/integrations/chat/anthropic.mdx:714,,,,
+  javascript/anthropic.mdx:714 [code] maxRetries: 0,",src/oss/javascript/integrations/chat/anthropic.mdx:81 src/oss/javascript/integrations/chat/anthropic.mdx:714,not-real,javascript/anthropic.mdx:81 and :714 explicitly configure retries for separate model instances.,not-real,javascript/anthropic.mdx:81 and :714 explicitly choose retry counts for separate standard-client and custom-client examples.
 g-60859b9c,javascript,anthropic,max_tokens,free,divergence low,"null
   javascript/anthropic.mdx:80 [code] maxTokens: undefined,
 1024
-  javascript/anthropic.mdx:264 [code] maxTokens: 1024,",src/oss/javascript/integrations/chat/anthropic.mdx:80 src/oss/javascript/integrations/chat/anthropic.mdx:264,,,,
+  javascript/anthropic.mdx:264 [code] maxTokens: 1024,",src/oss/javascript/integrations/chat/anthropic.mdx:80 src/oss/javascript/integrations/chat/anthropic.mdx:264,not-real,javascript/anthropic.mdx:80 and :264 choose different token limits in separate examples.,not-real,"The examples independently leave maxTokens unset or choose 1024, without claiming a fixed required value."
 g-ef307ac1,twin anthropic.mdx,anthropic,max_tokens,free,divergence low,"null
   javascript/anthropic.mdx:80 [code] maxTokens: undefined,
 1024
   javascript/anthropic.mdx:264 [code] maxTokens: 1024,
 5000
-  python/anthropic.mdx:751 [code] max_tokens=5000,",src/oss/javascript/integrations/chat/anthropic.mdx:80 src/oss/javascript/integrations/chat/anthropic.mdx:264 src/oss/python/integrations/chat/anthropic.mdx:751,,,,
+  python/anthropic.mdx:751 [code] max_tokens=5000,",src/oss/javascript/integrations/chat/anthropic.mdx:80 src/oss/javascript/integrations/chat/anthropic.mdx:264 src/oss/python/integrations/chat/anthropic.mdx:751,not-real,"These are explicit token-limit choices for separate examples, including extended thinking at python/anthropic.mdx:751.",not-real,"The examples choose different token budgets for different requests, including Python's extended-thinking example."
 g-81a6aee8,python,anthropic,model,free,,"claude-haiku-4-5-20251001
   python/anthropic.mdx:86 [code] model=""claude-haiku-4-5-20251001"",
   python/anthropic.mdx:207 [code] model = ChatAnthropic(model=""claude-haiku-4-5-20251001"")
@@ -89,7 +89,7 @@ claude-sonnet-4-6
 claude-opus-4-8
   python/anthropic.mdx:764 [code] model=""claude-opus-4-8"",
 claude-opus-4-5-20251101
-  python/anthropic.mdx:822 [code] model=""claude-opus-4-5-20251101"",",src/oss/python/integrations/chat/anthropic.mdx:86 src/oss/python/integrations/chat/anthropic.mdx:207 src/oss/python/integrations/chat/anthropic.mdx:178 src/oss/python/integrations/chat/anthropic.mdx:764 src/oss/python/integrations/chat/anthropic.mdx:822,,,,
+  python/anthropic.mdx:822 [code] model=""claude-opus-4-5-20251101"",",src/oss/python/integrations/chat/anthropic.mdx:86 src/oss/python/integrations/chat/anthropic.mdx:207 src/oss/python/integrations/chat/anthropic.mdx:178 src/oss/python/integrations/chat/anthropic.mdx:764 src/oss/python/integrations/chat/anthropic.mdx:822,real,"python/anthropic.mdx:86 configures Haiku, but the async response from that model reports Sonnet at :178.",real,"python/anthropic.mdx:86 initializes claude-haiku-4-5-20251001, but the async response from that model at :178 reports claude-sonnet-4-6."
 g-2ba89cd8,javascript,anthropic,model,free,contradiction low,"claude-haiku-4-5-20251001
   javascript/anthropic.mdx:78 [code] model: ""claude-haiku-4-5-20251001"",
   javascript/anthropic.mdx:107 [code] ""model"": ""claude-haiku-4-5-20251001"",
@@ -104,23 +104,23 @@ claude-sonnet-4-6
   javascript/anthropic.mdx:972 [code] model: ""claude-sonnet-4-6"",
   javascript/anthropic.mdx:1016 [code] model: ""claude-sonnet-4-6"",
 claude-3-sonnet-20240229
-  javascript/anthropic.mdx:283 [code] ""model"": ""claude-3-sonnet-20240229"",",src/oss/javascript/integrations/chat/anthropic.mdx:78 src/oss/javascript/integrations/chat/anthropic.mdx:107 src/oss/javascript/integrations/chat/anthropic.mdx:172 src/oss/javascript/integrations/chat/anthropic.mdx:733 src/oss/javascript/integrations/chat/anthropic.mdx:817 src/oss/javascript/integrations/chat/anthropic.mdx:910 src/oss/javascript/integrations/chat/anthropic.mdx:263 src/oss/javascript/integrations/chat/anthropic.mdx:601 src/oss/javascript/integrations/chat/anthropic.mdx:713 src/oss/javascript/integrations/chat/anthropic.mdx:972 src/oss/javascript/integrations/chat/anthropic.mdx:1016 src/oss/javascript/integrations/chat/anthropic.mdx:283,,,,
+  javascript/anthropic.mdx:283 [code] ""model"": ""claude-3-sonnet-20240229"",",src/oss/javascript/integrations/chat/anthropic.mdx:78 src/oss/javascript/integrations/chat/anthropic.mdx:107 src/oss/javascript/integrations/chat/anthropic.mdx:172 src/oss/javascript/integrations/chat/anthropic.mdx:733 src/oss/javascript/integrations/chat/anthropic.mdx:817 src/oss/javascript/integrations/chat/anthropic.mdx:910 src/oss/javascript/integrations/chat/anthropic.mdx:263 src/oss/javascript/integrations/chat/anthropic.mdx:601 src/oss/javascript/integrations/chat/anthropic.mdx:713 src/oss/javascript/integrations/chat/anthropic.mdx:972 src/oss/javascript/integrations/chat/anthropic.mdx:1016 src/oss/javascript/integrations/chat/anthropic.mdx:283,real,"javascript/anthropic.mdx:263 configures claude-sonnet-4-6, but its displayed response reports claude-3-sonnet-20240229 at :283.",real,"javascript/anthropic.mdx:263 selects claude-sonnet-4-6, but the response to that invocation reports claude-3-sonnet-20240229 at line 283."
 g-59948fe7,twin anthropic.mdx,anthropic,serializable,single,,"true
   javascript/anthropic.mdx:25 [prose] | ✅ | ✅ |
 beta
-  python/anthropic.mdx:36 [prose] beta",src/oss/javascript/integrations/chat/anthropic.mdx:25 src/oss/python/integrations/chat/anthropic.mdx:36,,,,
+  python/anthropic.mdx:36 [prose] beta",src/oss/javascript/integrations/chat/anthropic.mdx:25 src/oss/python/integrations/chat/anthropic.mdx:36,not-real,"The serialization entries describe separate JavaScript and Python implementations, and beta does not deny support.",not-real,"The tables describe separate SDKs, and Python's beta status does not contradict JavaScript's serialization support."
 g-b67aff2e,python,app_attribution,env_var,single,contradiction low,"openrouter_app_url
   python/openrouter.mdx:733 [code] # or OPENROUTER_APP_URL env var
 openrouter_app_title
-  python/openrouter.mdx:734 [code] # or OPENROUTER_APP_TITLE env var",src/oss/python/integrations/chat/openrouter.mdx:733 src/oss/python/integrations/chat/openrouter.mdx:734,,,,
+  python/openrouter.mdx:734 [code] # or OPENROUTER_APP_TITLE env var",src/oss/python/integrations/chat/openrouter.mdx:733 src/oss/python/integrations/chat/openrouter.mdx:734,not-real,"python/openrouter.mdx:733–734 assigns the two environment variables to different fields, app_url and app_title.",not-real,python/openrouter.mdx:733-734 maps separate environment variables to the app URL and app title.
 g-b1c1ec4e,javascript,audio_output_format,format,free,,"wav
   javascript/openai.mdx:1295 [code] format: ""wav"",
 pcm16
-  javascript/openai.mdx:1333 [code] format: ""pcm16"", // Format must be `pcm16` for streaming",src/oss/javascript/integrations/chat/openai.mdx:1295 src/oss/javascript/integrations/chat/openai.mdx:1333,,,,
+  javascript/openai.mdx:1333 [code] format: ""pcm16"", // Format must be `pcm16` for streaming",src/oss/javascript/integrations/chat/openai.mdx:1295 src/oss/javascript/integrations/chat/openai.mdx:1333,not-real,"javascript/openai.mdx:1295 uses WAV for invocation, while :1333 explicitly requires PCM16 for streaming.",not-real,"javascript/openai.mdx:1295 uses wav for a regular invocation, while :1333 explicitly requires pcm16 for streaming."
 g-6bc913a9,python,bash_tool,required_parameter,single,contradiction high,"required
   python/anthropic.mdx:1863 [prose] `command` (required): The bash command to execute
 optional
-  python/anthropic.mdx:1864 [prose] `restart` (optional): Set to `true` to restart the bash session",src/oss/python/integrations/chat/anthropic.mdx:1863 src/oss/python/integrations/chat/anthropic.mdx:1864,,,,
+  python/anthropic.mdx:1864 [prose] `restart` (optional): Set to `true` to restart the bash session",src/oss/python/integrations/chat/anthropic.mdx:1863 src/oss/python/integrations/chat/anthropic.mdx:1864,not-real,"python/anthropic.mdx:1863–1864 describes two different parameters, required command and optional restart.",not-real,"python/anthropic.mdx:1863-1864 marks command required and restart optional, so the requirements concern different parameters."
 g-7d503bc0,python,chat_cerebras,model,free,,"llama-3.3-70b
   python/cerebras.mdx:92 [code] model=""llama-3.3-70b""
   python/cerebras.mdx:122 [code] model=""llama-3.3-70b""
@@ -128,25 +128,25 @@ g-7d503bc0,python,chat_cerebras,model,free,,"llama-3.3-70b
   python/cerebras.mdx:188 [code] model=""llama-3.3-70b""
 llama3-8b-8192
   python/cerebras.mdx:112 [code] 'model_name': 'llama3-8b-8192'
-  python/cerebras.mdx:178 [code] 'model_name': 'llama3-8b-8192'",src/oss/python/integrations/chat/cerebras.mdx:92 src/oss/python/integrations/chat/cerebras.mdx:122 src/oss/python/integrations/chat/cerebras.mdx:161 src/oss/python/integrations/chat/cerebras.mdx:188 src/oss/python/integrations/chat/cerebras.mdx:112 src/oss/python/integrations/chat/cerebras.mdx:178,,,,
+  python/cerebras.mdx:178 [code] 'model_name': 'llama3-8b-8192'",src/oss/python/integrations/chat/cerebras.mdx:92 src/oss/python/integrations/chat/cerebras.mdx:122 src/oss/python/integrations/chat/cerebras.mdx:161 src/oss/python/integrations/chat/cerebras.mdx:188 src/oss/python/integrations/chat/cerebras.mdx:112 src/oss/python/integrations/chat/cerebras.mdx:178,real,"python/cerebras.mdx:92 and :161 configure llama-3.3-70b, but their displayed responses report llama3-8b-8192 at :112 and :178.",real,"python/cerebras.mdx:92 and :161 select llama-3.3-70b, but their responses at :112 and :178 report llama3-8b-8192."
 g-d82c55c9,twin cerebras.mdx,chat_cerebras,serializable,single,,"false
   javascript/cerebras.mdx:31 [prose] ❌ | ✅
 beta
-  python/cerebras.mdx:35 [prose] beta",src/oss/javascript/integrations/chat/cerebras.mdx:31 src/oss/python/integrations/chat/cerebras.mdx:35,,,,
+  python/cerebras.mdx:35 [prose] beta",src/oss/javascript/integrations/chat/cerebras.mdx:31 src/oss/python/integrations/chat/cerebras.mdx:35,not-real,javascript/cerebras.mdx:31 and python/cerebras.mdx:35 describe serialization in different language packages.,not-real,"The serialization entries describe separate SDKs, with beta providing no opposing boolean claim."
 g-85806e05,python,chat_cohere,content,free,,"4 && 5
   python/cohere.mdx:65 [code] AIMessage(content='4 && 5'
 the value of magic_function(2) is 12
-  python/cohere.mdx:135 [code] content='The value of magic_function(2) is 12.'",src/oss/python/integrations/chat/cohere.mdx:65 src/oss/python/integrations/chat/cohere.mdx:135,,,,
+  python/cohere.mdx:135 [code] content='The value of magic_function(2) is 12.'",src/oss/python/integrations/chat/cohere.mdx:65 src/oss/python/integrations/chat/cohere.mdx:135,not-real,"python/cohere.mdx:65 and :135 show responses from separate examples, with the latter following a tool call.",not-real,"python/cohere.mdx:65 and :135 show responses to different prompts, with the latter following a tool call."
 g-bc35b93d,twin groq.mdx,chat_groq,image_input,single,,"false
   javascript/groq.mdx:34 [prose] | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
 true
-  python/groq.mdx:39 [prose] | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ |",src/oss/javascript/integrations/chat/groq.mdx:34 src/oss/python/integrations/chat/groq.mdx:39,,,,
+  python/groq.mdx:39 [prose] | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ |",src/oss/javascript/integrations/chat/groq.mdx:34 src/oss/python/integrations/chat/groq.mdx:39,not-real,"The feature tables describe different language integrations, and the Python vision section documents its supported models at python/groq.mdx:123–140.",not-real,The image-input tables describe capabilities of separate JavaScript and Python integrations rather than one shared implementation.
 g-ea0de456,python,chat_groq,model,free,divergence low,"qwen/qwen3-32b
   python/groq.mdx:87 [code] model=""qwen/qwen3-32b""
 deepseek-r1-distill-llama-70b
   python/groq.mdx:112 [code] 'model_name': 'deepseek-r1-distill-llama-70b'
 meta-llama/llama-4-scout-17b-16e-instruct
-  python/groq.mdx:140 [code] llm = ChatGroq(model=""meta-llama/llama-4-scout-17b-16e-instruct"")",src/oss/python/integrations/chat/groq.mdx:87 src/oss/python/integrations/chat/groq.mdx:112 src/oss/python/integrations/chat/groq.mdx:140,,,,
+  python/groq.mdx:140 [code] llm = ChatGroq(model=""meta-llama/llama-4-scout-17b-16e-instruct"")",src/oss/python/integrations/chat/groq.mdx:87 src/oss/python/integrations/chat/groq.mdx:112 src/oss/python/integrations/chat/groq.mdx:140,real,"python/groq.mdx:87 configures qwen/qwen3-32b, but the resulting message reports deepseek-r1-distill-llama-70b at :112.",real,"python/groq.mdx:87 initializes qwen/qwen3-32b, but the response from that instance at :112 identifies deepseek-r1-distill-llama-70b."
 g-20246bf2,twin groq.mdx,chat_groq,model,free,divergence low,"openai/gpt-oss-120b
   javascript/groq.mdx:80 [code] model: ""openai/gpt-oss-120b"",
 qwen/qwen3-32b
@@ -154,31 +154,31 @@ qwen/qwen3-32b
 deepseek-r1-distill-llama-70b
   python/groq.mdx:112 [code] 'model_name': 'deepseek-r1-distill-llama-70b'
 meta-llama/llama-4-scout-17b-16e-instruct
-  python/groq.mdx:140 [code] llm = ChatGroq(model=""meta-llama/llama-4-scout-17b-16e-instruct"")",src/oss/javascript/integrations/chat/groq.mdx:80 src/oss/python/integrations/chat/groq.mdx:87 src/oss/python/integrations/chat/groq.mdx:112 src/oss/python/integrations/chat/groq.mdx:140,,,,
+  python/groq.mdx:140 [code] llm = ChatGroq(model=""meta-llama/llama-4-scout-17b-16e-instruct"")",src/oss/javascript/integrations/chat/groq.mdx:80 src/oss/python/integrations/chat/groq.mdx:87 src/oss/python/integrations/chat/groq.mdx:112 src/oss/python/integrations/chat/groq.mdx:140,real,"Although language examples may choose different models, python/groq.mdx:87 and :112 conflict about the model used for the same invocation.",real,"python/groq.mdx:87 selects qwen/qwen3-32b, but its invocation response at :112 reports deepseek-r1-distill-llama-70b."
 g-9e273043,twin groq.mdx,chat_groq,multimodal,single,,"false
   javascript/groq.mdx:11 [prose] multimodal: false
 true
-  python/groq.mdx:12 [prose] multimodal: true",src/oss/javascript/integrations/chat/groq.mdx:11 src/oss/python/integrations/chat/groq.mdx:12,,,,
+  python/groq.mdx:12 [prose] multimodal: true",src/oss/javascript/integrations/chat/groq.mdx:11 src/oss/python/integrations/chat/groq.mdx:12,not-real,The metadata describes separate JavaScript and Python integrations rather than asserting identical multimodal support across both packages.,not-real,"The multimodal flags describe separate JavaScript and Python integrations, whose supported capabilities can differ."
 g-d21c67bc,twin groq.mdx,chat_groq,serializable,single,,"false
   javascript/groq.mdx:26 [prose] | ❌ | ✅ |
 beta
-  python/groq.mdx:33 [prose] | @[`ChatGroq`] | @[`langchain-groq`] | beta | ✅ |",src/oss/javascript/integrations/chat/groq.mdx:26 src/oss/python/integrations/chat/groq.mdx:33,,,,
+  python/groq.mdx:33 [prose] | @[`ChatGroq`] | @[`langchain-groq`] | beta | ✅ |",src/oss/javascript/integrations/chat/groq.mdx:26 src/oss/python/integrations/chat/groq.mdx:33,not-real,javascript/groq.mdx:26 and python/groq.mdx:33 describe serialization support in separate language packages.,not-real,"The serialization entries concern separate SDKs, and beta is not an affirmative boolean that contradicts JavaScript's false value."
 g-2426ad1b,python,chat_groq,supported_model,free,,"meta-llama/llama-4-scout-17b-16e-instruct
   python/groq.mdx:130 [prose] - `meta-llama/llama-4-scout-17b-16e-instruct`
 meta-llama/llama-4-maverick-17b-128e-instruct
-  python/groq.mdx:131 [prose] - `meta-llama/llama-4-maverick-17b-128e-instruct`",src/oss/python/integrations/chat/groq.mdx:130 src/oss/python/integrations/chat/groq.mdx:131,,,,
+  python/groq.mdx:131 [prose] - `meta-llama/llama-4-maverick-17b-128e-instruct`",src/oss/python/integrations/chat/groq.mdx:130 src/oss/python/integrations/chat/groq.mdx:131,not-real,python/groq.mdx:130–131 lists two members of the supported vision-model set.,not-real,python/groq.mdx:130-131 lists two members of the set of vision-capable models.
 g-d09e8961,python,chat_vertex_ai,bound_tool,free,,"google_search
   python/google_vertex_ai.mdx:137 [code] bind_tools([{""google_search"": {}}])
 code_execution
-  python/google_vertex_ai.mdx:153 [code] bind_tools([{""code_execution"": {}}])",src/oss/python/integrations/chat/google_vertex_ai.mdx:137 src/oss/python/integrations/chat/google_vertex_ai.mdx:153,,,,
+  python/google_vertex_ai.mdx:153 [code] bind_tools([{""code_execution"": {}}])",src/oss/python/integrations/chat/google_vertex_ai.mdx:137 src/oss/python/integrations/chat/google_vertex_ai.mdx:153,not-real,"python/google_vertex_ai.mdx:137 and :153 demonstrate different supported tools, Google Search and code execution.",not-real,"python/google_vertex_ai.mdx:137 binds Google Search, while :153 demonstrates the separate code-execution tool."
 g-0edbca43,twin google_vertex_ai.mdx,chat_vertex_ai,max_retries,free,divergence low,"2
   javascript/google_vertex_ai.mdx:127 [code] maxRetries: 2,
 6
-  python/google_vertex_ai.mdx:90 [code] max_retries=6,",src/oss/javascript/integrations/chat/google_vertex_ai.mdx:127 src/oss/python/integrations/chat/google_vertex_ai.mdx:90,,,,
+  python/google_vertex_ai.mdx:90 [code] max_retries=6,",src/oss/javascript/integrations/chat/google_vertex_ai.mdx:127 src/oss/python/integrations/chat/google_vertex_ai.mdx:90,not-real,The retry counts are explicit example configurations for separate JavaScript and Python instances.,not-real,The JavaScript and Python snippets explicitly choose different retry counts without claiming one required count.
 g-6557b1f6,javascript,chat_vertex_ai,model,free,divergence medium,"gemini-2.5-pro
   javascript/google_vertex_ai.mdx:14 [prose] like `gemini-2.5-pro`, `gemini-2.5-flash`, etc.
 gemini-2.5-flash
-  javascript/google_vertex_ai.mdx:125 [code] model: ""gemini-2.5-flash""",src/oss/javascript/integrations/chat/google_vertex_ai.mdx:14 src/oss/javascript/integrations/chat/google_vertex_ai.mdx:125,,,,
+  javascript/google_vertex_ai.mdx:125 [code] model: ""gemini-2.5-flash""",src/oss/javascript/integrations/chat/google_vertex_ai.mdx:14 src/oss/javascript/integrations/chat/google_vertex_ai.mdx:125,not-real,"javascript/google_vertex_ai.mdx:14 lists available models, while :125 selects one for an example.",not-real,"javascript/google_vertex_ai.mdx:14 lists available models, and :125 chooses one of them for an example."
 g-392a4425,twin google_vertex_ai.mdx,chat_vertex_ai,model,free,divergence medium,"gemini-2.5-pro
   javascript/google_vertex_ai.mdx:14 [prose] like `gemini-2.5-pro`, `gemini-2.5-flash`, etc.
 gemini-2.5-flash
@@ -186,62 +186,62 @@ gemini-2.5-flash
 gemini-3.7-flash
   python/google_vertex_ai.mdx:87 [code] model=""gemini-3.7-flash"",
   python/google_vertex_ai.mdx:137 [code] ChatVertexAI(model=""gemini-3.7-flash"")
-  python/google_vertex_ai.mdx:153 [code] ChatVertexAI(model=""gemini-3.7-flash"")",src/oss/javascript/integrations/chat/google_vertex_ai.mdx:14 src/oss/javascript/integrations/chat/google_vertex_ai.mdx:125 src/oss/python/integrations/chat/google_vertex_ai.mdx:87 src/oss/python/integrations/chat/google_vertex_ai.mdx:137 src/oss/python/integrations/chat/google_vertex_ai.mdx:153,,,,
+  python/google_vertex_ai.mdx:153 [code] ChatVertexAI(model=""gemini-3.7-flash"")",src/oss/javascript/integrations/chat/google_vertex_ai.mdx:14 src/oss/javascript/integrations/chat/google_vertex_ai.mdx:125 src/oss/python/integrations/chat/google_vertex_ai.mdx:87 src/oss/python/integrations/chat/google_vertex_ai.mdx:137 src/oss/python/integrations/chat/google_vertex_ai.mdx:153,not-real,The passages list available models or select models for independent examples without declaring one mandatory model ID.,not-real,The pages list available models and select different models for examples without claiming a single required model.
 g-b9ed840a,twin google_vertex_ai.mdx,chat_vertex_ai,replaced_by,single,,"chatgoogle
   javascript/google_vertex_ai.mdx:22 [prose] This library will be replaced by the [ChatGoogle](/oss/integrations/chat/google) library.
 chatgooglegenerativeai
-  python/google_vertex_ai.mdx:18 [prose] Please use [`ChatGoogleGenerativeAI`](/oss/integrations/chat/google_generative_ai) instead",src/oss/javascript/integrations/chat/google_vertex_ai.mdx:22 src/oss/python/integrations/chat/google_vertex_ai.mdx:18,,,,
+  python/google_vertex_ai.mdx:18 [prose] Please use [`ChatGoogleGenerativeAI`](/oss/integrations/chat/google_generative_ai) instead",src/oss/javascript/integrations/chat/google_vertex_ai.mdx:22 src/oss/python/integrations/chat/google_vertex_ai.mdx:18,not-real,javascript/google_vertex_ai.mdx:22 and python/google_vertex_ai.mdx:18 give migration targets for their respective language libraries.,not-real,"The migration recommendations concern different language integrations, with JavaScript using ChatGoogle and Python using ChatGoogleGenerativeAI."
 g-cf878a1f,twin google_vertex_ai.mdx,chat_vertex_ai,serializable,single,,"true
   javascript/google_vertex_ai.mdx:33 [prose] | ✅ | ✅ |
 beta
-  python/google_vertex_ai.mdx:41 [prose] | @[`ChatVertexAI`] | @[`langchain-google-vertexai`] | beta |",src/oss/javascript/integrations/chat/google_vertex_ai.mdx:33 src/oss/python/integrations/chat/google_vertex_ai.mdx:41,,,,
+  python/google_vertex_ai.mdx:41 [prose] | @[`ChatVertexAI`] | @[`langchain-google-vertexai`] | beta |",src/oss/javascript/integrations/chat/google_vertex_ai.mdx:33 src/oss/python/integrations/chat/google_vertex_ai.mdx:41,not-real,"The serialization entries concern different language implementations, and beta does not contradict affirmative support.",not-real,"The entries describe separate SDKs, and beta does not assert that serialization is unsupported."
 g-82148b23,python,chat_xai,model,free,,"grok-beta
   python/xai.mdx:103 [code] 'model_name': 'grok-beta'
   python/xai.mdx:153 [code] 'model_name': 'grok-beta'
 grok-4
   python/xai.mdx:165 [code] model=""grok-4""
 grok-4.3
-  python/xai.mdx:181 [code] model = ChatXAI(model=""grok-4.3"")",src/oss/python/integrations/chat/xai.mdx:103 src/oss/python/integrations/chat/xai.mdx:153 src/oss/python/integrations/chat/xai.mdx:165 src/oss/python/integrations/chat/xai.mdx:181,,,,
+  python/xai.mdx:181 [code] model = ChatXAI(model=""grok-4.3"")",src/oss/python/integrations/chat/xai.mdx:103 src/oss/python/integrations/chat/xai.mdx:153 src/oss/python/integrations/chat/xai.mdx:165 src/oss/python/integrations/chat/xai.mdx:181,not-real,"python/xai.mdx:79 configures grok-beta for the displayed responses, while :165 and :181 create separate instances using other models.",not-real,"The grok-beta responses match their earlier initialization, while grok-4 and grok-4.3 appear in separately initialized examples."
 g-74603b4f,python,code_execution_tool,minimum_version,single,contradiction high,"1.0.3
   python/anthropic.mdx:1875 [prose] Anthropic's `2025-08-25` code execution tools are supported since `langchain-anthropic>=1.0.3`.
 0.3.14
-  python/anthropic.mdx:1877 [prose] tool is supported since `langchain-anthropic>=0.3.14`.",src/oss/python/integrations/chat/anthropic.mdx:1875 src/oss/python/integrations/chat/anthropic.mdx:1877,,,,
+  python/anthropic.mdx:1877 [prose] tool is supported since `langchain-anthropic>=0.3.14`.",src/oss/python/integrations/chat/anthropic.mdx:1875 src/oss/python/integrations/chat/anthropic.mdx:1877,not-real,python/anthropic.mdx:1875 and :1877 specify minimum versions for different dated code-execution tools.,not-real,"python/anthropic.mdx:1875 requires version 1.0.3 for the newer tool, while :1877 requires 0.3.14 for the legacy tool."
 g-39d7e254,python,computer_use_tool,supported_model,free,,"claude opus 4.5, claude 4, or claude sonnet 3.7
   python/anthropic.mdx:2040 [prose] Claude Opus 4.5, Claude 4, or Claude Sonnet 3.7
 claude 4 and claude sonnet 3.7
   python/anthropic.mdx:2206 [prose] `computer_20250124` (for Claude 4 and Claude Sonnet 3.7)
 claude opus 4.5
-  python/anthropic.mdx:2207 [prose] `computer_20251124` (for Claude Opus 4.5)",src/oss/python/integrations/chat/anthropic.mdx:2040 src/oss/python/integrations/chat/anthropic.mdx:2206 src/oss/python/integrations/chat/anthropic.mdx:2207,,,,
+  python/anthropic.mdx:2207 [prose] `computer_20251124` (for Claude Opus 4.5)",src/oss/python/integrations/chat/anthropic.mdx:2040 src/oss/python/integrations/chat/anthropic.mdx:2206 src/oss/python/integrations/chat/anthropic.mdx:2207,not-real,"python/anthropic.mdx:2040 lists supported model families, and :2206–2207 maps them to different computer-tool versions.",not-real,python/anthropic.mdx:2206-2207 assigns different computer-use tool versions to the model groups listed together at line 2040.
 g-d6e85072,twin google_generative_ai.mdx,context_caching,ttl_seconds,free,divergence low,"300
   javascript/google_generative_ai.mdx:603 [code] ttlSeconds: 300,
 300s
-  python/google_generative_ai.mdx:1401 [code] ttl=""300s""",src/oss/javascript/integrations/chat/google_generative_ai.mdx:603 src/oss/python/integrations/chat/google_generative_ai.mdx:1401,,,,
+  python/google_generative_ai.mdx:1401 [code] ttl=""300s""",src/oss/javascript/integrations/chat/google_generative_ai.mdx:603 src/oss/python/integrations/chat/google_generative_ai.mdx:1401,not-real,javascript/google_generative_ai.mdx:603 and python/google_generative_ai.mdx:1401 both specify a 300-second cache lifetime.,not-real,javascript/google_generative_ai.mdx:603 and python/google_generative_ai.mdx:1401 both specify a cache lifetime of 300 seconds.
 g-2f464e9a,python,effort_level,supported_model,free,,"claude opus 4.6
   python/anthropic.mdx:815 [prose] The `max` effort level is only supported on Claude Opus 4.6.
 claude opus 4.7
-  python/anthropic.mdx:815 [prose] The `xhigh` effort level is supported on Claude Opus 4.7.",src/oss/python/integrations/chat/anthropic.mdx:815 src/oss/python/integrations/chat/anthropic.mdx:815,,,,
+  python/anthropic.mdx:815 [prose] The `xhigh` effort level is supported on Claude Opus 4.7.",src/oss/python/integrations/chat/anthropic.mdx:815 src/oss/python/integrations/chat/anthropic.mdx:815,not-real,python/anthropic.mdx:815 assigns different model requirements to the distinct max and xhigh effort levels.,not-real,"python/anthropic.mdx:815 gives model restrictions for two different effort levels, max and xhigh."
 g-7fbb6fa5,python,fireworks,model,free,divergence low,"accounts/fireworks/models/kimi-k2-instruct-0905
   python/fireworks.mdx:74 [code] model=""accounts/fireworks/models/kimi-k2-instruct-0905"",
   python/fireworks.mdx:98 [code] 'model_name': 'accounts/fireworks/models/kimi-k2-instruct-0905'
 accounts/fireworks/models/deepseek-v4-pro
-  python/fireworks.mdx:116 [code] model = ChatFireworks(model=""accounts/fireworks/models/deepseek-v4-pro"")",src/oss/python/integrations/chat/fireworks.mdx:74 src/oss/python/integrations/chat/fireworks.mdx:98 src/oss/python/integrations/chat/fireworks.mdx:116,,,,
+  python/fireworks.mdx:116 [code] model = ChatFireworks(model=""accounts/fireworks/models/deepseek-v4-pro"")",src/oss/python/integrations/chat/fireworks.mdx:74 src/oss/python/integrations/chat/fireworks.mdx:98 src/oss/python/integrations/chat/fireworks.mdx:116,not-real,"python/fireworks.mdx:74 selects Kimi for translation, while :116 selects DeepSeek for a separate reasoning example.",not-real,"python/fireworks.mdx:74 selects Kimi for translation, while :116 independently selects DeepSeek for reasoning."
 g-d9721672,twin fireworks.mdx,fireworks,model,free,divergence low,"accounts/fireworks/models/llama-v3p1-70b-instruct
   javascript/fireworks.mdx:77 [code] model: ""accounts/fireworks/models/llama-v3p1-70b-instruct"",
 accounts/fireworks/models/kimi-k2-instruct-0905
   python/fireworks.mdx:74 [code] model=""accounts/fireworks/models/kimi-k2-instruct-0905"",
   python/fireworks.mdx:98 [code] 'model_name': 'accounts/fireworks/models/kimi-k2-instruct-0905'
 accounts/fireworks/models/deepseek-v4-pro
-  python/fireworks.mdx:116 [code] model = ChatFireworks(model=""accounts/fireworks/models/deepseek-v4-pro"")",src/oss/javascript/integrations/chat/fireworks.mdx:77 src/oss/python/integrations/chat/fireworks.mdx:74 src/oss/python/integrations/chat/fireworks.mdx:98 src/oss/python/integrations/chat/fireworks.mdx:116,,,,
+  python/fireworks.mdx:116 [code] model = ChatFireworks(model=""accounts/fireworks/models/deepseek-v4-pro"")",src/oss/javascript/integrations/chat/fireworks.mdx:77 src/oss/python/integrations/chat/fireworks.mdx:74 src/oss/python/integrations/chat/fireworks.mdx:98 src/oss/python/integrations/chat/fireworks.mdx:116,not-real,"The JavaScript and Python examples independently choose models, and the Python response matches its configured Kimi model.",not-real,"The pages choose different models for independent examples, and the Python Kimi response matches its initialization."
 g-7d45895e,python,fireworks,reasoning_effort,free,,"forwarded unchanged as the reasoning_effort request field
   python/fireworks.mdx:111 [prose] `ChatFireworks` forwards it unchanged as the `reasoning_effort` request field.
 high
-  python/fireworks.mdx:119 [code] reasoning_effort=""high"",",src/oss/python/integrations/chat/fireworks.mdx:111 src/oss/python/integrations/chat/fireworks.mdx:119,,,,
+  python/fireworks.mdx:119 [code] reasoning_effort=""high"",",src/oss/python/integrations/chat/fireworks.mdx:111 src/oss/python/integrations/chat/fireworks.mdx:119,not-real,"python/fireworks.mdx:111 describes parameter forwarding, while :119 supplies high as an example value.",not-real,"python/fireworks.mdx:111 explains how reasoning_effort is forwarded, and :119 supplies high as an example value."
 g-66365f91,javascript,google_genai,max_retries,free,,"2
   javascript/google_generative_ai.mdx:98 [code] maxRetries: 2,
 0
   javascript/google_generative_ai.mdx:279 [code] maxRetries: 0,
   javascript/google_generative_ai.mdx:477 [code] maxRetries: 0,
-  javascript/google_vertex_ai.mdx:198 [code] maxRetries: 0,",src/oss/javascript/integrations/chat/google_generative_ai.mdx:98 src/oss/javascript/integrations/chat/google_generative_ai.mdx:279 src/oss/javascript/integrations/chat/google_generative_ai.mdx:477 src/oss/javascript/integrations/chat/google_vertex_ai.mdx:198,,,,
+  javascript/google_vertex_ai.mdx:198 [code] maxRetries: 0,",src/oss/javascript/integrations/chat/google_generative_ai.mdx:98 src/oss/javascript/integrations/chat/google_generative_ai.mdx:279 src/oss/javascript/integrations/chat/google_generative_ai.mdx:477 src/oss/javascript/integrations/chat/google_vertex_ai.mdx:198,not-real,The retry counts are explicit settings for separate model instances and tool examples.,not-real,The snippets explicitly configure retry counts for independent examples rather than stating competing defaults.
 g-1e01488b,javascript,google_genai,model,free,divergence low,"gemini-2.5-pro
   javascript/google_generative_ai.mdx:96 [code] model: ""gemini-2.5-pro"",
   javascript/google_generative_ai.mdx:190 [code] model: ""gemini-2.5-pro"",
@@ -250,7 +250,7 @@ g-1e01488b,javascript,google_genai,model,free,divergence low,"gemini-2.5-pro
 gemini-pro
   javascript/google_generative_ai.mdx:234 [code] model: ""gemini-pro"",
 models/gemini-2.5-flash
-  javascript/google_generative_ai.mdx:586 [code] model: ""models/gemini-2.5-flash"",",src/oss/javascript/integrations/chat/google_generative_ai.mdx:96 src/oss/javascript/integrations/chat/google_generative_ai.mdx:190 src/oss/javascript/integrations/chat/google_vertex_ai.mdx:196 src/oss/javascript/integrations/chat/google_vertex_ai.mdx:242 src/oss/javascript/integrations/chat/google_generative_ai.mdx:234 src/oss/javascript/integrations/chat/google_generative_ai.mdx:586,,,,
+  javascript/google_generative_ai.mdx:586 [code] model: ""models/gemini-2.5-flash"",",src/oss/javascript/integrations/chat/google_generative_ai.mdx:96 src/oss/javascript/integrations/chat/google_generative_ai.mdx:190 src/oss/javascript/integrations/chat/google_vertex_ai.mdx:196 src/oss/javascript/integrations/chat/google_vertex_ai.mdx:242 src/oss/javascript/integrations/chat/google_generative_ai.mdx:234 src/oss/javascript/integrations/chat/google_generative_ai.mdx:586,not-real,"The model IDs are choices in separate Gemini examples, including tool calling and context caching.",not-real,"The snippets choose models for separate tool, search, and caching examples without asserting one required model."
 g-a067e62b,twin google_generative_ai.mdx,google_genai,model,free,divergence low,"gemini-2.5-pro
   javascript/google_generative_ai.mdx:96 [code] model: ""gemini-2.5-pro"",
   javascript/google_generative_ai.mdx:190 [code] model: ""gemini-2.5-pro"",
@@ -259,41 +259,41 @@ gemini-pro
 models/gemini-2.5-flash
   javascript/google_generative_ai.mdx:586 [code] model: ""models/gemini-2.5-flash"",
 gemini-3.7-flash
-  python/google_generative_ai.mdx:110 [code] model=""gemini-3.7-flash""",src/oss/javascript/integrations/chat/google_generative_ai.mdx:96 src/oss/javascript/integrations/chat/google_generative_ai.mdx:190 src/oss/javascript/integrations/chat/google_generative_ai.mdx:234 src/oss/javascript/integrations/chat/google_generative_ai.mdx:586 src/oss/python/integrations/chat/google_generative_ai.mdx:110,,,,
+  python/google_generative_ai.mdx:110 [code] model=""gemini-3.7-flash""",src/oss/javascript/integrations/chat/google_generative_ai.mdx:96 src/oss/javascript/integrations/chat/google_generative_ai.mdx:190 src/oss/javascript/integrations/chat/google_generative_ai.mdx:234 src/oss/javascript/integrations/chat/google_generative_ai.mdx:586 src/oss/python/integrations/chat/google_generative_ai.mdx:110,not-real,The language pages select different models for independent examples without claiming a single required or default model.,not-real,The pages choose models for separate examples without claiming that only one model ID is valid.
 g-2b4ece34,python,google_genai,service_tier,free,,"flex
   python/google_generative_ai.mdx:960 [code] service_tier=""flex""
 priority
-  python/google_generative_ai.mdx:964 [code] service_tier=""priority""",src/oss/python/integrations/chat/google_generative_ai.mdx:960 src/oss/python/integrations/chat/google_generative_ai.mdx:964,,,,
+  python/google_generative_ai.mdx:964 [code] service_tier=""priority""",src/oss/python/integrations/chat/google_generative_ai.mdx:960 src/oss/python/integrations/chat/google_generative_ai.mdx:964,not-real,python/google_generative_ai.mdx:964 explicitly overrides the model-level flex tier from :960 with priority for one request.,not-real,python/google_generative_ai.mdx:964 explicitly overrides the model-level flex tier from :960 with priority for one request.
 g-264d7154,python,google_genai,temperature,free,divergence high,"1.0
   python/google_generative_ai.mdx:183 [code] temperature=1.0,
   python/google_generative_ai.mdx:215 [prose] it will be automatically set to `1.0`
 0.7
-  python/google_generative_ai.mdx:215 [prose] instead of the default `0.7`",src/oss/python/integrations/chat/google_generative_ai.mdx:183 src/oss/python/integrations/chat/google_generative_ai.mdx:215 src/oss/python/integrations/chat/google_generative_ai.mdx:215,,,,
+  python/google_generative_ai.mdx:215 [prose] instead of the default `0.7`",src/oss/python/integrations/chat/google_generative_ai.mdx:183 src/oss/python/integrations/chat/google_generative_ai.mdx:215 src/oss/python/integrations/chat/google_generative_ai.mdx:215,not-real,python/google_generative_ai.mdx:215 explicitly distinguishes the Gemini 3.0+ default of 1.0 from the general default of 0.7.,not-real,python/google_generative_ai.mdx:215 explicitly changes the default from 0.7 to 1.0 when the model is Gemini 3.0 or later.
 g-e3cc3678,twin google_generative_ai.mdx,google_genai,temperature,free,divergence high,"0
   javascript/google_generative_ai.mdx:97 [code] temperature: 0,
 1.0
   python/google_generative_ai.mdx:183 [code] temperature=1.0,
   python/google_generative_ai.mdx:215 [prose] it will be automatically set to `1.0`
 0.7
-  python/google_generative_ai.mdx:215 [prose] instead of the default `0.7`",src/oss/javascript/integrations/chat/google_generative_ai.mdx:97 src/oss/python/integrations/chat/google_generative_ai.mdx:183 src/oss/python/integrations/chat/google_generative_ai.mdx:215 src/oss/python/integrations/chat/google_generative_ai.mdx:215,,,,
+  python/google_generative_ai.mdx:215 [prose] instead of the default `0.7`",src/oss/javascript/integrations/chat/google_generative_ai.mdx:97 src/oss/python/integrations/chat/google_generative_ai.mdx:183 src/oss/python/integrations/chat/google_generative_ai.mdx:215 src/oss/python/integrations/chat/google_generative_ai.mdx:215,not-real,"JavaScript explicitly sets temperature to zero, while Python documents a conditional default for Gemini 3.0+ models.",not-real,"JavaScript explicitly chooses temperature 0, while Python explains the conditional default of 1.0 for Gemini 3.0+ versus 0.7 otherwise."
 g-4bbaa5ab,python,google_vertexai,model,free,,"gemini-3.1-pro-preview
   python/google_vertex_ai.mdx:21 [prose] like `gemini-3.1-pro-preview`, `gemini-3.7-flash`, etc.
 gemini-3.7-flash
-  python/google_vertex_ai.mdx:21 [prose] like `gemini-3.1-pro-preview`, `gemini-3.7-flash`, etc.",src/oss/python/integrations/chat/google_vertex_ai.mdx:21 src/oss/python/integrations/chat/google_vertex_ai.mdx:21,,,,
+  python/google_vertex_ai.mdx:21 [prose] like `gemini-3.1-pro-preview`, `gemini-3.7-flash`, etc.",src/oss/python/integrations/chat/google_vertex_ai.mdx:21 src/oss/python/integrations/chat/google_vertex_ai.mdx:21,not-real,python/google_vertex_ai.mdx:21 lists two examples of available models rather than competing answers.,not-real,python/google_vertex_ai.mdx:21 lists both model IDs as examples of available models.
 g-05d85baf,python,langchain_google_vertexai,minimum_version,single,contradiction high,">=2.0.11
   python/google_vertex_ai.mdx:129 [prose] Requires `langchain-google-vertexai>=2.0.11`
 >=2.0.25
-  python/google_vertex_ai.mdx:145 [prose] Requires `langchain-google-vertexai>=2.0.25`",src/oss/python/integrations/chat/google_vertex_ai.mdx:129 src/oss/python/integrations/chat/google_vertex_ai.mdx:145,,,,
+  python/google_vertex_ai.mdx:145 [prose] Requires `langchain-google-vertexai>=2.0.25`",src/oss/python/integrations/chat/google_vertex_ai.mdx:129 src/oss/python/integrations/chat/google_vertex_ai.mdx:145,not-real,"python/google_vertex_ai.mdx:129 requires one version for Google Search, while :145 requires another for code execution.",not-real,"python/google_vertex_ai.mdx:129 gives the minimum version for Google Search, while :145 gives it for code execution."
 g-98c4170b,javascript,ollama,input_tokens,free,,"35
   javascript/ollama.mdx:108 [code] ""prompt_eval_count"": 35,
 1
-  javascript/ollama.mdx:307 [code] ""prompt_eval_count"": 1,",src/oss/javascript/integrations/chat/ollama.mdx:108 src/oss/javascript/integrations/chat/ollama.mdx:307,,,,
+  javascript/ollama.mdx:307 [code] ""prompt_eval_count"": 1,",src/oss/javascript/integrations/chat/ollama.mdx:108 src/oss/javascript/integrations/chat/ollama.mdx:307,not-real,javascript/ollama.mdx:108 and :307 report token counts for separate text and image requests.,not-real,javascript/ollama.mdx:108 and :307 report token counts for different requests.
 g-1bf950e2,python,ollama,install_command,single,contradiction medium,"brew install ollama
   python/ollama.mdx:45 [prose] `brew install ollama`
 install langchain-ollama
   python/ollama.mdx:72 [code] pip install -qU langchain-ollama
 install pillow
-  python/ollama.mdx:177 [code] pip install pillow",src/oss/python/integrations/chat/ollama.mdx:45 src/oss/python/integrations/chat/ollama.mdx:72 src/oss/python/integrations/chat/ollama.mdx:177,,,,
+  python/ollama.mdx:177 [code] pip install pillow",src/oss/python/integrations/chat/ollama.mdx:45 src/oss/python/integrations/chat/ollama.mdx:72 src/oss/python/integrations/chat/ollama.mdx:177,not-real,"The commands install three different components: the Ollama runtime, its Python integration, and Pillow for image handling.",not-real,"The commands install different components: the Ollama runtime, its LangChain integration, and Pillow for image handling."
 g-882925e1,twin ollama.mdx,ollama,install_command,single,contradiction medium,"install @langchain/core @langchain/ollama
   javascript/ollama.mdx:59 [code] npm install @langchain/ollama @langchain/core
   javascript/ollama.mdx:62 [code] yarn add @langchain/ollama @langchain/core
@@ -303,17 +303,17 @@ brew install ollama
 install langchain-ollama
   python/ollama.mdx:72 [code] pip install -qU langchain-ollama
 install pillow
-  python/ollama.mdx:177 [code] pip install pillow",src/oss/javascript/integrations/chat/ollama.mdx:59 src/oss/javascript/integrations/chat/ollama.mdx:62 src/oss/javascript/integrations/chat/ollama.mdx:65 src/oss/python/integrations/chat/ollama.mdx:45 src/oss/python/integrations/chat/ollama.mdx:72 src/oss/python/integrations/chat/ollama.mdx:177,,,,
+  python/ollama.mdx:177 [code] pip install pillow",src/oss/javascript/integrations/chat/ollama.mdx:59 src/oss/javascript/integrations/chat/ollama.mdx:62 src/oss/javascript/integrations/chat/ollama.mdx:65 src/oss/python/integrations/chat/ollama.mdx:45 src/oss/python/integrations/chat/ollama.mdx:72 src/oss/python/integrations/chat/ollama.mdx:177,not-real,The commands install language-specific integrations and separate runtime or image-processing prerequisites.,not-real,The commands target different language packages or install the separate Ollama runtime and image dependency.
 g-4b08a6b5,python,ollama,logprobs,free,divergence high,"logprobs and top_logprobs
   python/ollama.mdx:268 [prose] via the `logprobs` and `top_logprobs` parameters.
 true
-  python/ollama.mdx:275 [code] llm = ChatOllama(model=""llama3.1"", logprobs=True)",src/oss/python/integrations/chat/ollama.mdx:268 src/oss/python/integrations/chat/ollama.mdx:275,,,,
+  python/ollama.mdx:275 [code] llm = ChatOllama(model=""llama3.1"", logprobs=True)",src/oss/python/integrations/chat/ollama.mdx:268 src/oss/python/integrations/chat/ollama.mdx:275,not-real,"python/ollama.mdx:268 names the supported parameters, and :275 demonstrates enabling one with True.",not-real,"python/ollama.mdx:268 describes logprobs support, and :275 demonstrates enabling that feature."
 g-ed3f5803,twin ollama.mdx,ollama,logprobs,free,divergence high,"false
   javascript/ollama.mdx:38 [prose] | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ |
 logprobs and top_logprobs
   python/ollama.mdx:268 [prose] via the `logprobs` and `top_logprobs` parameters.
 true
-  python/ollama.mdx:275 [code] llm = ChatOllama(model=""llama3.1"", logprobs=True)",src/oss/javascript/integrations/chat/ollama.mdx:38 src/oss/python/integrations/chat/ollama.mdx:268 src/oss/python/integrations/chat/ollama.mdx:275,,,,
+  python/ollama.mdx:275 [code] llm = ChatOllama(model=""llama3.1"", logprobs=True)",src/oss/javascript/integrations/chat/ollama.mdx:38 src/oss/python/integrations/chat/ollama.mdx:268 src/oss/python/integrations/chat/ollama.mdx:275,not-real,"javascript/ollama.mdx:38 describes the JavaScript wrapper, while python/ollama.mdx:268 documents support in the separate Python wrapper.",not-real,JavaScript's feature table and Python's logprobs example describe support in separate SDK implementations.
 g-3270d456,python,ollama,model,free,,"gpt-oss
   python/ollama.mdx:14 [prose] such as `gpt-oss`, locally.
 llama3.1
@@ -322,7 +322,7 @@ llama3.1
 gpt-oss:20b
   python/ollama.mdx:151 [code] model=""gpt-oss:20b"",
 bakllava
-  python/ollama.mdx:229 [code] llm = ChatOllama(model=""bakllava"", temperature=0)",src/oss/python/integrations/chat/ollama.mdx:14 src/oss/python/integrations/chat/ollama.mdx:83 src/oss/python/integrations/chat/ollama.mdx:275 src/oss/python/integrations/chat/ollama.mdx:151 src/oss/python/integrations/chat/ollama.mdx:229,,,,
+  python/ollama.mdx:229 [code] llm = ChatOllama(model=""bakllava"", temperature=0)",src/oss/python/integrations/chat/ollama.mdx:14 src/oss/python/integrations/chat/ollama.mdx:83 src/oss/python/integrations/chat/ollama.mdx:275 src/oss/python/integrations/chat/ollama.mdx:151 src/oss/python/integrations/chat/ollama.mdx:229,not-real,"The page uses different Ollama models for general invocation, tool calling, and image input.",not-real,"The Ollama page lists available models and selects different models for separate chat, tool, image, and logprobs examples."
 g-f2fbe1af,javascript,ollama,model,free,,"llama3
   javascript/ollama.mdx:77 [code] model: ""llama3"",
   javascript/ollama.mdx:102 [code] ""model"": ""llama3"",
@@ -334,31 +334,31 @@ llama3.1
   javascript/ollama.mdx:249 [code] model: ""llama3.1"",
 llava
   javascript/ollama.mdx:276 [code] model: ""llava"",
-  javascript/ollama.mdx:301 [code] ""model"": ""llava"",",src/oss/javascript/integrations/chat/ollama.mdx:77 src/oss/javascript/integrations/chat/ollama.mdx:102 src/oss/javascript/integrations/chat/ollama.mdx:152 src/oss/javascript/integrations/chat/ollama.mdx:170 src/oss/javascript/integrations/chat/ollama.mdx:217 src/oss/javascript/integrations/chat/ollama.mdx:249 src/oss/javascript/integrations/chat/ollama.mdx:276 src/oss/javascript/integrations/chat/ollama.mdx:301,,,,
+  javascript/ollama.mdx:301 [code] ""model"": ""llava"",",src/oss/javascript/integrations/chat/ollama.mdx:77 src/oss/javascript/integrations/chat/ollama.mdx:102 src/oss/javascript/integrations/chat/ollama.mdx:152 src/oss/javascript/integrations/chat/ollama.mdx:170 src/oss/javascript/integrations/chat/ollama.mdx:217 src/oss/javascript/integrations/chat/ollama.mdx:249 src/oss/javascript/integrations/chat/ollama.mdx:276 src/oss/javascript/integrations/chat/ollama.mdx:301,not-real,"Separate examples select different Ollama models, and each displayed response matches its corresponding configuration.",not-real,"The Ollama examples explicitly choose different models for ordinary chat, tool use, structured output, and images."
 g-27ba1f0b,python,ollama,model_storage_directory,single,contradiction high,"~/.ollama/models
   python/ollama.mdx:51 [prose] On Mac, the models will be download to `~/.ollama/models`
 /usr/share/ollama/.ollama/models
-  python/ollama.mdx:53 [prose] `/usr/share/ollama/.ollama/models`",src/oss/python/integrations/chat/ollama.mdx:51 src/oss/python/integrations/chat/ollama.mdx:53,,,,
+  python/ollama.mdx:53 [prose] `/usr/share/ollama/.ollama/models`",src/oss/python/integrations/chat/ollama.mdx:51 src/oss/python/integrations/chat/ollama.mdx:53,not-real,python/ollama.mdx:51 and :53 explicitly distinguish macOS storage from Linux or WSL storage.,not-real,"python/ollama.mdx:51 specifies the macOS storage path, while :53 specifies the Linux and WSL path."
 g-bd266045,javascript,ollama,output_tokens,free,,"43
   javascript/ollama.mdx:110 [code] ""eval_count"": 43,
 127
-  javascript/ollama.mdx:309 [code] ""eval_count"": 127,",src/oss/javascript/integrations/chat/ollama.mdx:110 src/oss/javascript/integrations/chat/ollama.mdx:309,,,,
+  javascript/ollama.mdx:309 [code] ""eval_count"": 127,",src/oss/javascript/integrations/chat/ollama.mdx:110 src/oss/javascript/integrations/chat/ollama.mdx:309,not-real,javascript/ollama.mdx:110 and :309 report output lengths from different generations.,not-real,javascript/ollama.mdx:110 and :309 report output-token counts for different text and image requests.
 g-a3133c0f,twin ollama.mdx,ollama,serializable,single,,"beta
   javascript/ollama.mdx:30 [prose] | beta |
 false
-  python/ollama.mdx:32 [prose] | @[`ChatOllama`] | @[`langchain-ollama`] | ❌ | ✅ |",src/oss/javascript/integrations/chat/ollama.mdx:30 src/oss/python/integrations/chat/ollama.mdx:32,,,,
+  python/ollama.mdx:32 [prose] | @[`ChatOllama`] | @[`langchain-ollama`] | ❌ | ✅ |",src/oss/javascript/integrations/chat/ollama.mdx:30 src/oss/python/integrations/chat/ollama.mdx:32,not-real,javascript/ollama.mdx:30 and python/ollama.mdx:32 describe serialization in separate language implementations.,not-real,"The serialization entries concern separate JavaScript and Python implementations, so their support statuses need not match."
 g-6891155b,javascript,ollama,structured_output,free,,"true
   javascript/ollama.mdx:10 [prose] structured_output: true
   javascript/ollama.mdx:38 [prose] | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ |
 all models
-  javascript/ollama.mdx:202 [prose] Ollama natively supports [structured output](https://docs.ollama.com/capabilities/structured-outputs) for all models",src/oss/javascript/integrations/chat/ollama.mdx:10 src/oss/javascript/integrations/chat/ollama.mdx:38 src/oss/javascript/integrations/chat/ollama.mdx:202,,,,
+  javascript/ollama.mdx:202 [prose] Ollama natively supports [structured output](https://docs.ollama.com/capabilities/structured-outputs) for all models",src/oss/javascript/integrations/chat/ollama.mdx:10 src/oss/javascript/integrations/chat/ollama.mdx:38 src/oss/javascript/integrations/chat/ollama.mdx:202,not-real,javascript/ollama.mdx:202 explains the structured-output support affirmed by the metadata and feature table.,not-real,javascript/ollama.mdx:202 expands on the structured-output support already marked true in the metadata and table.
 g-08972ba1,twin openai.mdx,openai,install_command,single,,"install @langchain/core @langchain/openai
   javascript/openai.mdx:72 [code] npm install @langchain/openai @langchain/core
   javascript/openai.mdx:75 [code] yarn add @langchain/openai @langchain/core
   javascript/openai.mdx:78 [code] pnpm add @langchain/openai @langchain/core
 install langchain-openai
   python/openai.mdx:56 [code] pip install -U langchain-openai
-  python/openai.mdx:59 [code] uv add langchain-openai",src/oss/javascript/integrations/chat/openai.mdx:72 src/oss/javascript/integrations/chat/openai.mdx:75 src/oss/javascript/integrations/chat/openai.mdx:78 src/oss/python/integrations/chat/openai.mdx:56 src/oss/python/integrations/chat/openai.mdx:59,,,,
+  python/openai.mdx:59 [code] uv add langchain-openai",src/oss/javascript/integrations/chat/openai.mdx:72 src/oss/javascript/integrations/chat/openai.mdx:75 src/oss/javascript/integrations/chat/openai.mdx:78 src/oss/python/integrations/chat/openai.mdx:56 src/oss/python/integrations/chat/openai.mdx:59,not-real,The commands install the corresponding JavaScript and Python OpenAI integration packages.,not-real,The installation commands target the distinct JavaScript and Python OpenAI integration packages.
 g-e06d80b2,python,openai,model,free,,"gpt-5-nano
   python/openai.mdx:96 [code] model=""gpt-5-nano"",
 gpt-5.4-mini
@@ -368,23 +368,23 @@ gpt-5-mini
 o4-mini
   python/openai.mdx:1969 [code] llm = ChatOpenAI(model=""o4-mini"", service_tier=""flex"")
 gpt-5.5
-  python/openai.mdx:363 [code] llm = ChatOpenAI(model=""gpt-5.5"", use_responses_api=True)",src/oss/python/integrations/chat/openai.mdx:96 src/oss/python/integrations/chat/openai.mdx:157 src/oss/python/integrations/chat/openai.mdx:180 src/oss/python/integrations/chat/openai.mdx:1969 src/oss/python/integrations/chat/openai.mdx:363,,,,
+  python/openai.mdx:363 [code] llm = ChatOpenAI(model=""gpt-5.5"", use_responses_api=True)",src/oss/python/integrations/chat/openai.mdx:96 src/oss/python/integrations/chat/openai.mdx:157 src/oss/python/integrations/chat/openai.mdx:180 src/oss/python/integrations/chat/openai.mdx:1969 src/oss/python/integrations/chat/openai.mdx:363,not-real,"These are independent model choices for different examples, including an Azure deployment name and flex processing.",not-real,"The snippets choose models for different examples, including Azure deployment, reasoning, and flex processing."
 g-d7455b99,twin openai.mdx,openai,serializable,single,,"true
   javascript/openai.mdx:37 [prose] | ✅ | ✅ | ![NPM - Downloads]
 beta
-  python/openai.mdx:40 [prose] | @[`ChatOpenAI`] | @[`langchain-openai`] | beta |",src/oss/javascript/integrations/chat/openai.mdx:37 src/oss/python/integrations/chat/openai.mdx:40,,,,
+  python/openai.mdx:40 [prose] | @[`ChatOpenAI`] | @[`langchain-openai`] | beta |",src/oss/javascript/integrations/chat/openai.mdx:37 src/oss/python/integrations/chat/openai.mdx:40,not-real,"The entries describe separate language implementations, and beta does not deny serialization support.",not-real,Python's beta entry and JavaScript's checkmark describe separate integrations and do not give opposing boolean answers.
 g-45b9b741,twin openai.mdx,openai,stream_usage,free,divergence medium,"false
   javascript/openai.mdx:196 [code] streamUsage: false,
 true
-  python/openai.mdx:152 [prose] set `stream_usage=True` as an initialization parameter",src/oss/javascript/integrations/chat/openai.mdx:196 src/oss/python/integrations/chat/openai.mdx:152,,,,
+  python/openai.mdx:152 [prose] set `stream_usage=True` as an initialization parameter",src/oss/javascript/integrations/chat/openai.mdx:196 src/oss/python/integrations/chat/openai.mdx:152,not-real,"JavaScript disables usage reporting for incompatible proxies at javascript/openai.mdx:188–196, while Python enables it to retrieve token counts.",not-real,"javascript/openai.mdx:188-196 disables usage reporting for incompatible proxies, while python/openai.mdx:152 enables it to obtain token counts."
 g-f76577cc,javascript,openai,temperature,free,,"0
   javascript/openai.mdx:91 [code] temperature: 0,
 0.9
-  javascript/openai.mdx:153 [code] temperature: 0.9,",src/oss/javascript/integrations/chat/openai.mdx:91 src/oss/javascript/integrations/chat/openai.mdx:153,,,,
+  javascript/openai.mdx:153 [code] temperature: 0.9,",src/oss/javascript/integrations/chat/openai.mdx:91 src/oss/javascript/integrations/chat/openai.mdx:153,not-real,javascript/openai.mdx:91 and :153 explicitly choose different temperatures for separate instances.,not-real,javascript/openai.mdx:91 and :153 choose different temperatures for separate model instances.
 g-f70b4fcf,python,openrouter,max_tokens,free,,"1024
   python/openrouter.mdx:85 [code] max_tokens=1024,
 16384
-  python/openrouter.mdx:273 [code] max_tokens=16384,",src/oss/python/integrations/chat/openrouter.mdx:85 src/oss/python/integrations/chat/openrouter.mdx:273,,,,
+  python/openrouter.mdx:273 [code] max_tokens=16384,",src/oss/python/integrations/chat/openrouter.mdx:85 src/oss/python/integrations/chat/openrouter.mdx:273,not-real,python/openrouter.mdx:85 and :273 choose different token budgets for basic invocation and reasoning.,not-real,"python/openrouter.mdx:85 chooses 1024 tokens for basic chat, while :273 chooses 16384 for a separate reasoning example."
 g-150904f3,python,openrouter,model,free,,"anthropic/claude-sonnet-4.5
   python/openrouter.mdx:83 [code] model=""anthropic/claude-sonnet-4.5""
 openai/gpt-5.5
@@ -392,15 +392,15 @@ openai/gpt-5.5
 openai/gpt-4o
   python/openrouter.mdx:330 [code] model = ChatOpenRouter(model=""openai/gpt-4o"")
 google/gemini-2.5-flash
-  python/openrouter.mdx:379 [code] model = ChatOpenRouter(model=""google/gemini-2.5-flash"")",src/oss/python/integrations/chat/openrouter.mdx:83 src/oss/python/integrations/chat/openrouter.mdx:202 src/oss/python/integrations/chat/openrouter.mdx:330 src/oss/python/integrations/chat/openrouter.mdx:379,,,,
+  python/openrouter.mdx:379 [code] model = ChatOpenRouter(model=""google/gemini-2.5-flash"")",src/oss/python/integrations/chat/openrouter.mdx:83 src/oss/python/integrations/chat/openrouter.mdx:202 src/oss/python/integrations/chat/openrouter.mdx:330 src/oss/python/integrations/chat/openrouter.mdx:379,not-real,"The examples independently choose models for basic chat, structured output, image input, and audio input.",not-real,"The OpenRouter examples select different models for ordinary chat, structured output, image input, and audio input."
 g-77e44a95,javascript,openrouter,model,free,,"anthropic/claude-sonnet-4.5
   javascript/openrouter.mdx:81 [code] model: ""anthropic/claude-sonnet-4.5"",
 openai/gpt-5.5
-  javascript/openrouter.mdx:198 [code] const model = new ChatOpenRouter({ model: ""openai/gpt-5.5"" });",src/oss/javascript/integrations/chat/openrouter.mdx:81 src/oss/javascript/integrations/chat/openrouter.mdx:198,,,,
+  javascript/openrouter.mdx:198 [code] const model = new ChatOpenRouter({ model: ""openai/gpt-5.5"" });",src/oss/javascript/integrations/chat/openrouter.mdx:81 src/oss/javascript/integrations/chat/openrouter.mdx:198,not-real,javascript/openrouter.mdx:81 and :198 select different models for separate chat and structured-output examples.,not-real,javascript/openrouter.mdx:81 and :198 select different models for independent examples.
 g-c9f4eca5,javascript,perplexity,endpoint,single,contradiction high,"agent api
   javascript/perplexity.mdx:142 [prose] | `true` | Agent API |
 chat completions
-  javascript/perplexity.mdx:143 [prose] | `false` | Chat Completions |",src/oss/javascript/integrations/chat/perplexity.mdx:142 src/oss/javascript/integrations/chat/perplexity.mdx:143,,,,
+  javascript/perplexity.mdx:143 [prose] | `false` | Chat Completions |",src/oss/javascript/integrations/chat/perplexity.mdx:142 src/oss/javascript/integrations/chat/perplexity.mdx:143,not-real,javascript/perplexity.mdx:142–143 explicitly maps different flag values to different endpoints.,not-real,javascript/perplexity.mdx:142-143 explicitly selects different endpoints according to whether useResponsesApi is true or false.
 g-7afcf43f,python,perplexity,model,free,,"sonar
   python/perplexity.mdx:61 [code] model=""sonar""
   python/perplexity.mdx:67 [code] model=""sonar""
@@ -412,16 +412,16 @@ openai/gpt-5.5
   python/perplexity.mdx:114 [code] model=""openai/gpt-5.5""
   python/perplexity.mdx:124 [code] model=""openai/gpt-5.5""
 sonar-pro
-  python/perplexity.mdx:241 [code] model=""sonar-pro""",src/oss/python/integrations/chat/perplexity.mdx:61 src/oss/python/integrations/chat/perplexity.mdx:67 src/oss/python/integrations/chat/perplexity.mdx:87 src/oss/python/integrations/chat/perplexity.mdx:153 src/oss/python/integrations/chat/perplexity.mdx:171 src/oss/python/integrations/chat/perplexity.mdx:204 src/oss/python/integrations/chat/perplexity.mdx:114 src/oss/python/integrations/chat/perplexity.mdx:124 src/oss/python/integrations/chat/perplexity.mdx:241,,,,
+  python/perplexity.mdx:241 [code] model=""sonar-pro""",src/oss/python/integrations/chat/perplexity.mdx:61 src/oss/python/integrations/chat/perplexity.mdx:67 src/oss/python/integrations/chat/perplexity.mdx:87 src/oss/python/integrations/chat/perplexity.mdx:153 src/oss/python/integrations/chat/perplexity.mdx:171 src/oss/python/integrations/chat/perplexity.mdx:204 src/oss/python/integrations/chat/perplexity.mdx:114 src/oss/python/integrations/chat/perplexity.mdx:124 src/oss/python/integrations/chat/perplexity.mdx:241,not-real,"The models serve separate examples and endpoints, with Agent API model choices distinguished from Sonar chat examples.",not-real,The examples choose Sonar models for Chat Completions and openai/gpt-5.5 for the separately documented Agent API.
 g-5d2bb264,twin perplexity.mdx,perplexity,required_env_var,single,,"perplexity_api_key
   javascript/perplexity.mdx:40 [prose] set the `PERPLEXITY_API_KEY` environment variable
 pplx_api_key
-  python/perplexity.mdx:36 [prose] set the `PPLX_API_KEY` environment variable",src/oss/javascript/integrations/chat/perplexity.mdx:40 src/oss/python/integrations/chat/perplexity.mdx:36,,,,
+  python/perplexity.mdx:36 [prose] set the `PPLX_API_KEY` environment variable",src/oss/javascript/integrations/chat/perplexity.mdx:40 src/oss/python/integrations/chat/perplexity.mdx:36,not-real,javascript/perplexity.mdx:40 and python/perplexity.mdx:36 specify configuration names for different language packages.,not-real,PERPLEXITY_API_KEY and PPLX_API_KEY configure different JavaScript and Python integration packages.
 g-816f6437,javascript,perplexity,structured_output,free,,"true
   javascript/perplexity.mdx:10 [prose] structured_output: true
   javascript/perplexity.mdx:30 [prose] | ❌ | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ |
 only on certain usage tiers
-  javascript/perplexity.mdx:32 [prose] Perplexity only supports structured outputs on certain usage tiers",src/oss/javascript/integrations/chat/perplexity.mdx:10 src/oss/javascript/integrations/chat/perplexity.mdx:30 src/oss/javascript/integrations/chat/perplexity.mdx:32,,,,
+  javascript/perplexity.mdx:32 [prose] Perplexity only supports structured outputs on certain usage tiers",src/oss/javascript/integrations/chat/perplexity.mdx:10 src/oss/javascript/integrations/chat/perplexity.mdx:30 src/oss/javascript/integrations/chat/perplexity.mdx:32,not-real,javascript/perplexity.mdx:32 qualifies the affirmative structured-output support with a usage-tier requirement.,not-real,javascript/perplexity.mdx:32 qualifies the support checkmark by explaining which usage tiers provide structured output.
 g-63c95028,python,perplexity,temperature,free,,"0
   python/perplexity.mdx:61 [code] temperature=0
   python/perplexity.mdx:67 [code] temperature=0
@@ -430,41 +430,41 @@ g-63c95028,python,perplexity,temperature,free,,"0
 0.7
   python/perplexity.mdx:153 [code] temperature=0.7
   python/perplexity.mdx:204 [code] temperature=0.7
-  python/perplexity.mdx:241 [code] temperature=0.7",src/oss/python/integrations/chat/perplexity.mdx:61 src/oss/python/integrations/chat/perplexity.mdx:67 src/oss/python/integrations/chat/perplexity.mdx:87 src/oss/python/integrations/chat/perplexity.mdx:171 src/oss/python/integrations/chat/perplexity.mdx:153 src/oss/python/integrations/chat/perplexity.mdx:204 src/oss/python/integrations/chat/perplexity.mdx:241,,,,
+  python/perplexity.mdx:241 [code] temperature=0.7",src/oss/python/integrations/chat/perplexity.mdx:61 src/oss/python/integrations/chat/perplexity.mdx:67 src/oss/python/integrations/chat/perplexity.mdx:87 src/oss/python/integrations/chat/perplexity.mdx:171 src/oss/python/integrations/chat/perplexity.mdx:153 src/oss/python/integrations/chat/perplexity.mdx:204 src/oss/python/integrations/chat/perplexity.mdx:241,not-real,The temperatures are explicit choices in separate examples rather than conflicting defaults.,not-real,The Perplexity snippets choose different temperatures for independent examples without stating conflicting defaults.
 g-75149061,python,perplexity,use_responses_api,free,,"null
   python/perplexity.mdx:104 [prose] `None` (default)
 true
-  python/perplexity.mdx:115 [code] use_responses_api=True",src/oss/python/integrations/chat/perplexity.mdx:104 src/oss/python/integrations/chat/perplexity.mdx:115,,,,
+  python/perplexity.mdx:115 [code] use_responses_api=True",src/oss/python/integrations/chat/perplexity.mdx:104 src/oss/python/integrations/chat/perplexity.mdx:115,not-real,"python/perplexity.mdx:104 states the default, while :115 explicitly overrides it to force the Agent API.",not-real,"python/perplexity.mdx:104 documents automatic routing by default, while :115 explicitly overrides it to use the Agent API."
 g-01ffc8b4,javascript,perplexity,use_responses_api,free,,"useresponsesapi
   javascript/perplexity.mdx:137 [prose] by setting `useResponsesApi`
 true
-  javascript/perplexity.mdx:152 [code] useResponsesApi: true",src/oss/javascript/integrations/chat/perplexity.mdx:137 src/oss/javascript/integrations/chat/perplexity.mdx:152,,,,
+  javascript/perplexity.mdx:152 [code] useResponsesApi: true",src/oss/javascript/integrations/chat/perplexity.mdx:137 src/oss/javascript/integrations/chat/perplexity.mdx:152,not-real,"javascript/perplexity.mdx:137 names the option, and :152 demonstrates setting that option to true.",not-real,"javascript/perplexity.mdx:137 names the routing option, and :152 demonstrates setting it to true."
 g-749a9379,python,perplexity_agent_api,model,free,,"openai/gpt-5.5
   python/perplexity.mdx:146 [prose] `openai/gpt-5.5`
 anthropic/claude-sonnet-4-6
   python/perplexity.mdx:146 [prose] `anthropic/claude-sonnet-4-6`
 google/gemini-3-1-pro
-  python/perplexity.mdx:146 [prose] `google/gemini-3-1-pro`",src/oss/python/integrations/chat/perplexity.mdx:146 src/oss/python/integrations/chat/perplexity.mdx:146 src/oss/python/integrations/chat/perplexity.mdx:146,,,,
+  python/perplexity.mdx:146 [prose] `google/gemini-3-1-pro`",src/oss/python/integrations/chat/perplexity.mdx:146 src/oss/python/integrations/chat/perplexity.mdx:146 src/oss/python/integrations/chat/perplexity.mdx:146,not-real,python/perplexity.mdx:146 lists examples from the available Agent API model set.,not-real,python/perplexity.mdx:146 lists several available Agent API models as examples.
 g-9ee2884b,twin openai.mdx,predicted_outputs,supported_model,free,divergence high,"gpt-4o and gpt-4o-mini series
   javascript/openai.mdx:1180 [prose] (such as their `gpt-4o` and `gpt-4o-mini` series)
 gpt-4o and gpt-4o-mini
-  python/openai.mdx:1714 [prose] Some OpenAI models (such as their `gpt-4o` and `gpt-4o-mini` series) support",src/oss/javascript/integrations/chat/openai.mdx:1180 src/oss/python/integrations/chat/openai.mdx:1714,,,,
+  python/openai.mdx:1714 [prose] Some OpenAI models (such as their `gpt-4o` and `gpt-4o-mini` series) support",src/oss/javascript/integrations/chat/openai.mdx:1180 src/oss/python/integrations/chat/openai.mdx:1714,not-real,Both passages name the same gpt-4o and gpt-4o-mini model series as examples supporting predicted outputs.,not-real,Both cited passages identify the same gpt-4o and gpt-4o-mini model series.
 g-b10992d9,python,provider_routing,allow_fallbacks,free,,"true
   python/openrouter.mdx:631 [code] ""allow_fallbacks"": True,
 false
-  python/openrouter.mdx:715 [code] ""allow_fallbacks"": False,",src/oss/python/integrations/chat/openrouter.mdx:631 src/oss/python/integrations/chat/openrouter.mdx:715,,,,
+  python/openrouter.mdx:715 [code] ""allow_fallbacks"": False,",src/oss/python/integrations/chat/openrouter.mdx:631 src/oss/python/integrations/chat/openrouter.mdx:715,not-real,"python/openrouter.mdx:631 enables fallback, while :715 intentionally disables it in a stricter routing example.",not-real,"python/openrouter.mdx:631 enables fallback, while :715 deliberately disables it for a stricter provider configuration."
 g-aa851640,javascript,provider_routing,allow_fallbacks,free,,"true
   javascript/openrouter.mdx:348 [code] allow_fallbacks: true,
 false
-  javascript/openrouter.mdx:414 [code] allow_fallbacks: false,",src/oss/javascript/integrations/chat/openrouter.mdx:348 src/oss/javascript/integrations/chat/openrouter.mdx:414,,,,
+  javascript/openrouter.mdx:414 [code] allow_fallbacks: false,",src/oss/javascript/integrations/chat/openrouter.mdx:348 src/oss/javascript/integrations/chat/openrouter.mdx:414,not-real,javascript/openrouter.mdx:348 and :414 demonstrate permissive and restricted provider-routing configurations.,not-real,javascript/openrouter.mdx:348 and :414 intentionally demonstrate configurations with fallback enabled and disabled.
 g-f02fad8c,python,provider_routing,sort,free,,"throughput
   python/openrouter.mdx:660 [code] openrouter_provider={""sort"": ""throughput""},
 latency
-  python/openrouter.mdx:666 [code] openrouter_provider={""sort"": ""latency""},",src/oss/python/integrations/chat/openrouter.mdx:660 src/oss/python/integrations/chat/openrouter.mdx:666,,,,
+  python/openrouter.mdx:666 [code] openrouter_provider={""sort"": ""latency""},",src/oss/python/integrations/chat/openrouter.mdx:660 src/oss/python/integrations/chat/openrouter.mdx:666,not-real,"python/openrouter.mdx:660 and :666 demonstrate alternative sorting goals, throughput and latency.",not-real,python/openrouter.mdx:660 and :666 demonstrate alternative provider sorting preferences.
 g-1ebd5610,javascript,provider_routing,sort,free,,"throughput
   javascript/openrouter.mdx:374 [code] provider: { sort: ""throughput"" },
 latency
-  javascript/openrouter.mdx:379 [code] provider: { sort: ""latency"" },",src/oss/javascript/integrations/chat/openrouter.mdx:374 src/oss/javascript/integrations/chat/openrouter.mdx:379,,,,
+  javascript/openrouter.mdx:379 [code] provider: { sort: ""latency"" },",src/oss/javascript/integrations/chat/openrouter.mdx:374 src/oss/javascript/integrations/chat/openrouter.mdx:379,not-real,javascript/openrouter.mdx:374 and :379 configure separate examples to prioritize throughput or latency.,not-real,javascript/openrouter.mdx:374 and :379 demonstrate separate choices for throughput and latency priorities.
 g-49e1e18e,python,reasoning_effort,minimum_version,single,contradiction high,"1.5.3
   python/anthropic.mdx:836 [prose] `reasoning_effort` requires `langchain-anthropic>=1.5.3`.
 >=4.3.1
@@ -472,38 +472,38 @@ g-49e1e18e,python,reasoning_effort,minimum_version,single,contradiction high,"1.
 >=1.4.1
   python/openai.mdx:1561 [prose] `reasoning_effort` as a standard parameter requires `langchain-openai>=1.4.1`.
 >=1.3.0
-  python/xai.mdx:189 [prose] `langchain-xai>=1.3.0`",src/oss/python/integrations/chat/anthropic.mdx:836 src/oss/python/integrations/chat/google_generative_ai.mdx:1006 src/oss/python/integrations/chat/openai.mdx:1561 src/oss/python/integrations/chat/xai.mdx:189,,,,
+  python/xai.mdx:189 [prose] `langchain-xai>=1.3.0`",src/oss/python/integrations/chat/anthropic.mdx:836 src/oss/python/integrations/chat/google_generative_ai.mdx:1006 src/oss/python/integrations/chat/openai.mdx:1561 src/oss/python/integrations/chat/xai.mdx:189,not-real,Each minimum version applies to a different provider integration package.,not-real,Each minimum version applies to a different provider integration package.
 g-a5ce24fa,python,reasoning_models,models,free,,"anthropic/claude-sonnet-4.5, deepseek/deepseek-r1
   python/openrouter.mdx:268 [prose] For models that support reasoning (e.g., `anthropic/claude-sonnet-4.5`, `deepseek/deepseek-r1`)
 deepseek/deepseek-r1, openai/o3
-  python/openrouter.mdx:512 [prose] (e.g., `deepseek/deepseek-r1`, `openai/o3`)",src/oss/python/integrations/chat/openrouter.mdx:268 src/oss/python/integrations/chat/openrouter.mdx:512,,,,
+  python/openrouter.mdx:512 [prose] (e.g., `deepseek/deepseek-r1`, `openai/o3`)",src/oss/python/integrations/chat/openrouter.mdx:268 src/oss/python/integrations/chat/openrouter.mdx:512,not-real,python/openrouter.mdx:268 and :512 give nonexclusive examples of models that support reasoning.,not-real,Both passages give nonexclusive examples of reasoning models rather than competing exhaustive lists.
 g-d664d1da,twin openai.mdx,strict_argument,minimum_version,single,,"0.2.6
   javascript/openai.mdx:399 [prose] Requires `@langchain/openai >= 0.2.6`
 >=0.1.21
-  python/openai.mdx:304 [prose] **Requires `langchain-openai>=0.1.21`**",src/oss/javascript/integrations/chat/openai.mdx:399 src/oss/python/integrations/chat/openai.mdx:304,,,,
+  python/openai.mdx:304 [prose] **Requires `langchain-openai>=0.1.21`**",src/oss/javascript/integrations/chat/openai.mdx:399 src/oss/python/integrations/chat/openai.mdx:304,not-real,The minimum versions apply to distinct npm and Python packages with independent release histories.,not-real,The strict-argument version requirements apply to different JavaScript and Python packages.
 g-24a92448,python,tool_search,tool_type,free,,"tool_search_tool_regex_20251119
   python/anthropic.mdx:2826 [prose] `tool_search_tool_regex_20251119`
 tool_search_tool_bm25_20251119
-  python/anthropic.mdx:2827 [prose] `tool_search_tool_bm25_20251119`",src/oss/python/integrations/chat/anthropic.mdx:2826 src/oss/python/integrations/chat/anthropic.mdx:2827,,,,
+  python/anthropic.mdx:2827 [prose] `tool_search_tool_bm25_20251119`",src/oss/python/integrations/chat/anthropic.mdx:2826 src/oss/python/integrations/chat/anthropic.mdx:2827,not-real,python/anthropic.mdx:2824–2827 explicitly presents regex and BM25 as two alternative tool-search variants.,not-real,python/anthropic.mdx:2824-2827 explicitly introduces Regex and BM25 as two available tool-search variants.
 g-6486fbf5,javascript,web_search_tool,type,free,,"web_search_20250305
   javascript/anthropic.mdx:1024 [code] { type: ""web_search_20250305"", name: ""web_search"" }
 web_search_preview
-  javascript/openai.mdx:537 [prose] pass `{""type"": ""web_search_preview""}` to the model",src/oss/javascript/integrations/chat/anthropic.mdx:1024 src/oss/javascript/integrations/chat/openai.mdx:537,,,,
+  javascript/openai.mdx:537 [prose] pass `{""type"": ""web_search_preview""}` to the model",src/oss/javascript/integrations/chat/anthropic.mdx:1024 src/oss/javascript/integrations/chat/openai.mdx:537,not-real,"The tool types belong to different providers, Anthropic and OpenAI, with different API schemas.",not-real,"The tool type strings belong to different providers' web-search APIs, Anthropic and OpenAI."
 g-63e86e32,python,with_structured_output,default_method,single,contradiction high,"function calling
   python/anthropic.mdx:1622 [prose] otherwise the method defaults to using function calling
 json_schema
   python/google_generative_ai.mdx:887 [prose] `method=""json_schema""` (default)
 function_calling
-  python/openrouter.mdx:192 [prose] `function_calling` (default)",src/oss/python/integrations/chat/anthropic.mdx:1622 src/oss/python/integrations/chat/google_generative_ai.mdx:887 src/oss/python/integrations/chat/openrouter.mdx:192,,,,
+  python/openrouter.mdx:192 [prose] `function_calling` (default)",src/oss/python/integrations/chat/anthropic.mdx:1622 src/oss/python/integrations/chat/google_generative_ai.mdx:887 src/oss/python/integrations/chat/openrouter.mdx:192,not-real,The defaults belong to different provider-specific implementations of with_structured_output.,not-real,The default methods belong to different provider-specific implementations of with_structured_output.
 g-0bbf73a9,javascript,with_structured_output,method,free,divergence low,"functioncalling
   javascript/ollama.mdx:236 [prose] method: ""functionCalling""
 jsonschema
-  javascript/openrouter.mdx:209 [code] method: ""jsonSchema"", // [!code highlight]",src/oss/javascript/integrations/chat/ollama.mdx:236 src/oss/javascript/integrations/chat/openrouter.mdx:209,,,,
+  javascript/openrouter.mdx:209 [code] method: ""jsonSchema"", // [!code highlight]",src/oss/javascript/integrations/chat/ollama.mdx:236 src/oss/javascript/integrations/chat/openrouter.mdx:209,not-real,The passages select different supported methods in separate Ollama and OpenRouter examples.,not-real,The passages demonstrate alternative structured-output methods in different integrations rather than prescribing one universal method.
 g-83c2744a,twin openrouter.mdx,with_structured_output,method,free,divergence low,"jsonschema
   javascript/openrouter.mdx:209 [code] method: ""jsonSchema"", // [!code highlight]
 json_schema
-  python/openrouter.mdx:211 [code] structured_model = model.with_structured_output(Movie, method=""json_schema"")",src/oss/javascript/integrations/chat/openrouter.mdx:209 src/oss/python/integrations/chat/openrouter.mdx:211,,,,
+  python/openrouter.mdx:211 [code] structured_model = model.with_structured_output(Movie, method=""json_schema"")",src/oss/javascript/integrations/chat/openrouter.mdx:209 src/oss/python/integrations/chat/openrouter.mdx:211,not-real,jsonSchema and json_schema are the respective JavaScript and Python spellings for the same structured-output method.,not-real,jsonSchema and json_schema are the JavaScript and Python spellings for the same structured-output method.
 g-ce98f3f7,twin xai.mdx,xai,serializable,single,,"true
   javascript/xai.mdx:28 [prose] | ✅ | ✅ |
 beta
-  python/xai.mdx:32 [prose] beta",src/oss/javascript/integrations/chat/xai.mdx:28 src/oss/python/integrations/chat/xai.mdx:32,,,,
+  python/xai.mdx:32 [prose] beta",src/oss/javascript/integrations/chat/xai.mdx:28 src/oss/python/integrations/chat/xai.mdx:32,not-real,"The serialization entries concern different language packages, and beta does not contradict affirmative support.",not-real,"The tables describe separate SDK implementations, and beta does not deny the serialization support marked in JavaScript."
