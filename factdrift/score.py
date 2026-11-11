@@ -1,13 +1,14 @@
 """Precision and recall of detector findings against a labeled set.
 
-A labeled set is JSONL, one row per labeled contradiction:
+A labeled set is JSONL or CSV, one row per labeled group of claims:
 
     {"id": "control-01", "label": "real", "sites": ["src/.../deepseek.mdx:73"],
      "entity_id": "...", "attribute_id": "...", "note": "..."}
 
 `label` is "real" or "not-real". `sites` are corpus-relative `path:line`
 locations. `entity_id` and `attribute_id` are optional; when present they
-must also agree with the finding. Other fields are carried through untouched.
+must also agree with the finding. In CSV, `sites` is space-separated. Other
+fields are carried through untouched.
 
 A finding matches a row when one of the finding's value sites covers one of
 the row's sites. Only findings with a site in a file the labeled set names
@@ -20,6 +21,7 @@ the share of real rows matched by at least one finding.
 
 from __future__ import annotations
 
+import csv
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -39,10 +41,13 @@ def _site(text: str) -> tuple[str, int]:
     return path, int(line)
 
 
-def load_labels(path: Path) -> list[dict[str, Any]]:
-    """Read a labeled set, rejecting rows the scorer cannot use. Rows with an
-    empty label are skipped, so a half-labeled file can be scored."""
-    rows = []
+def _raw_rows(path: Path) -> list[tuple[int, dict[str, Any]]]:
+    if path.suffix == ".csv":
+        with path.open(newline="", encoding="utf-8") as handle:
+            reader = csv.DictReader(handle)
+            return [(reader.line_num, {**row, "sites": (row.get("sites") or "").split()})
+                    for row in reader]
+    raw = []
     for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
         if not line.strip():
             continue
@@ -52,7 +57,20 @@ def load_labels(path: Path) -> list[dict[str, Any]]:
             raise LabelError(f"{path}:{number}: not JSON ({error.msg})") from None
         if not isinstance(row, dict):
             raise LabelError(f"{path}:{number}: expected an object")
-        label = (row.get("label") or "").strip()
+        raw.append((number, row))
+    return raw
+
+
+def load_labels(
+    path: Path, label_field: str = "label", note_field: str = "note"
+) -> list[dict[str, Any]]:
+    """Read a labeled set (JSONL, or CSV with space-separated sites),
+    rejecting rows the scorer cannot use. `label_field` and `note_field` pick
+    the columns, so a second labeling pass can be scored on its own. Rows with an empty label
+    are skipped, so a half-labeled file can be scored."""
+    rows = []
+    for number, row in _raw_rows(path):
+        label = (row.get(label_field) or "").strip()
         if not label:
             continue
         if label not in LABELS:
@@ -64,7 +82,8 @@ def load_labels(path: Path) -> list[dict[str, Any]]:
             parsed = [_site(s) for s in sites]
         except LabelError as error:
             raise LabelError(f"{path}:{number}: {error}") from None
-        rows.append({**row, "id": row.get("id", f"line-{number}"), "label": label,
+        rows.append({**row, "id": row.get("id") or f"line-{number}", "label": label,
+                     "note": row.get(note_field),
                      "_sites": parsed})
     return rows
 

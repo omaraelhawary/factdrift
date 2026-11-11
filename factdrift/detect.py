@@ -275,6 +275,42 @@ def detect(
     return findings
 
 
+def candidates(
+    claims: list[dict[str, Any]],
+    *,
+    package_attributes: Iterable[str] = DEFAULT_PACKAGE_ATTRIBUTES,
+) -> list[dict[str, Any]]:
+    """Every group of claims that disagrees before cardinality is applied,
+    for hand labeling. One candidate per entity, attribute and language whose
+    values disagree, and one per twin page whose Python and JavaScript values
+    share nothing, whatever the attribute's cardinality. `detect` reports a
+    subset of these, so labels on the candidates measure what it misses as
+    well as what it gets wrong."""
+    package_attributes = frozenset(package_attributes)
+    found: list[dict[str, Any]] = []
+    for (entity_id, attribute_id), group in sorted(_group(claims).items()):
+        cardinality = group[0]["cardinality"]
+        for language in ("python", "javascript"):
+            by_value = _by_value([c for c in group if c["language"] == language], package_attributes)
+            if _disagree(by_value):
+                found.append({"scope": language, "entity_id": entity_id,
+                              "attribute_id": attribute_id, "cardinality": cardinality,
+                              "values": by_value})
+        pages: dict[str, list[dict[str, Any]]] = defaultdict(list)
+        for claim in group:
+            pages[_twin_key(claim["source_path"])].append(claim)
+        for page, page_claims in sorted(pages.items()):
+            python = set(_by_value(
+                [c for c in page_claims if c["language"] == "python"], package_attributes))
+            javascript = set(_by_value(
+                [c for c in page_claims if c["language"] == "javascript"], package_attributes))
+            if python and javascript and not python & javascript:
+                found.append({"scope": "twin " + page.rsplit("/", 1)[-1], "entity_id": entity_id,
+                              "attribute_id": attribute_id, "cardinality": cardinality,
+                              "values": _by_value(page_claims, package_attributes)})
+    return found
+
+
 def render_markdown(findings: list[Finding], *, claim_count: int) -> str:
     counts: dict[tuple[str, str], int] = defaultdict(int)
     for finding in findings:
